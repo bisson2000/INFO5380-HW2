@@ -14,7 +14,7 @@ TODO
 
 ## How to start developing
 
-First, clone the repository. Follow the 
+First, clone the repository. Follow the following guides.
 
 ### Installing Unity Hub and Unity
 
