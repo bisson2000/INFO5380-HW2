@@ -7,12 +7,27 @@ using UnityEngine;
 using UnityEditor;
 #endif
   
+// Notes: renderer is finished
+// Create another class called WireCreator, which will create the positions
 
-
+// TODO: Only update when there is a change
+// TODO: Cleanup
+// TODO: Documentation
 [RequireComponent(typeof(MeshFilter))]
 [ExecuteInEditMode]
 public class WireRenderer : MonoBehaviour
 {
+    [Tooltip("How many edges each circle will contain")]
+    [Min(2)]
+    [SerializeField]
+    private int nSegments = 8;
+    
+    [Tooltip("The radius of the wire")]
+    [Min(0.0f)]
+    [SerializeField]
+    private float radius = 0.5f;
+    
+    [Header("--------Debug--------")]
     public bool showDebugPoints = true;
     // Use list of transforms instead
     public List<Vector3> positions = new List<Vector3>() 
@@ -20,14 +35,14 @@ public class WireRenderer : MonoBehaviour
     public List<Quaternion> orientations = new List<Quaternion>() 
         { Quaternion.identity, Quaternion.identity, Quaternion.identity };
 
-    public List<GameObject> debug = new List<GameObject>();
-
+    private List<GameObject> debug = new List<GameObject>();
+    
     private MeshFilter _meshFilter;
     private Mesh _mesh;
     public Mesh CurrentMesh => _mesh;
     
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         _meshFilter = GetComponent<MeshFilter>();
         if (_meshFilter.mesh == null)
@@ -42,24 +57,13 @@ public class WireRenderer : MonoBehaviour
         }
     }
 
+    
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         List<Vector3> newVertices = new List<Vector3>();
-        //newVertices.Add(new Vector3(0, 0, 0));
-        //newVertices.Add(new Vector3(0, 1, 0));
-        //newVertices.Add(new Vector3(1, 1, 0));
-        
         List<int> newTris = new List<int>();
-        //newTris.Add(0);
-        //newTris.Add(1);
-        //newTris.Add(2);
-        
         List<Vector2> newUVs = new List<Vector2>();
-        //newUVs.Add(new Vector2(0, 0));
-        //newUVs.Add(new Vector2(0, 1));
-        //newUVs.Add(new Vector2(1, 1));
-        
         List<Vector3> newNormals = new List<Vector3>();
 
         foreach (var debugo in debug)
@@ -69,8 +73,6 @@ public class WireRenderer : MonoBehaviour
         debug.Clear();
 
         // Contour
-        int nSegments = 8;
-        float width = 0.5f;
         for (int i = 0; i < positions.Count; i++)
         {
             Vector3 center = positions[i];
@@ -81,8 +83,8 @@ public class WireRenderer : MonoBehaviour
                 int absoluteIndex = i * nSegments + (j - 1);
                 
                 // Vertex
-                float newX = width * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
-                float newY = width * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
+                float newX = radius * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
+                float newY = radius * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
                 Vector3 newVertex = center + rotation * (new Vector3(newX, newY, 0));
                 newVertices.Add(newVertex);
 
@@ -91,7 +93,7 @@ public class WireRenderer : MonoBehaviour
                 newNormals.Add(newVertexNormal);
                 
                 // UV
-                Vector2 newVertexUV = new Vector2((float)j / nSegments, 0);//currentPositionIndex / positions.Count);
+                Vector2 newVertexUV = new Vector2((float)j / nSegments, (float)i / (positions.Count - 1));//currentPositionIndex / positions.Count);
                 newUVs.Add(newVertexUV);
 
                 // Triangles
@@ -141,9 +143,6 @@ public class WireRenderer : MonoBehaviour
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
 
-
-
-
         _mesh.Clear();
         _mesh.SetVertices(newVertices);
         _mesh.SetTriangles(newTris, 0);
@@ -155,6 +154,17 @@ public class WireRenderer : MonoBehaviour
     private Mesh BuildMesh()
     {
         return _meshFilter.mesh;
+    }
+
+    public (Vector3, Quaternion) GetPositionRotation(int index)
+    {
+        return (positions[index], orientations[index]);
+    }
+    
+    public void AddPositionRotation(Vector3 position, Quaternion rotation)
+    {
+        positions.Add(position);
+        orientations.Add(rotation);
     }
 
     private Vector3 GetRight(Vector3 point, Quaternion rotation)
@@ -176,21 +186,6 @@ public class WireRenderer : MonoBehaviour
     } 
     
 #if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (_mesh == null)
-        {
-            return;
-        }
-
-        Color previousGizmosColor = Gizmos.color;
-        Gizmos.color = Color.blue;
-        
-        // Draw
-        
-        Gizmos.color = previousGizmosColor;
-    }
-    
     public void OnGUI()
     {
         showDebugPoints = GUILayout.Toggle(showDebugPoints, "Show debug points");
@@ -204,11 +199,29 @@ public class WireRenderer : MonoBehaviour
 [CustomEditor(typeof(WireRenderer))]
 public class WireRendererEditor : Editor
 {
+    public override void OnInspectorGUI() {
+        base.OnInspectorGUI();
+        
+        WireRenderer wireRenderer = target as WireRenderer;
+        if (wireRenderer == null || wireRenderer.CurrentMesh == null)
+        {
+            return;
+        }
+
+        if (GUILayout.Button("Quick add point"))
+        {
+            Vector3 newPos = wireRenderer.positions[wireRenderer.positions.Count - 1];
+            newPos.x += 0.5f;
+            Quaternion newRot = wireRenderer.orientations[wireRenderer.orientations.Count - 1];
+            wireRenderer.AddPositionRotation(newPos, newRot);
+        }
+    }
+    
+    
     // Custom in-scene UI
     public void OnSceneGUI()
     {
         WireRenderer wireRenderer = target as WireRenderer;
-        
         if (wireRenderer == null || wireRenderer.CurrentMesh == null || !wireRenderer.showDebugPoints)
         {
             return;
