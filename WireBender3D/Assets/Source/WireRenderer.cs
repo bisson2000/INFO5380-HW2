@@ -68,87 +68,81 @@ public class WireRenderer : MonoBehaviour
         }
         debug.Clear();
 
-        int nSegments = 4;
+        // Contour
+        int nSegments = 8;
         float width = 0.5f;
-        int currentPositionIndex = 0;
-        Vector3 center = positions[currentPositionIndex];
-        Quaternion rotation = orientations[currentPositionIndex];
-        for (int j = 1; j <= nSegments; j++)
+        for (int i = 0; i < positions.Count; i++)
         {
-            int absoluteIndex = currentPositionIndex * nSegments + (j - 1);
+            Vector3 center = positions[i];
+            Quaternion rotation = orientations[i];
             
-            // Vertex
-            float newX = width * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
-            float newY = width * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
-            Vector3 newVertex = center + rotation * (new Vector3(newX, newY, 0));
-            newVertices.Add(newVertex);
+            for (int j = 1; j <= nSegments; j++)
+            {
+                int absoluteIndex = i * nSegments + (j - 1);
+                
+                // Vertex
+                float newX = width * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
+                float newY = width * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
+                Vector3 newVertex = center + rotation * (new Vector3(newX, newY, 0));
+                newVertices.Add(newVertex);
 
-            // Normal
-            Vector3 newVertexNormal = (newVertex - center).normalized;
-            newNormals.Add(newVertexNormal);
-            
-            // UV
-            Vector2 newVertexUV = new Vector2((float)j / nSegments, 0);//currentPositionIndex / positions.Count);
-            newUVs.Add(newVertexUV);
+                // Normal
+                Vector3 newVertexNormal = (newVertex - center).normalized;
+                newNormals.Add(newVertexNormal);
+                
+                // UV
+                Vector2 newVertexUV = new Vector2((float)j / nSegments, 0);//currentPositionIndex / positions.Count);
+                newUVs.Add(newVertexUV);
 
-            // Triangles
-            // Every new vertex adds 2 triangles
-            // Triangle with 2 vertices on current segment
-            newTris.Add(absoluteIndex + 1); // next vertex on same segment
-            newTris.Add(absoluteIndex + nSegments); // vertex in front
-            newTris.Add(absoluteIndex); // current vertex
-            
-            // Triangle with 2 vertices on opposite segment
-            newTris.Add(absoluteIndex + nSegments); // vertex in front
-            newTris.Add(absoluteIndex + nSegments - 1); // next vertex in front
-            newTris.Add(absoluteIndex); // current vertex
-            
-            //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //go.transform.position = newVertex;
-            //go.transform.rotation = rotation;
-            //go.transform.localScale = Vector3.one * 0.25f;
-            //debug.Add(go);
+                // Triangles
+                // Every new vertex adds 2 triangles
+                if (i < positions.Count - 1)
+                {
+                    // Triangle with 2 vertices on current segment
+                    newTris.Add(absoluteIndex + 1); // next vertex on same segment
+                    newTris.Add(absoluteIndex + nSegments); // vertex in front
+                    newTris.Add(absoluteIndex); // current vertex
+                
+                    // Triangle with 2 vertices on opposite segment
+                    newTris.Add(absoluteIndex + nSegments); // vertex in front
+                    newTris.Add(absoluteIndex + nSegments - 1); // next vertex in front
+                    newTris.Add(absoluteIndex); // current vertex
+                }
+                
+                //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //go.transform.position = newVertex;
+                //go.transform.rotation = rotation;
+                //go.transform.localScale = Vector3.one * 0.25f;
+                //debug.Add(go);
+            }
+        }
+        
+        // sides
+        // Start
+        newVertices.Add(positions[0]);
+        newNormals.Add(-1.0f * GetForward(positions[0], orientations[0]));
+        newUVs.Add(new Vector2(0.5f, 0f));
+        for (int i = 0; i < nSegments; i++)
+        {
+            newTris.Add((i + 1) % nSegments);
+            newTris.Add(i);
+            newTris.Add(newVertices.Count - 1); // Current Vertex
+        }
+        
+        // End
+        newVertices.Add(positions[positions.Count - 1]);
+        newNormals.Add(GetForward(positions[positions.Count - 1], orientations[positions.Count - 1]));
+        newUVs.Add(new Vector2(0.5f, 1.0f));
+        int absoluteStartIndex = newVertices.Count - nSegments - 2; // -2 because we just added the start
+        for (int i = 0; i < nSegments; i++)
+        {
+            newTris.Add(absoluteStartIndex + i);
+            newTris.Add(absoluteStartIndex + (i + 1) % nSegments);
+            newTris.Add(newVertices.Count - 1); // Current Vertex
         }
 
-        currentPositionIndex++;
-        center = positions[currentPositionIndex];
-        rotation = orientations[currentPositionIndex];
-        for (int j = 1; j <= nSegments; j++)
-        {
-            int absoluteIndex = currentPositionIndex * nSegments + (j - 1);
-            
-            // Vertex
-            float newX = width * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
-            float newY = width * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
-            Vector3 newVertex = center + rotation * (new Vector3(newX, newY, 0));
-            newVertices.Add(newVertex);
 
-            // Normal
-            Vector3 newVertexNormal = (newVertex - center).normalized;
-            newNormals.Add(newVertexNormal);
-            
-            // UV
-            Vector2 newVertexUV = new Vector2((float)j / nSegments, 0);//currentPositionIndex / positions.Count);
-            newUVs.Add(newVertexUV);
 
-            // Triangles
-            // Every new vertex adds 2 triangles
-            // Triangle with 2 vertices on current segment
-            //newTris.Add(absoluteIndex); // current vertex
-            //newTris.Add(absoluteIndex + nSegments); // vertex in front
-            //newTris.Add(currentPositionIndex * nSegments + j % nSegments); // next vertex on same segment
-            
-            // Triangle with 2 vertices on opposite segment
-            //newTris.Add(absoluteIndex); // current vertex
-            //newTris.Add(absoluteIndex + nSegments); // vertex in front
-            //newTris.Add(absoluteIndex + nSegments - 1); // next vertex in front
-            
-            //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //go.transform.position = newVertex;
-            //go.transform.rotation = rotation;
-            //go.transform.localScale = Vector3.one * 0.25f;
-            //debug.Add(go);
-        }
 
         _mesh.Clear();
         _mesh.SetVertices(newVertices);
