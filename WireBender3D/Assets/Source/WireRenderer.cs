@@ -156,6 +156,11 @@ public class WireRenderer : MonoBehaviour
         return _meshFilter.mesh;
     }
 
+    public (Vector3, Quaternion) GetLastPositionRotation()
+    {
+        return (positions[^1], orientations[^1]);
+    }
+    
     public (Vector3, Quaternion) GetPositionRotation(int index)
     {
         return (positions[index], orientations[index]);
@@ -167,19 +172,19 @@ public class WireRenderer : MonoBehaviour
         orientations.Add(rotation);
     }
 
-    private Vector3 GetRight(Vector3 point, Quaternion rotation)
+    public Vector3 GetRight(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.right + point;
         return (end - point).normalized;
     }
     
-    private Vector3 GetForward(Vector3 point, Quaternion rotation)
+    public Vector3 GetForward(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.forward + point;
         return (end - point).normalized;
     }
     
-    private Vector3 GetUp(Vector3 point, Quaternion rotation)
+    public Vector3 GetUp(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.up + point;
         return (end - point).normalized;
@@ -214,6 +219,12 @@ public class WireRendererEditor : Editor
             newPos.x += 0.5f;
             Quaternion newRot = wireRenderer.orientations[wireRenderer.orientations.Count - 1];
             wireRenderer.AddPositionRotation(newPos, newRot);
+        }
+        
+        if (GUILayout.Button("Quick delete last point"))
+        {
+            wireRenderer.positions.RemoveAt(wireRenderer.positions.Count - 1);
+            wireRenderer.orientations.RemoveAt(wireRenderer.orientations.Count - 1);
         }
     }
     
