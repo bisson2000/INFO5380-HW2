@@ -216,28 +216,33 @@ public class WireRendererEditor : Editor
 
         List<Vector3> positions = wireRenderer.positions;
         List<Quaternion> orientations = wireRenderer.orientations;
-        for (int i = 1; i < positions.Count; i++)
+        for (int i = 0; i < positions.Count; i++)
         {
-            positions[i] = Handles.PositionHandle(positions[i], orientations[i]);
+            Vector3 position = positions[i];
+            Quaternion rotation = orientations[i];
+            Vector3 scale = Vector3.one * 0.5f;
+            Handles.TransformHandle(ref position, ref rotation, ref scale);
+            positions[i] = position;
+            orientations[i] = rotation;
         }
         
-        Vector3 start = positions[0];
-        Quaternion startOrient = orientations[0];
-        float scale = 1.0f;
-        Handles.TransformHandle(ref start, ref startOrient, ref scale);
-        
-        positions[0] = start;
-        orientations[0] = startOrient;
-        
-        Vector3 endOriginal = start + new Vector3(1.0f, 0.0f, 0.0f);
-        Vector3 endX = startOrient * Vector3.right + start;
-        Handles.DrawLine(start, endX, 5.0f);
-        
-        Vector3 endZ = (startOrient * Vector3.forward + start);
-        Handles.DrawLine(start, endZ, 5.0f);
-        
-        Vector3 endY = (startOrient * Vector3.up + start);
-        Handles.DrawLine(start, endY, 5.0f);
+        // Vector3 start = positions[0];
+        // Quaternion startOrient = orientations[0];
+        // float scale = 1.0f;
+        // Handles.TransformHandle(ref start, ref startOrient, ref scale);
+        // 
+        // positions[0] = start;
+        // orientations[0] = startOrient;
+        // 
+        // Vector3 endOriginal = start + new Vector3(1.0f, 0.0f, 0.0f);
+        // Vector3 endX = startOrient * Vector3.right + start;
+        // Handles.DrawLine(start, endX, 5.0f);
+        // 
+        // Vector3 endZ = (startOrient * Vector3.forward + start);
+        // Handles.DrawLine(start, endZ, 5.0f);
+        // 
+        // Vector3 endY = (startOrient * Vector3.up + start);
+        // Handles.DrawLine(start, endY, 5.0f);
         
         // display object "value" in scene
         // GUI.color = Color.blue;
