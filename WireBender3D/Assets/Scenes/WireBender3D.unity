@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c30cb9bd0c48e449a0ac87c0185307, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nSegments: 8
+  nEdgesInSegments: 8
   radius: 0.5
   showDebugPoints: 0
   positions:

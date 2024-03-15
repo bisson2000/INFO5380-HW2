@@ -56,13 +56,11 @@ public class WireRenderer : MonoBehaviour
     
     [Tooltip("The center position of each segment in the wire")]
     [SerializeField]
-    private List<Vector3> positions = new List<Vector3>() 
-        { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 0, 2) };
+    private List<Vector3> positions = new List<Vector3>();
     
     [Tooltip("The orientation of each segment in the wire. Forward is in the Z axis")]
     [SerializeField]
-    private List<Quaternion> orientations = new List<Quaternion>() 
-        { Quaternion.identity, Quaternion.identity, Quaternion.identity };
+    private List<Quaternion> orientations = new List<Quaternion>();
 
     // Flag to indicate to regenerate the mesh
     private bool _dirty = true;
@@ -232,7 +230,7 @@ public class WireRenderer : MonoBehaviour
     /// </summary>
     /// <param name="start">The start index to erase (included)</param>
     /// <param name="count">The number of points to erase from the start index</param>
-    public void EraseRange(int start, int count = 1)
+    public void EraseRange(int start, int count)
     {
         positions.RemoveRange(start, count);
         orientations.RemoveRange(start, count);
@@ -335,14 +333,24 @@ public class WireRendererEditor : Editor
 
         if (GUILayout.Button("Quick add point"))
         {
-            (Vector3 newPos, Quaternion newRot) = wireRenderer.GetLastPositionRotation();
-            newPos.x += 0.5f;
+            Vector3 newPos = Vector3.zero;
+            Quaternion newRot = Quaternion.identity;
+            if (wireRenderer.GetPositionsCount() > 0)
+            {
+                (newPos, newRot) = wireRenderer.GetLastPositionRotation();
+                newPos.z += 1.0f;
+            }
             wireRenderer.AddPositionRotation(newPos, newRot);
         }
         
         if (GUILayout.Button("Quick delete last point"))
         {
-            wireRenderer.EraseRange(wireRenderer.GetPositionsCount() - 1, 1);
+            int count = wireRenderer.GetPositionsCount();
+            if (count == 0)
+            {
+                return;
+            }
+            wireRenderer.EraseRange(count - 1, 1);
         }
     }
     
