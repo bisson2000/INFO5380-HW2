@@ -215,6 +215,16 @@ public class WireRenderer : MonoBehaviour
     {
         return (positions[^1], orientations[^1]);
     }
+    
+    /// <summary>
+    /// Gets the position and rotation of a point at a specific index
+    /// </summary>
+    /// <param name="index">The index to get the information from</param>
+    /// <returns>The point's position and rotation</returns>
+    public (Vector3, Quaternion) GetPositionRotation(int index)
+    {
+        return (positions[index], orientations[index]);
+    }
 
     /// <summary>
     /// Get the number of points in the wire
@@ -259,6 +269,19 @@ public class WireRenderer : MonoBehaviour
     {
         positions.Add(position);
         orientations.Add(rotation);
+        MarkDirty();
+    }
+    
+    /// <summary>
+    /// Inserts a new point to the wire
+    /// </summary>
+    /// <param name="position">The position of the point</param>
+    /// <param name="rotation">The rotation of the point</param>
+    /// <param name="index">The index to insert to</param>
+    public void InsertPositionRotation(Vector3 position, Quaternion rotation, int index)
+    {
+        positions.Insert(index, position);
+        orientations.Insert(index, rotation);
         MarkDirty();
     }
 
