@@ -51,8 +51,9 @@ Note: You may need to restart your computer.
 ### Setting your code editor in the project
 
 1. Go to Edit > Preferences (macOS: Unity > Settings)
-2. Go to External Script Editor
+2. Go to External tools
 3. Set your external script editor to whichever one you prefer
+4. Make sure the 4 first checkboxes are checked
 
 ![](./ReadmeImages/ExternalScriptEditor.png)
 
