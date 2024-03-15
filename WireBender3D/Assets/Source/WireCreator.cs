@@ -69,7 +69,21 @@ public class WireCreator : MonoBehaviour
             {
                 EraseSegment(currentCurve);
                 float pivotAngleDegrees = (currentCurve.PivotAngleDegrees + 15.0f) % 360.0f;
-                Segment newSegment = CreateCurve(pivotAngleDegrees, currentCurve.AngleDegrees);
+                float angleDegrees = currentCurve.AngleDegrees;
+                Segment newSegment = CreateCurve(pivotAngleDegrees, angleDegrees);
+                _segmentList.Add(newSegment);
+            }
+            
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            // rotate
+            if (currentSegment is Curve currentCurve)
+            {
+                EraseSegment(currentCurve);
+                float pivotAngleDegrees = currentCurve.PivotAngleDegrees;
+                float angleDegrees = (currentCurve.AngleDegrees + 15.0f) % 360.0f;
+                Segment newSegment = CreateCurve(pivotAngleDegrees, angleDegrees);
                 _segmentList.Add(newSegment);
             }
             
@@ -147,7 +161,7 @@ public class WirCreatorEditor : Editor
             return;
         }
 
-        if (GUILayout.Button("Quick add point"))
+        if (GUILayout.Button("Quick add curve"))
         {
             wireCreator.AddDebugCurve();
         }
