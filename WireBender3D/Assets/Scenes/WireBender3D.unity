@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &291403261
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -595,13 +595,14 @@ GameObject:
   - component: {fileID: 1735342547}
   - component: {fileID: 1735342553}
   - component: {fileID: 1735342552}
+  - component: {fileID: 1735342554}
   m_Layer: 0
   m_Name: WireRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1735342547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,6 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d189d1dd16cd94f8da4de9aed94abb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _curveAngleStep: 5
 --- !u!114 &1735342553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -724,6 +726,30 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0, w: 1}
   - {x: 0, y: 0, z: 0, w: 1}
   - {x: 0, y: 0, z: 0, w: 1}
+--- !u!114 &1735342554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735342545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e065bb5a3d33946b171a96d2152061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createCurveAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Create curve
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 9767906e-e9eb-4d16-9225-f061ffeb4149
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 6268373456792319316, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

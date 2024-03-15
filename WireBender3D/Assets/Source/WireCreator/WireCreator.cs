@@ -29,6 +29,12 @@ public class WireCreator : MonoBehaviour
      * Let's say we have 2 control points, the start and the finish. Those control points cannot be extended
      * 
      */
+
+    [Tooltip("The angle in a curvature before creating a step. This will influence the \"resolution\" of the curve")]
+    [Min(1e-6f)]
+    [SerializeField] 
+    private float _curveAngleStep = 5.0f;
+    
     
     private WireRenderer _wireRenderer;
     private List<Curve> _segmentList = new List<Curve>() {new Curve(0, 1), new Curve(1, 2)};
@@ -120,10 +126,10 @@ public class WireCreator : MonoBehaviour
     private void AddNewSegment(CurveData curveData)
     {
         int startIndex = _wireRenderer.GetPositionsCount() - 1;
-        int endIndex = _wireRenderer.GetPositionsCount() - 1 + 8 + 1; // TODO: get this elsewhere
+        int totalPoints = CreateCurve(curveData.PivotAngleDegrees, curveData.AngleDegrees);
+        totalPoints += CreateLine(curveData.DistanceFromEnd);
+        int endIndex = startIndex + totalPoints;
         Curve newSegment = new Curve(startIndex, endIndex, curveData);
-        CreateCurve(curveData.PivotAngleDegrees, curveData.AngleDegrees);
-        CreateLine(curveData.DistanceFromEnd);
         _segmentList.Add(newSegment);
     }
 
@@ -153,23 +159,20 @@ public class WireCreator : MonoBehaviour
         CreateCurve(0, 90);
     }
 
-    public void CreateLine(float length)
+    public int CreateLine(float length)
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
         Vector3 forward = WireRenderer.GetForward(lastPos, lastRot);
         _wireRenderer.AddPositionRotation(lastPos + forward * length, lastRot);
+
+        return 1;
     }
 
-    private void CreateCurve(float pivotAngleDegrees, float curvatureDegrees, float startOffset = 0.0f)
+    private int CreateCurve(float pivotAngleDegrees, float curvatureDegrees)
     {
-        const int N_STEPS = 8;
+        int nSteps = Mathf.Max(1, (int) (curvatureDegrees / _curveAngleStep));
+        float angleStep = curvatureDegrees / nSteps;
         const float DIST_FROM_CENTER = 1.5f;
-        float angleStep = curvatureDegrees / N_STEPS;
-        //int startIndex = _wireRenderer.GetPositionsCount() - 1;
-        // TODO: Check if we should add one at the end as well. most likely not
-        // +1 for the start point
-        //int endIndex = _wireRenderer.GetPositionsCount() - 1 + N_STEPS + 1; 
-        //Curve segment = new Curve(startIndex, endIndex, pivotAngleDegrees, angleDegrees);
         
         // Get the pivot point
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetLastPositionRotation();
@@ -181,12 +184,9 @@ public class WireCreator : MonoBehaviour
         // Get the rotation that must be completed around the pivot
         Vector3 rotationAxis = Vector3.Cross(startForward, pivotDirection.normalized);
         Quaternion rotation = Quaternion.AngleAxis(angleStep, rotationAxis);
-
-        // The start point, aligned
-        //_wireRenderer.AddPositionRotation(startPoint + startForward * startOffset, startRotation);
         
         // The curved points
-        for (int i = 0; i < N_STEPS; i++)
+        for (int i = 0; i < nSteps; i++)
         {
             // Rotate the current point around the pivot
             Vector3 finalPoint = rotation * (startPoint - pivotPoint) + pivotPoint;
@@ -197,7 +197,7 @@ public class WireCreator : MonoBehaviour
             startRotation = finalRotation;
         }
 
-        //return segment;
+        return nSteps;
     }
 }
 
