@@ -1,0 +1,34 @@
+{
+    "name": "CreateCurveInputAction",
+    "maps": [
+        {
+            "name": "CreateCurve",
+            "id": "0ec2b084-34af-4f03-8fe9-9324c66bb765",
+            "actions": [
+                {
+                    "name": "CreateCurve",
+                    "type": "Button",
+                    "id": "1c8b1ee7-65a3-4fa2-afc7-0caa4c185519",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "369414c9-15f1-4c77-83eb-23bfe42014ee",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CreateCurve",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
