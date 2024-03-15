@@ -47,7 +47,7 @@ public class WireCreator : MonoBehaviour
         {
             // Add curve
             Vector3 up = _wireRenderer.GetUp(lastPos, lastRot);
-            Segment newSegment = CreateCurve(lastPos + up * 1.5f, 32);
+            Segment newSegment = CreateCurve(0, 90);
             _segmentList.Add(newSegment);
         }
         
@@ -62,6 +62,18 @@ public class WireCreator : MonoBehaviour
             // erase segment
             EraseSegment(currentSegment);
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            // rotate
+            if (currentSegment is Curve currentCurve)
+            {
+                EraseSegment(currentCurve);
+                float pivotAngleDegrees = (currentCurve.PivotAngleDegrees + 15.0f) % 360.0f;
+                Segment newSegment = CreateCurve(pivotAngleDegrees, currentCurve.AngleDegrees);
+                _segmentList.Add(newSegment);
+            }
+            
+        }
         
         
     }
@@ -70,7 +82,7 @@ public class WireCreator : MonoBehaviour
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
         Vector3 up = _wireRenderer.GetUp(lastPos, lastRot);
-        CreateCurve(lastPos + up * 1.5f, 90);
+        CreateCurve(0, 90);
     }
 
     public void AddLine(float length = 1.0f)
@@ -78,23 +90,27 @@ public class WireCreator : MonoBehaviour
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
     }
 
-    private Segment CreateCurve(Vector3 pivotPoint, float angleDegrees)
+    private Segment CreateCurve(float pivotAngleDegrees, float angleDegrees)
     {
         const int N_STEPS = 8;
         const float DIST_FROM_CENTER = 1.5f;
         float angleStep = angleDegrees / N_STEPS;
-        Segment segment = new Segment(_wireRenderer.positions.Count - 1, _wireRenderer.positions.Count + N_STEPS - 1);
+        Segment segment = new Curve(_wireRenderer.positions.Count - 1, _wireRenderer.positions.Count + N_STEPS - 1, pivotAngleDegrees, angleDegrees);
         
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetLastPositionRotation();
+        Vector3 startForward = _wireRenderer.GetForward(startPoint, startRotation);
+        Vector3 pivotDirection = _wireRenderer.GetUp(startPoint, startRotation);
+        pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
+        Vector3 pivotPoint = pivotDirection + startPoint;
+        
+        Vector3 rotationAxis = Vector3.Cross(startForward, pivotDirection.normalized);
+        Quaternion rotation = Quaternion.AngleAxis(angleStep, rotationAxis);
+
         for (int i = 0; i < N_STEPS; i++)
         {
-            Vector3 pivotVector = startPoint - pivotPoint;
 
-            Vector3 rotationAxis = Vector3.Cross(pivotVector.normalized, _wireRenderer.GetForward(startPoint, startRotation));
-            Quaternion rotation = Quaternion.AngleAxis(angleStep, rotationAxis);
-
-            Vector3 finalPoint = rotation * pivotVector + pivotPoint;
-            Quaternion finalRotation = startRotation * rotation;
+            Vector3 finalPoint = rotation * (startPoint - pivotPoint) + pivotPoint;
+            Quaternion finalRotation = rotation * startRotation;
             _wireRenderer.AddPositionRotation(finalPoint, finalRotation);
 
             startPoint = finalPoint;

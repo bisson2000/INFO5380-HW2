@@ -17,8 +17,17 @@ public class Segment
 
 public class Curve : Segment
 {
-    public Curve(int startPointIndex, int endPointIndex, float pivotAngle, float radiusAngle) : base(startPointIndex, endPointIndex)
+    public float PivotAngleDegrees;
+    public float AngleDegrees;
+    public Curve(int startPointIndex, int endPointIndex, float pivotAngleDegrees, float angleDegrees) : base(startPointIndex, endPointIndex)
     {
-        
+        PivotAngleDegrees = pivotAngleDegrees;
+        AngleDegrees = angleDegrees;
     }
+}
+
+public enum SegmentType
+{
+    Line,
+    Curve
 }
