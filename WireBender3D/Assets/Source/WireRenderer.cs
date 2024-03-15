@@ -8,25 +8,41 @@ using UnityEngine.Rendering;
 using UnityEditor;
 #endif
   
-// Notes: renderer is finished
-// Create another class called WireCreator, which will create the positions
 
-// TODO: Only update when there is a change
 // TODO: Cleanup
-// TODO: Documentation
 [RequireComponent(typeof(MeshFilter))]
 [ExecuteInEditMode]
 public class WireRenderer : MonoBehaviour
 {
+    
     [Tooltip("How many edges each circle will contain")]
     [Min(2)]
     [SerializeField]
     private int nSegments = 8;
+    public int NSegments
+    {
+        get => nSegments;
+        set
+        {
+            nSegments = value;
+            MarkDirty();
+        }
+    }
     
     [Tooltip("The radius of the wire")]
     [Min(0.0f)]
     [SerializeField]
     private float radius = 0.5f;
+    
+    public float Radius
+    {
+        get => radius;
+        set
+        {
+            radius = value;
+            MarkDirty();
+        }
+    }
     
     // The modified mesh
     private MeshFilter _meshFilter;
@@ -46,26 +62,53 @@ public class WireRenderer : MonoBehaviour
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>() 
         { Quaternion.identity, Quaternion.identity, Quaternion.identity };
+
+    // Flag to indicate to regenerate the mesh
+    private bool _dirty = true;
     
     // Start is called before the first frame update
     public void Start()
     {
         _meshFilter = GetComponent<MeshFilter>();
-        if (_meshFilter.mesh == null)
+        if (_meshFilter.sharedMesh == null)
         {
             _mesh = new Mesh();
             _mesh.name = "WireRenderer";
-            _meshFilter.mesh = _mesh;
+            _meshFilter.sharedMesh = _mesh;
         }
         else
         {
-            _mesh = _meshFilter.mesh;
+            _mesh = _meshFilter.sharedMesh;
         }
+        MarkDirty();
     }
 
     
     // Update is called once per frame
     public void Update()
+    {
+#if UNITY_EDITOR
+        // Force update in unity editor, since variables can be changed without
+        // any check.
+        if (!Application.isPlaying)
+        {
+            _dirty = true;
+        }
+#endif
+        // Only build if the mesh has changed
+        if (_dirty)
+        {
+            BuildMesh();
+            _dirty = false;
+        }
+    }
+
+    /// <summary>
+    /// Builds the mesh by assigning:
+    /// vertices, tris, UVs, Normals.
+    /// The mesh is built with the positions and rotations
+    /// </summary>
+    private void BuildMesh()
     {
         List<Vector3> newVertices = new List<Vector3>();
         List<int> newTris = new List<int>();
@@ -78,13 +121,13 @@ public class WireRenderer : MonoBehaviour
             Vector3 center = positions[i];
             Quaternion rotation = orientations[i];
             
-            for (int j = 1; j <= nSegments; j++)
+            for (int j = 1; j <= NSegments; j++)
             {
-                int absoluteIndex = i * nSegments + (j - 1);
+                int absoluteIndex = i * NSegments + (j - 1);
                 
                 // Vertex
-                float newX = radius * Mathf.Cos(j * 2 * Mathf.PI / nSegments);
-                float newY = radius * Mathf.Sin(j * 2 * Mathf.PI / nSegments);
+                float newX = Radius * Mathf.Cos(j * 2 * Mathf.PI / NSegments);
+                float newY = Radius * Mathf.Sin(j * 2 * Mathf.PI / NSegments);
                 Vector3 newVertex = center + rotation * (new Vector3(newX, newY, 0));
                 newVertices.Add(newVertex);
 
@@ -93,7 +136,7 @@ public class WireRenderer : MonoBehaviour
                 newNormals.Add(newVertexNormal);
                 
                 // UV
-                Vector2 newVertexUV = new Vector2((float)j / nSegments, (float)i / (positions.Count - 1));//currentPositionIndex / positions.Count);
+                Vector2 newVertexUV = new Vector2((float)j / NSegments, (float)i / (positions.Count - 1));//currentPositionIndex / positions.Count);
                 newUVs.Add(newVertexUV);
 
                 // Triangles
@@ -102,12 +145,12 @@ public class WireRenderer : MonoBehaviour
                 {
                     // Triangle with 2 vertices on current segment
                     newTris.Add(absoluteIndex + 1); // next vertex on same segment
-                    newTris.Add(absoluteIndex + nSegments); // vertex in front
+                    newTris.Add(absoluteIndex + NSegments); // vertex in front
                     newTris.Add(absoluteIndex); // current vertex
                 
                     // Triangle with 2 vertices on opposite segment
-                    newTris.Add(absoluteIndex + nSegments); // vertex in front
-                    newTris.Add(absoluteIndex + nSegments - 1); // next vertex in front
+                    newTris.Add(absoluteIndex + NSegments); // vertex in front
+                    newTris.Add(absoluteIndex + NSegments - 1); // next vertex in front
                     newTris.Add(absoluteIndex); // current vertex
                 }
             }
@@ -118,9 +161,9 @@ public class WireRenderer : MonoBehaviour
         newVertices.Add(positions[0]);
         newNormals.Add(-1.0f * GetForward(positions[0], orientations[0]));
         newUVs.Add(new Vector2(0.5f, 0f));
-        for (int i = 0; i < nSegments; i++)
+        for (int i = 0; i < NSegments; i++)
         {
-            newTris.Add((i + 1) % nSegments);
+            newTris.Add((i + 1) % NSegments);
             newTris.Add(i);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
@@ -129,11 +172,11 @@ public class WireRenderer : MonoBehaviour
         newVertices.Add(positions[positions.Count - 1]);
         newNormals.Add(GetForward(positions[positions.Count - 1], orientations[positions.Count - 1]));
         newUVs.Add(new Vector2(0.5f, 1.0f));
-        int absoluteStartIndex = newVertices.Count - nSegments - 2; // -2 because we just added the start
-        for (int i = 0; i < nSegments; i++)
+        int absoluteStartIndex = newVertices.Count - NSegments - 2; // -2 because we just added the start
+        for (int i = 0; i < NSegments; i++)
         {
             newTris.Add(absoluteStartIndex + i);
-            newTris.Add(absoluteStartIndex + (i + 1) % nSegments);
+            newTris.Add(absoluteStartIndex + (i + 1) % NSegments);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
 
@@ -143,11 +186,6 @@ public class WireRenderer : MonoBehaviour
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
-    }
-
-    private Mesh BuildMesh()
-    {
-        return _meshFilter.mesh;
     }
 
     public (Vector3, Quaternion) GetLastPositionRotation()
@@ -183,7 +221,7 @@ public class WireRenderer : MonoBehaviour
 
     public void MarkDirty()
     {
-        
+        _dirty = true;
     }
 
     public static Vector3 GetRight(Vector3 point, Quaternion rotation)
