@@ -123,6 +123,18 @@ public class WireRenderer : MonoBehaviour
         List<Vector2> newUVs = new List<Vector2>();
         List<Vector3> newNormals = new List<Vector3>();
 
+        // Edge case
+        if (positions.Count == 0)
+        {
+            _mesh.Clear();
+            _mesh.SetVertices(newVertices);
+            _mesh.SetTriangles(newTris, 0);
+            _mesh.SetUVs(0, newUVs);
+            _mesh.SetNormals(newNormals);
+            _mesh.RecalculateBounds();
+            return;
+        }
+
         // Contour
         for (int i = 0; i < positions.Count; i++)
         {
@@ -144,7 +156,7 @@ public class WireRenderer : MonoBehaviour
                 newNormals.Add(newVertexNormal);
                 
                 // UV
-                Vector2 newVertexUV = new Vector2((float)j / NEdgesInSegments, (float)i / (positions.Count - 1));//currentPositionIndex / positions.Count);
+                Vector2 newVertexUV = new Vector2((float)j / NEdgesInSegments, (float)i / (positions.Count - 1));
                 newUVs.Add(newVertexUV);
 
                 // Triangles
