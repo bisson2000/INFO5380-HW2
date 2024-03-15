@@ -42,11 +42,9 @@ public class WireCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
         if (Input.GetKeyDown(KeyCode.C))
         {
             // Add curve
-            Vector3 up = _wireRenderer.GetUp(lastPos, lastRot);
             Segment newSegment = CreateCurve(0, 90);
             _segmentList.Add(newSegment);
         }
@@ -95,7 +93,7 @@ public class WireCreator : MonoBehaviour
     public void AddDebugCurve()
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
-        Vector3 up = _wireRenderer.GetUp(lastPos, lastRot);
+        Vector3 up = WireRenderer.GetUp(lastPos, lastRot);
         CreateCurve(0, 90);
     }
 
@@ -109,11 +107,13 @@ public class WireCreator : MonoBehaviour
         const int N_STEPS = 8;
         const float DIST_FROM_CENTER = 1.5f;
         float angleStep = angleDegrees / N_STEPS;
-        Segment segment = new Curve(_wireRenderer.positions.Count - 1, _wireRenderer.positions.Count + N_STEPS - 1, pivotAngleDegrees, angleDegrees);
+        int startIndex = _wireRenderer.GetPositionsCount() - 1;
+        int endIndex = _wireRenderer.GetPositionsCount() + N_STEPS - 1;
+        Segment segment = new Curve(startIndex, endIndex, pivotAngleDegrees, angleDegrees);
         
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetLastPositionRotation();
-        Vector3 startForward = _wireRenderer.GetForward(startPoint, startRotation);
-        Vector3 pivotDirection = _wireRenderer.GetUp(startPoint, startRotation);
+        Vector3 startForward = WireRenderer.GetForward(startPoint, startRotation);
+        Vector3 pivotDirection = WireRenderer.GetUp(startPoint, startRotation);
         pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
         Vector3 pivotPoint = pivotDirection + startPoint;
         
@@ -139,8 +139,7 @@ public class WireCreator : MonoBehaviour
         _segmentList.RemoveAt(_segmentList.Count - 1);
         int start = segment.StartPointIndex + 1;
         int count = segment.EndPointIndex - segment.StartPointIndex;
-        _wireRenderer.positions.RemoveRange(start, count);
-        _wireRenderer.orientations.RemoveRange(start, count);
+        _wireRenderer.EraseRange(start, count);
     }
     
     

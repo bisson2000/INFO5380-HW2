@@ -27,19 +27,16 @@ public class WireRenderer : MonoBehaviour
     [SerializeField]
     private float radius = 0.5f;
     
-    [Header("--------Debug--------")]
+    private MeshFilter _meshFilter;
+    private Mesh _mesh;
+    public Mesh CurrentMesh => _mesh;
+    
+    [Header("--------Debug Information--------")]
     public bool showDebugPoints = true;
-    // Use list of transforms instead
     public List<Vector3> positions = new List<Vector3>() 
         { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 0, 2) };
     public List<Quaternion> orientations = new List<Quaternion>() 
         { Quaternion.identity, Quaternion.identity, Quaternion.identity };
-
-    private List<GameObject> debug = new List<GameObject>();
-    
-    private MeshFilter _meshFilter;
-    private Mesh _mesh;
-    public Mesh CurrentMesh => _mesh;
     
     // Start is called before the first frame update
     public void Start()
@@ -65,12 +62,6 @@ public class WireRenderer : MonoBehaviour
         List<int> newTris = new List<int>();
         List<Vector2> newUVs = new List<Vector2>();
         List<Vector3> newNormals = new List<Vector3>();
-
-        foreach (var debugo in debug)
-        {
-            GameObject.DestroyImmediate(debugo);
-        }
-        debug.Clear();
 
         // Contour
         for (int i = 0; i < positions.Count; i++)
@@ -110,12 +101,6 @@ public class WireRenderer : MonoBehaviour
                     newTris.Add(absoluteIndex + nSegments - 1); // next vertex in front
                     newTris.Add(absoluteIndex); // current vertex
                 }
-                
-                //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //go.transform.position = newVertex;
-                //go.transform.rotation = rotation;
-                //go.transform.localScale = Vector3.one * 0.25f;
-                //debug.Add(go);
             }
         }
         
@@ -160,10 +145,16 @@ public class WireRenderer : MonoBehaviour
     {
         return (positions[^1], orientations[^1]);
     }
-    
-    public (Vector3, Quaternion) GetPositionRotation(int index)
+
+    public int GetPositionsCount()
     {
-        return (positions[index], orientations[index]);
+        return positions.Count;
+    }
+
+    public void EraseRange(int start, int count)
+    {
+        positions.RemoveRange(start, count);
+        orientations.RemoveRange(start, count);
     }
     
     public void AddPositionRotation(Vector3 position, Quaternion rotation)
@@ -172,19 +163,24 @@ public class WireRenderer : MonoBehaviour
         orientations.Add(rotation);
     }
 
-    public Vector3 GetRight(Vector3 point, Quaternion rotation)
+    public void MarkDirty()
+    {
+        
+    }
+
+    public static Vector3 GetRight(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.right + point;
         return (end - point).normalized;
     }
     
-    public Vector3 GetForward(Vector3 point, Quaternion rotation)
+    public static Vector3 GetForward(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.forward + point;
         return (end - point).normalized;
     }
     
-    public Vector3 GetUp(Vector3 point, Quaternion rotation)
+    public static Vector3 GetUp(Vector3 point, Quaternion rotation)
     {
         Vector3 end = rotation * Vector3.up + point;
         return (end - point).normalized;
