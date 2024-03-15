@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -27,15 +28,23 @@ public class WireRenderer : MonoBehaviour
     [SerializeField]
     private float radius = 0.5f;
     
+    // The modified mesh
     private MeshFilter _meshFilter;
     private Mesh _mesh;
     public Mesh CurrentMesh => _mesh;
     
     [Header("--------Debug Information--------")]
     public bool showDebugPoints = true;
-    public List<Vector3> positions = new List<Vector3>() 
+
+    public IReadOnlyList<Vector3> Positions => positions.AsReadOnly();
+    public IReadOnlyList<Quaternion> Rotations => orientations.AsReadOnly();
+    
+    [SerializeField]
+    private List<Vector3> positions = new List<Vector3>() 
         { new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 0, 2) };
-    public List<Quaternion> orientations = new List<Quaternion>() 
+    
+    [SerializeField]
+    private List<Quaternion> orientations = new List<Quaternion>() 
         { Quaternion.identity, Quaternion.identity, Quaternion.identity };
     
     // Start is called before the first frame update
@@ -155,12 +164,21 @@ public class WireRenderer : MonoBehaviour
     {
         positions.RemoveRange(start, count);
         orientations.RemoveRange(start, count);
+        MarkDirty();
+    }
+
+    public void SetPositionRotation(Vector3 position, Quaternion rotation, int index)
+    {
+        positions[index] = position;
+        orientations[index] = rotation;
+        MarkDirty();
     }
     
     public void AddPositionRotation(Vector3 position, Quaternion rotation)
     {
         positions.Add(position);
         orientations.Add(rotation);
+        MarkDirty();
     }
 
     public void MarkDirty()
@@ -211,16 +229,14 @@ public class WireRendererEditor : Editor
 
         if (GUILayout.Button("Quick add point"))
         {
-            Vector3 newPos = wireRenderer.positions[wireRenderer.positions.Count - 1];
+            (Vector3 newPos, Quaternion newRot) = wireRenderer.GetLastPositionRotation();
             newPos.x += 0.5f;
-            Quaternion newRot = wireRenderer.orientations[wireRenderer.orientations.Count - 1];
             wireRenderer.AddPositionRotation(newPos, newRot);
         }
         
         if (GUILayout.Button("Quick delete last point"))
         {
-            wireRenderer.positions.RemoveAt(wireRenderer.positions.Count - 1);
-            wireRenderer.orientations.RemoveAt(wireRenderer.orientations.Count - 1);
+            wireRenderer.EraseRange(wireRenderer.GetPositionsCount() - 1, 1);
         }
     }
     
@@ -234,16 +250,15 @@ public class WireRendererEditor : Editor
             return;
         }
 
-        List<Vector3> positions = wireRenderer.positions;
-        List<Quaternion> orientations = wireRenderer.orientations;
+        IReadOnlyList<Vector3> positions = wireRenderer.Positions;
+        IReadOnlyList<Quaternion> orientations = wireRenderer.Rotations;
         for (int i = 0; i < positions.Count; i++)
         {
             Vector3 position = positions[i];
             Quaternion rotation = orientations[i];
             Vector3 scale = Vector3.one * 0.5f;
             Handles.TransformHandle(ref position, ref rotation, ref scale);
-            positions[i] = position;
-            orientations[i] = rotation;
+            wireRenderer.SetPositionRotation(position, rotation, i);
         }
         
         // Vector3 start = positions[0];
