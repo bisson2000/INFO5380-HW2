@@ -702,7 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d189d1dd16cd94f8da4de9aed94abb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _curveAngleStep: 5
+  _curveAngleStep: 45
 --- !u!114 &1735342553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nEdgesInSegments: 8
   radius: 0.5
-  showDebugPoints: 0
+  showDebugPoints: 1
   positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
