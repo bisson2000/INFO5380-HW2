@@ -256,7 +256,7 @@ public class WireRenderer : MonoBehaviour
     public void SetPositionRotation(Vector3 position, Quaternion rotation, int index)
     {
         positions[index] = position;
-        orientations[index] = rotation;
+        orientations[index] = rotation.normalized;
         MarkDirty();
     }
     
@@ -268,7 +268,7 @@ public class WireRenderer : MonoBehaviour
     public void AddPositionRotation(Vector3 position, Quaternion rotation)
     {
         positions.Add(position);
-        orientations.Add(rotation);
+        orientations.Add(rotation.normalized);
         MarkDirty();
     }
     
@@ -281,7 +281,27 @@ public class WireRenderer : MonoBehaviour
     public void InsertPositionRotation(Vector3 position, Quaternion rotation, int index)
     {
         positions.Insert(index, position);
-        orientations.Insert(index, rotation);
+        orientations.Insert(index, rotation.normalized);
+        MarkDirty();
+    }
+
+    public void PropagatePointChange(Vector3 lastPos, Quaternion lastRot, int startIndex)
+    {
+        Vector3 lastForward = WireRenderer.GetForward(lastPos, lastRot);
+        Vector3 newForward = WireRenderer.GetForward(positions[startIndex - 1], orientations[startIndex - 1]);
+        Quaternion baseRotation = Quaternion.FromToRotation(lastForward, newForward);
+        
+        for (int i = startIndex; i < positions.Count; i++)
+        {
+            Vector3 lastTranslation = positions[i] - lastPos;
+            Vector3 pos1 = positions[i - 1] + baseRotation * lastTranslation;
+            Quaternion or1 = baseRotation * orientations[i];
+            
+            lastPos = positions[i];
+            lastRot = orientations[i];
+            positions[i] = pos1;
+            orientations[i] = or1;
+        }
         MarkDirty();
     }
 
@@ -389,13 +409,99 @@ public class WireRendererEditor : Editor
 
         IReadOnlyList<Vector3> positions = wireRenderer.Positions;
         IReadOnlyList<Quaternion> orientations = wireRenderer.Rotations;
-        for (int i = 0; i < positions.Count; i++)
+        
+        Vector3 position = positions[0];
+        Quaternion rotation = orientations[0];
+        Vector3 lastPos = positions[0];
+        Quaternion lastRot = orientations[0];
+        
+        Vector3 scale = Vector3.one * 0.5f;
+        Handles.TransformHandle(ref position, ref rotation, ref scale);
+        wireRenderer.SetPositionRotation(position, rotation, 0);
+        
+        Quaternion globalDiff = Quaternion.Inverse(lastRot) * orientations[1];
+        //Debug.Log("Start");
+        
+        Vector3 lastForward = WireRenderer.GetForward(lastPos, lastRot);
+        Vector3 newForward = WireRenderer.GetForward(positions[0], orientations[0]);
+        Vector3 lastUp = WireRenderer.GetUp(lastPos, lastRot);
+        Vector3 newUp = WireRenderer.GetUp(positions[0], orientations[0]);
+        Vector3 lastRight = WireRenderer.GetRight(lastPos, lastRot);
+        Vector3 newRight = WireRenderer.GetRight(positions[0], orientations[0]);
+        Quaternion forwardRotation = Quaternion.FromToRotation(lastForward, newForward);
+        Quaternion upRotation = Quaternion.FromToRotation(lastUp, newUp);
+        Quaternion rightRotation = Quaternion.FromToRotation(lastRight, newRight);
+        
+        for (int i = 1; i < positions.Count; i++)
         {
-            Vector3 position = positions[i];
-            Quaternion rotation = orientations[i];
-            Vector3 scale = Vector3.one * 0.5f;
-            Handles.TransformHandle(ref position, ref rotation, ref scale);
-            wireRenderer.SetPositionRotation(position, rotation, i);
+            // Vector3 lastDir = positions[i] - lastPos;
+            // Quaternion diff = Quaternion.Inverse(lastRot) * orientations[i - 1];
+            // 
+            // Debug.Log("angle: " + diff.eulerAngles);
+            // Debug.Log("dir: " + lastDir);
+            // 
+            // lastPos = positions[i];
+            // lastRot = orientations[i];
+            // Vector3 pos1 = positions[i - 1] + diff * lastDir;
+            // Quaternion or1 = orientations[i] * diff;
+            
+            // Vector3 lastForward = WireRenderer.GetForward(lastPos, lastRot);
+            // Vector3 newForward = WireRenderer.GetForward(positions[i - 1], orientations[i - 1]);
+            // Vector3 lastUp = WireRenderer.GetUp(lastPos, lastRot);
+            // Vector3 newUp = WireRenderer.GetUp(positions[i - 1], orientations[i - 1]);
+            // Vector3 lastRight = WireRenderer.GetRight(lastPos, lastRot);
+            // Vector3 newRight = WireRenderer.GetRight(positions[i - 1], orientations[i - 1]);
+            // Quaternion forwardRotation = Quaternion.FromToRotation(lastForward, newForward);
+            // Quaternion upRotation = Quaternion.FromToRotation(lastUp, newUp);
+            // Quaternion rightRotation = Quaternion.FromToRotation(lastRight, newRight);
+            
+            
+            //Quaternion rotationAxisMovement = Quaternion.FromToRotation(previousUp, newPreviousUp);
+            //Vector3 previousForward = WireRenderer.GetForward(lastPos, lastRot);
+            Quaternion rotationAxisMovement = Quaternion.Inverse(lastRot) * orientations[i - 1];
+            Quaternion nextRot = orientations[i] * rotationAxisMovement;
+            bool eq = nextRot == orientations[i];
+            //Debug.Log(rotationAxisMovement.eulerAngles);
+
+            Quaternion previousRotation = Quaternion.FromToRotation(WireRenderer.GetForward(lastPos, lastRot), 
+                WireRenderer.GetForward(positions[i], orientations[i]));
+            
+            previousRotation.ToAngleAxis(out float previousRotationAngle, out Vector3 previousRotationAxis);
+            Vector3 newRotationAxis = rotationAxisMovement * previousRotationAxis;
+            
+            Quaternion newRotation = Quaternion.AngleAxis(previousRotationAngle, newRotationAxis);
+            
+            
+            //Vector3 currentForward = WireRenderer.GetForward(positions[i], orientations[i]);
+            
+            
+            
+            // Quaternion addedTwist = Quaternion.FromToRotation(previousForward, newPreviousForward);
+            //Quaternion.FromToRotation(lastPos - pivot, positions[i] - pivot);
+            //
+            //
+
+            Quaternion appliedRotation = rotationAxisMovement;
+            if (appliedRotation != Quaternion.identity)
+            {
+                Debug.Log("appliedRotation " + i + ": " + appliedRotation.eulerAngles);
+            }
+            
+            Vector3 lastTranslation = positions[i] - lastPos;
+            Vector3 pos1 = positions[i - 1] + forwardRotation * lastTranslation;
+            Quaternion or1 = orientations[i] * forwardRotation;
+            
+            lastPos = positions[i];
+            lastRot = orientations[i];
+            
+            wireRenderer.SetPositionRotation(pos1, or1, i);
+
+            if (i > 6)
+            {
+                Handles.TransformHandle(ref pos1, ref or1, ref scale);
+            }
+            
+            
         }
         
         // Vector3 start = positions[0];
