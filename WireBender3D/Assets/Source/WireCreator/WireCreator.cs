@@ -129,7 +129,7 @@ public class WireCreator : MonoBehaviour
     private void SetSelectedSegment(int selectedIndex)
     {
         _selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
-        int start = _segmentList[_selectedSegment].StartPointIndex + 1;
+        int start = _segmentList[_selectedSegment].StartPointIndex;
         int count = _segmentList[_selectedSegment].EndPointIndex - start;
         _wireRenderer.SetSubmesh(start,  count);
     }
@@ -143,7 +143,6 @@ public class WireCreator : MonoBehaviour
             segmentInsertionIndex = _selectedSegment + 1;
             pointInsertionIndex = _segmentList[_selectedSegment].EndPointIndex + 1;
         }
-        Debug.Log(segmentInsertionIndex);
         
         CurveData curveData = new CurveData(0, 90.0f, 1.0f);
         InsertNewSegment(curveData, segmentInsertionIndex, pointInsertionIndex);
@@ -166,6 +165,9 @@ public class WireCreator : MonoBehaviour
         
         // Propagate the change
         PropagateChange(CurveData.GetDifference(oldCurveData, newCurveData), oldSegmentIndex + 1, false);
+        
+        // Update selection
+        SetSelectedSegment(_selectedSegment);
     }
     
     private void RemoveSegmentAndPropagate(int segmentIndex)

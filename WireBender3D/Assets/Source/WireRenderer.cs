@@ -62,6 +62,10 @@ public class WireRenderer : MonoBehaviour
     [Tooltip("The orientation of each segment in the wire. Forward is in the Z axis")]
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>();
+    
+    // Submesh information
+    private int _submeshIndexStart = -1;
+    private int _submeshCount = 0;
 
     // Flag to indicate to regenerate the mesh
     private bool _dirty = true;
@@ -204,23 +208,39 @@ public class WireRenderer : MonoBehaviour
         _mesh.Clear();
         _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
+        
         _mesh.SetTriangles(newTris, 0);
-        _mesh.SetTriangles(new List<int>(), 1);
+        if (_submeshIndexStart > 0)
+        {
+            _mesh.SetTriangles(newTris, _submeshIndexStart, _submeshCount, 1);
+        }
+        
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
+        
+        Debug.Log("Cleared!");
     }
 
     public void SetSubmesh(int startPoint, int count)
     {
         _mesh.subMeshCount = 2;
-        List<int> tris = _mesh.triangles.ToList();
-        List<int> submeshTris = tris.GetRange(startPoint * 6, count * 6);
+        int triIndexStart = startPoint * 6 * nEdgesInSegments;
+        int triCount = count * 6 * nEdgesInSegments;
 
-        tris.RemoveRange(startPoint * 6, count * 6);
-        //_mesh.SetTriangles(tris, 0);
-        //_mesh.SetTriangles(submeshTris, 1);
-        _mesh.RecalculateBounds();
+        
+        if (triIndexStart < 0)
+        {
+            _submeshIndexStart = -1;
+            _submeshCount = 0;
+        }
+        else
+        {
+            _submeshIndexStart = triIndexStart;
+            _submeshCount = triCount;
+        }
+        
+        MarkDirty();
     }
 
     /// <summary>
