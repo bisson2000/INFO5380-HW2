@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -200,11 +201,27 @@ public class WireRenderer : MonoBehaviour
 
         // Set the new mesh
         _mesh.Clear();
+        _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
         _mesh.SetTriangles(newTris, 0);
+        _mesh.SetTriangles(new List<int>(), 1);
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
+        Debug.Log("Cleared");
+    }
+
+    public void SetSubmesh(int startPoint, int count)
+    {
+        _mesh.subMeshCount = 2;
+        List<int> tris = _mesh.triangles.ToList();
+        List<int> submeshTris = tris.GetRange(startPoint * 6, count * 6);
+
+        tris.RemoveRange(startPoint * 6, count * 6);
+        //_mesh.SetTriangles(tris, 0);
+        //_mesh.SetTriangles(submeshTris, 1);
+        _mesh.RecalculateBounds();
+        Debug.Log("set submesh");
     }
 
     /// <summary>

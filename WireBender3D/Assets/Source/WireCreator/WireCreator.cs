@@ -54,7 +54,7 @@ public class WireCreator : MonoBehaviour
         {
             // Add curve
             AddNewSegment();
-            selectedSegment = _segmentList.Count - 1;
+            SetSelectedSegment(_segmentList.Count - 1);
         }
         
         if (_segmentList.Count == 0 || selectedSegment == -1)
@@ -66,11 +66,8 @@ public class WireCreator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             // erase segment
-            EraseSegment(selectedSegment);
-            if (selectedSegment >= _segmentList.Count)
-            {
-                selectedSegment = _segmentList.Count - 1;
-            }
+            RemoveSegmentAndPropagate(selectedSegment);
+            SetSelectedSegment(selectedSegment - 1);
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
@@ -120,14 +117,22 @@ public class WireCreator : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            selectedSegment = Mathf.Min(_segmentList.Count - 1, selectedSegment + 1);;
+            SetSelectedSegment(selectedSegment + 1);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            selectedSegment = Mathf.Max(0, selectedSegment - 1);
+            SetSelectedSegment(selectedSegment - 1);
         }
         
         
+    }
+
+    private void SetSelectedSegment(int selectedIndex)
+    {
+        selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
+        int start = _segmentList[selectedSegment].StartPointIndex + 1;
+        int count = _segmentList[selectedSegment].EndPointIndex - start;
+        _wireRenderer.SetSubmesh(start,  count);
     }
     
     private void AddNewSegment()
@@ -138,8 +143,6 @@ public class WireCreator : MonoBehaviour
     
     private void ReplaceSegment(int oldSegmentIndex, CurveData newCurveData)
     {
-        bool unfoldStyle = false;
-        
         // Keep source information
         int oldSegmentStart = _segmentList[oldSegmentIndex].StartPointIndex;
         CurveData oldCurveData = _segmentList[oldSegmentIndex].CurveData.Clone();
@@ -149,22 +152,52 @@ public class WireCreator : MonoBehaviour
         InsertNewSegment(newCurveData, oldSegmentIndex, oldSegmentStart + 1);
         
         // Propagate the change
-        for (int i = oldSegmentIndex + 1; i < _segmentList.Count; ++i)
+        PropagateChange(CurveData.GetDifference(oldCurveData, newCurveData), oldSegmentIndex + 1, false);
+    }
+    
+    private void RemoveSegmentAndPropagate(int segmentIndex)
+    {
+        CurveData oldCurveData = _segmentList[segmentIndex].CurveData.Clone();
+        CurveData curveDataChange = CurveData.GetDifference(oldCurveData, new CurveData());
+
+        EraseSegment(segmentIndex);
+        PropagateChange(curveDataChange, segmentIndex, true);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="curveDataChange"></param>
+    /// <param name="nextSegmentIndex"></param>
+    /// <param name="unfoldStyle">The style how the change is propagated. By setting to true, it will apply changes
+    /// the same way as if the curves were "unfolded" and then refolded. By setting to false, the curves will
+    /// be modified by the changes</param>
+    private void PropagateChange(CurveData curveDataChange, int nextSegmentIndex, bool unfoldStyle)
+    {
+        for (int i = nextSegmentIndex; i < _segmentList.Count; ++i)
         {
-            int startIndex = _segmentList[i - 1].EndPointIndex;
-            _segmentList[i].EndPointIndex += startIndex - _segmentList[i].StartPointIndex;
-            _segmentList[i].StartPointIndex = startIndex;
+            int newStartIndex = 0;
+            if (i > 0)
+            {
+                newStartIndex = _segmentList[i - 1].EndPointIndex;
+            }
+            
+            
+            int newEndIndex = _segmentList[i].EndPointIndex + newStartIndex - _segmentList[i].StartPointIndex;
+            
+            _segmentList[i].StartPointIndex = newStartIndex;
+            _segmentList[i].EndPointIndex = newEndIndex;
             CurveData data = _segmentList[i].CurveData.Clone();
             if (!unfoldStyle)
             {
-                data.PivotAngleDegrees += newCurveData.PivotAngleDegrees - oldCurveData.PivotAngleDegrees;
+                data.PivotAngleDegrees += curveDataChange.PivotAngleDegrees;
             }
             
             EraseSegment(i);
-            InsertNewSegment(data, i, startIndex + 1);
+            InsertNewSegment(data, i, newStartIndex + 1);
         }
     }
-
+    
     private void InsertNewSegment(CurveData curveData, int segmentInsertionIndex, int pointInsertionIndex)
     {
         int startIndex = pointInsertionIndex - 1;

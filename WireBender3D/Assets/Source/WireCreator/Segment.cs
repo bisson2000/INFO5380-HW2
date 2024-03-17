@@ -60,6 +60,14 @@ public class CurveData
     {
         return new CurveData(PivotAngleDegrees, AngleDegrees, DistanceFromEnd);
     }
+
+    public static CurveData GetDifference(CurveData from, CurveData to)
+    {
+        float pivotAngleDegrees = to.PivotAngleDegrees - from.PivotAngleDegrees;
+        float angleDegrees = to.PivotAngleDegrees - from.PivotAngleDegrees;
+        float distanceFromEnd = to.PivotAngleDegrees - from.PivotAngleDegrees;
+        return new CurveData(pivotAngleDegrees, angleDegrees, distanceFromEnd);
+    }
 }
 
 public enum SegmentType
