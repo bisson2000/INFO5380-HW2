@@ -218,8 +218,6 @@ public class WireRenderer : MonoBehaviour
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
-        
-        Debug.Log("Cleared!");
     }
 
     public void SetSubmesh(int startPoint, int count)
