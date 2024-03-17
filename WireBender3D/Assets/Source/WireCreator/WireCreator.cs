@@ -88,7 +88,7 @@ public class WireCreator : MonoBehaviour
         {
             // extend curvature
             CurveData newSegmentData = currentSegment.CurveData.Clone();
-            newSegmentData.AngleDegrees = Mathf.Clamp(newSegmentData.AngleDegrees + 15.0f, 0.0f, 360.0f);
+            newSegmentData.AngleDegrees = (newSegmentData.AngleDegrees + 15.0f) % 360.0f;
             ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
@@ -96,7 +96,7 @@ public class WireCreator : MonoBehaviour
         {
             // retract curvature
             CurveData newSegmentData = currentSegment.CurveData.Clone();
-            newSegmentData.AngleDegrees = Mathf.Clamp(newSegmentData.AngleDegrees - 15.0f, 0.0f, 360.0f);
+            newSegmentData.AngleDegrees = (newSegmentData.AngleDegrees - 15.0f) % 360.0f;
             ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
@@ -128,6 +128,13 @@ public class WireCreator : MonoBehaviour
 
     private void SetSelectedSegment(int selectedIndex)
     {
+        if (_segmentList.Count == 0)
+        {
+            _selectedSegment = 1;
+            _wireRenderer.SetSubmesh(-1,  0);
+            return;
+        }
+        
         _selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
         int start = _segmentList[_selectedSegment].StartPointIndex;
         int count = _segmentList[_selectedSegment].EndPointIndex - start;
@@ -250,6 +257,13 @@ public class WireCreator : MonoBehaviour
 
     private int CreateCurve(float pivotAngleDegrees, float curvatureDegrees, int insertionIndex)
     {
+        float curvatureFlip = 1.0f;
+        if (curvatureDegrees < 0)
+        {
+            curvatureFlip = -1.0f;
+            curvatureDegrees *= -1.0f;
+        }
+        
         int nSteps = Mathf.Max(1, (int) (curvatureDegrees / _curveAngleStep));
         float angleStep = curvatureDegrees / nSteps;
         const float DIST_FROM_CENTER = 1.5f;
@@ -257,7 +271,7 @@ public class WireCreator : MonoBehaviour
         // Get the pivot point
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetPositionRotation(insertionIndex - 1);
         Vector3 startForward = WireRenderer.GetForward(startPoint, startRotation);
-        Vector3 pivotDirection = WireRenderer.GetUp(startPoint, startRotation);
+        Vector3 pivotDirection = WireRenderer.GetUp(startPoint, startRotation) * curvatureFlip;
         pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
         Vector3 pivotPoint = pivotDirection + startPoint;
         
