@@ -126,6 +126,7 @@ public class WireRenderer : MonoBehaviour
         if (positions.Count == 0)
         {
             _mesh.Clear();
+            _mesh.subMeshCount = 2;
             _mesh.SetVertices(newVertices);
             _mesh.SetTriangles(newTris, 0);
             _mesh.SetUVs(0, newUVs);
@@ -208,7 +209,6 @@ public class WireRenderer : MonoBehaviour
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
-        Debug.Log("Cleared");
     }
 
     public void SetSubmesh(int startPoint, int count)
@@ -221,7 +221,6 @@ public class WireRenderer : MonoBehaviour
         //_mesh.SetTriangles(tris, 0);
         //_mesh.SetTriangles(submeshTris, 1);
         _mesh.RecalculateBounds();
-        Debug.Log("set submesh");
     }
 
     /// <summary>

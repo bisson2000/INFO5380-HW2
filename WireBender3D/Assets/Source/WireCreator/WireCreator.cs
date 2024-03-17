@@ -39,7 +39,7 @@ public class WireCreator : MonoBehaviour
     
     private WireRenderer _wireRenderer;
     private List<Curve> _segmentList = new List<Curve>() {new Curve(0, 1), new Curve(1, 2)};
-    private int selectedSegment = -1;
+    private int _selectedSegment = -1;
     
     // Start is called before the first frame update
     void Start()
@@ -54,27 +54,26 @@ public class WireCreator : MonoBehaviour
         {
             // Add curve
             AddNewSegment();
-            SetSelectedSegment(_segmentList.Count - 1);
         }
         
-        if (_segmentList.Count == 0 || selectedSegment == -1)
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
         
-        Curve currentSegment = _segmentList[selectedSegment];
+        Curve currentSegment = _segmentList[_selectedSegment];
         if (Input.GetKeyDown(KeyCode.Z))
         {
             // erase segment
-            RemoveSegmentAndPropagate(selectedSegment);
-            SetSelectedSegment(selectedSegment - 1);
+            RemoveSegmentAndPropagate(_selectedSegment);
+            SetSelectedSegment(_selectedSegment - 1);
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
             // rotate
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.PivotAngleDegrees = (newSegmentData.PivotAngleDegrees + 15.0f) % 360.0f;
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
         else if (Input.GetKeyDown(KeyCode.T))
@@ -82,7 +81,7 @@ public class WireCreator : MonoBehaviour
             // counter-rotate
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.PivotAngleDegrees = (newSegmentData.PivotAngleDegrees - 15.0f) % 360.0f;
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
         else if (Input.GetKeyDown(KeyCode.F))
@@ -90,7 +89,7 @@ public class WireCreator : MonoBehaviour
             // extend curvature
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.AngleDegrees = Mathf.Clamp(newSegmentData.AngleDegrees + 15.0f, 0.0f, 360.0f);
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
         else if (Input.GetKeyDown(KeyCode.G))
@@ -98,7 +97,7 @@ public class WireCreator : MonoBehaviour
             // retract curvature
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.AngleDegrees = Mathf.Clamp(newSegmentData.AngleDegrees - 15.0f, 0.0f, 360.0f);
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
             
         }
         else if (Input.GetKeyDown(KeyCode.V))
@@ -106,22 +105,22 @@ public class WireCreator : MonoBehaviour
             // extend line
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.DistanceFromEnd = Mathf.Max(0.0f, newSegmentData.DistanceFromEnd + 0.1f);
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
         }
         else if (Input.GetKeyDown(KeyCode.B))
         {
             // retract line
             CurveData newSegmentData = currentSegment.CurveData.Clone();
             newSegmentData.DistanceFromEnd = Mathf.Max(0.0f, newSegmentData.DistanceFromEnd - 0.1f);
-            ReplaceSegment(selectedSegment, newSegmentData);
+            ReplaceSegment(_selectedSegment, newSegmentData);
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            SetSelectedSegment(selectedSegment + 1);
+            SetSelectedSegment(_selectedSegment + 1);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            SetSelectedSegment(selectedSegment - 1);
+            SetSelectedSegment(_selectedSegment - 1);
         }
         
         
@@ -129,16 +128,30 @@ public class WireCreator : MonoBehaviour
 
     private void SetSelectedSegment(int selectedIndex)
     {
-        selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
-        int start = _segmentList[selectedSegment].StartPointIndex + 1;
-        int count = _segmentList[selectedSegment].EndPointIndex - start;
+        _selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
+        int start = _segmentList[_selectedSegment].StartPointIndex + 1;
+        int count = _segmentList[_selectedSegment].EndPointIndex - start;
         _wireRenderer.SetSubmesh(start,  count);
     }
     
     private void AddNewSegment()
     {
+        int segmentInsertionIndex = _segmentList.Count;
+        int pointInsertionIndex = _wireRenderer.GetPositionsCount();
+        if (0 <= _selectedSegment && _selectedSegment <  _segmentList.Count)
+        {
+            segmentInsertionIndex = _selectedSegment + 1;
+            pointInsertionIndex = _segmentList[_selectedSegment].EndPointIndex + 1;
+        }
+        Debug.Log(segmentInsertionIndex);
+        
         CurveData curveData = new CurveData(0, 90.0f, 1.0f);
-        InsertNewSegment(curveData, _segmentList.Count, _wireRenderer.GetPositionsCount());
+        InsertNewSegment(curveData, segmentInsertionIndex, pointInsertionIndex);
+        
+        CurveData curveDataChange = CurveData.GetDifference(new CurveData(), curveData);
+        PropagateChange(curveDataChange, segmentInsertionIndex + 1, false);
+        
+        SetSelectedSegment(segmentInsertionIndex);
     }
     
     private void ReplaceSegment(int oldSegmentIndex, CurveData newCurveData)
