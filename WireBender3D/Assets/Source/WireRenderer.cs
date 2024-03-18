@@ -221,13 +221,16 @@ public class WireRenderer : MonoBehaviour
         _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
         
-        Debug.Log(_submeshIndexStart);
-        Debug.Log(_submeshCount);
-        
-        _mesh.SetTriangles(newTris, 0);
-        if (_submeshIndexStart > 0)
+        if (_submeshIndexStart >= 0)
         {
-            _mesh.SetTriangles(newTris, _submeshIndexStart, _submeshCount, 1);
+            List<int> submeshTris = newTris.GetRange(_submeshIndexStart, _submeshCount);
+            newTris.RemoveRange(_submeshIndexStart, _submeshCount);
+            _mesh.SetTriangles(newTris, 0);
+            _mesh.SetTriangles(submeshTris, 1);
+        }
+        else
+        {
+            _mesh.SetTriangles(newTris, 0);
         }
         
         _mesh.SetUVs(0, newUVs);
