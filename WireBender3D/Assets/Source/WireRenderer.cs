@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -61,6 +62,10 @@ public class WireRenderer : MonoBehaviour
     [Tooltip("The orientation of each segment in the wire. Forward is in the Z axis")]
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>();
+    
+    // Submesh information
+    private int _submeshIndexStart = -1;
+    private int _submeshCount = 0;
 
     // Flag to indicate to regenerate the mesh
     private bool _dirty = true;
@@ -125,6 +130,7 @@ public class WireRenderer : MonoBehaviour
         if (positions.Count == 0)
         {
             _mesh.Clear();
+            _mesh.subMeshCount = 2;
             _mesh.SetVertices(newVertices);
             _mesh.SetTriangles(newTris, 0);
             _mesh.SetUVs(0, newUVs);
@@ -139,9 +145,12 @@ public class WireRenderer : MonoBehaviour
             Vector3 center = positions[i];
             Quaternion rotation = orientations[i];
             
-            for (int j = 1; j <= NEdgesInSegments; j++)
+            // Note: The total number of vertices added is
+            // equal to NEdgesInSegments + 1, for better looking UVs
+            // The last vertex added is at the same position as the start vertex, but is not connected to it.
+            for (int j = 0; j <= NEdgesInSegments; j++)
             {
-                int absoluteIndex = i * NEdgesInSegments + (j - 1);
+                int absoluteIndex = i * (NEdgesInSegments + 1) + j;
                 
                 // Vertex
                 float newX = Radius * Mathf.Cos(j * 2 * Mathf.PI / NEdgesInSegments);
@@ -161,15 +170,21 @@ public class WireRenderer : MonoBehaviour
                 // Every new vertex adds 2 triangles
                 if (i < positions.Count - 1)
                 {
-                    // Triangle with 2 vertices on current segment
-                    newTris.Add(absoluteIndex + 1); // next vertex on same segment
-                    newTris.Add(absoluteIndex + NEdgesInSegments); // vertex in front
-                    newTris.Add(absoluteIndex); // current vertex
-                
-                    // Triangle with 2 vertices on opposite segment
-                    newTris.Add(absoluteIndex + NEdgesInSegments); // vertex in front
-                    newTris.Add(absoluteIndex + NEdgesInSegments - 1); // next vertex in front
-                    newTris.Add(absoluteIndex); // current vertex
+                    if (j < NEdgesInSegments)
+                    {
+                        // Triangle with 2 vertices on current segment
+                        newTris.Add(absoluteIndex + 1); // next vertex on same segment
+                        newTris.Add(absoluteIndex + NEdgesInSegments + 1); // vertex in front
+                        newTris.Add(absoluteIndex); // current vertex
+                    }
+
+                    if (j > 0)
+                    {
+                        // Triangle with 2 vertices on opposite segment
+                        newTris.Add(absoluteIndex + NEdgesInSegments + 1); // vertex in front
+                        newTris.Add(absoluteIndex + NEdgesInSegments - 1 + 1); // next vertex in front
+                        newTris.Add(absoluteIndex); // current vertex
+                    }
                 }
             }
         }
@@ -181,30 +196,66 @@ public class WireRenderer : MonoBehaviour
         newUVs.Add(new Vector2(0.5f, 0f));
         for (int i = 0; i < NEdgesInSegments; i++)
         {
-            newTris.Add((i + 1) % NEdgesInSegments);
+            newTris.Add(i + 1);
             newTris.Add(i);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
         
         // End
-        newVertices.Add(positions[positions.Count - 1]);
-        newNormals.Add(GetForward(positions[positions.Count - 1], orientations[positions.Count - 1]));
+        newVertices.Add(positions[^1]);
+        newNormals.Add(GetForward(positions[^1], orientations[^1]));
         newUVs.Add(new Vector2(0.5f, 1.0f));
-        int absoluteStartIndex = newVertices.Count - NEdgesInSegments - 2; // -2 because we just added the start
+        // We start at the first vertex of the last segement
+        // it is located at newVertices.Count - NEdgesInSegments - 2
+        // But we add a -1 because we just added the start
+        int absoluteStartIndex = newVertices.Count - NEdgesInSegments - 3;
         for (int i = 0; i < NEdgesInSegments; i++)
         {
             newTris.Add(absoluteStartIndex + i);
-            newTris.Add(absoluteStartIndex + (i + 1) % NEdgesInSegments);
+            newTris.Add(absoluteStartIndex + i + 1);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
 
         // Set the new mesh
         _mesh.Clear();
+        _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
-        _mesh.SetTriangles(newTris, 0);
+        
+        if (_submeshIndexStart >= 0)
+        {
+            List<int> submeshTris = newTris.GetRange(_submeshIndexStart, _submeshCount);
+            newTris.RemoveRange(_submeshIndexStart, _submeshCount);
+            _mesh.SetTriangles(newTris, 0);
+            _mesh.SetTriangles(submeshTris, 1);
+        }
+        else
+        {
+            _mesh.SetTriangles(newTris, 0);
+        }
+        
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
+    }
+
+    public void SetSubmesh(int startPoint, int count)
+    {
+        _mesh.subMeshCount = 2;
+        int triIndexStart = startPoint * 6 * nEdgesInSegments;
+        int triCount = count * 6 * nEdgesInSegments;
+        
+        if (triIndexStart < 0)
+        {
+            _submeshIndexStart = -1;
+            _submeshCount = 0;
+        }
+        else
+        {
+            _submeshIndexStart = triIndexStart;
+            _submeshCount = triCount;
+        }
+        
+        MarkDirty();
     }
 
     /// <summary>
@@ -214,6 +265,16 @@ public class WireRenderer : MonoBehaviour
     public (Vector3, Quaternion) GetLastPositionRotation()
     {
         return (positions[^1], orientations[^1]);
+    }
+    
+    /// <summary>
+    /// Gets the position and rotation of a point at a specific index
+    /// </summary>
+    /// <param name="index">The index to get the information from</param>
+    /// <returns>The point's position and rotation</returns>
+    public (Vector3, Quaternion) GetPositionRotation(int index)
+    {
+        return (positions[index], orientations[index]);
     }
 
     /// <summary>
@@ -246,7 +307,7 @@ public class WireRenderer : MonoBehaviour
     public void SetPositionRotation(Vector3 position, Quaternion rotation, int index)
     {
         positions[index] = position;
-        orientations[index] = rotation;
+        orientations[index] = rotation.normalized;
         MarkDirty();
     }
     
@@ -258,7 +319,20 @@ public class WireRenderer : MonoBehaviour
     public void AddPositionRotation(Vector3 position, Quaternion rotation)
     {
         positions.Add(position);
-        orientations.Add(rotation);
+        orientations.Add(rotation.normalized);
+        MarkDirty();
+    }
+    
+    /// <summary>
+    /// Inserts a new point to the wire
+    /// </summary>
+    /// <param name="position">The position of the point</param>
+    /// <param name="rotation">The rotation of the point</param>
+    /// <param name="index">The index to insert to</param>
+    public void InsertPositionRotation(Vector3 position, Quaternion rotation, int index)
+    {
+        positions.Insert(index, position);
+        orientations.Insert(index, rotation.normalized);
         MarkDirty();
     }
 
@@ -364,38 +438,23 @@ public class WireRendererEditor : Editor
             return;
         }
 
+        const int SPARSE_POINTS = 1;
+
         IReadOnlyList<Vector3> positions = wireRenderer.Positions;
         IReadOnlyList<Quaternion> orientations = wireRenderer.Rotations;
-        for (int i = 0; i < positions.Count; i++)
+        
+        
+        Vector3 scale = Vector3.one * 0.5f;
+        for (int i = 0; i < positions.Count; i += SPARSE_POINTS)
         {
+            
             Vector3 position = positions[i];
             Quaternion rotation = orientations[i];
-            Vector3 scale = Vector3.one * 0.5f;
+            
             Handles.TransformHandle(ref position, ref rotation, ref scale);
+            
             wireRenderer.SetPositionRotation(position, rotation, i);
         }
-        
-        // Vector3 start = positions[0];
-        // Quaternion startOrient = orientations[0];
-        // float scale = 1.0f;
-        // Handles.TransformHandle(ref start, ref startOrient, ref scale);
-        // 
-        // positions[0] = start;
-        // orientations[0] = startOrient;
-        // 
-        // Vector3 endOriginal = start + new Vector3(1.0f, 0.0f, 0.0f);
-        // Vector3 endX = startOrient * Vector3.right + start;
-        // Handles.DrawLine(start, endX, 5.0f);
-        // 
-        // Vector3 endZ = (startOrient * Vector3.forward + start);
-        // Handles.DrawLine(start, endZ, 5.0f);
-        // 
-        // Vector3 endY = (startOrient * Vector3.up + start);
-        // Handles.DrawLine(start, endY, 5.0f);
-        
-        // display object "value" in scene
-        // GUI.color = Color.blue;
-        // Handles.Label(pos, t.value.ToString("F1"));
     }
 }
 
