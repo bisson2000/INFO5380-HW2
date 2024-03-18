@@ -145,9 +145,12 @@ public class WireRenderer : MonoBehaviour
             Vector3 center = positions[i];
             Quaternion rotation = orientations[i];
             
-            for (int j = 1; j <= NEdgesInSegments; j++)
+            // Note: The total number of vertices added is
+            // equal to NEdgesInSegments + 1, for better looking UVs
+            // The last vertex added is at the same position as the start vertex, but is not connected to it.
+            for (int j = 0; j <= NEdgesInSegments; j++)
             {
-                int absoluteIndex = i * NEdgesInSegments + (j - 1);
+                int absoluteIndex = i * (NEdgesInSegments + 1) + j;
                 
                 // Vertex
                 float newX = Radius * Mathf.Cos(j * 2 * Mathf.PI / NEdgesInSegments);
@@ -167,15 +170,21 @@ public class WireRenderer : MonoBehaviour
                 // Every new vertex adds 2 triangles
                 if (i < positions.Count - 1)
                 {
-                    // Triangle with 2 vertices on current segment
-                    newTris.Add(absoluteIndex + 1); // next vertex on same segment
-                    newTris.Add(absoluteIndex + NEdgesInSegments); // vertex in front
-                    newTris.Add(absoluteIndex); // current vertex
-                
-                    // Triangle with 2 vertices on opposite segment
-                    newTris.Add(absoluteIndex + NEdgesInSegments); // vertex in front
-                    newTris.Add(absoluteIndex + NEdgesInSegments - 1); // next vertex in front
-                    newTris.Add(absoluteIndex); // current vertex
+                    if (j < NEdgesInSegments)
+                    {
+                        // Triangle with 2 vertices on current segment
+                        newTris.Add(absoluteIndex + 1); // next vertex on same segment
+                        newTris.Add(absoluteIndex + NEdgesInSegments + 1); // vertex in front
+                        newTris.Add(absoluteIndex); // current vertex
+                    }
+
+                    if (j > 0)
+                    {
+                        // Triangle with 2 vertices on opposite segment
+                        newTris.Add(absoluteIndex + NEdgesInSegments + 1); // vertex in front
+                        newTris.Add(absoluteIndex + NEdgesInSegments - 1 + 1); // next vertex in front
+                        newTris.Add(absoluteIndex); // current vertex
+                    }
                 }
             }
         }
@@ -187,20 +196,23 @@ public class WireRenderer : MonoBehaviour
         newUVs.Add(new Vector2(0.5f, 0f));
         for (int i = 0; i < NEdgesInSegments; i++)
         {
-            newTris.Add((i + 1) % NEdgesInSegments);
+            newTris.Add(i + 1);
             newTris.Add(i);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
         
         // End
-        newVertices.Add(positions[positions.Count - 1]);
-        newNormals.Add(GetForward(positions[positions.Count - 1], orientations[positions.Count - 1]));
+        newVertices.Add(positions[^1]);
+        newNormals.Add(GetForward(positions[^1], orientations[^1]));
         newUVs.Add(new Vector2(0.5f, 1.0f));
-        int absoluteStartIndex = newVertices.Count - NEdgesInSegments - 2; // -2 because we just added the start
+        // We start at the first vertex of the last segement
+        // it is located at newVertices.Count - NEdgesInSegments - 2
+        // But we add a -1 because we just added the start
+        int absoluteStartIndex = newVertices.Count - NEdgesInSegments - 3;
         for (int i = 0; i < NEdgesInSegments; i++)
         {
             newTris.Add(absoluteStartIndex + i);
-            newTris.Add(absoluteStartIndex + (i + 1) % NEdgesInSegments);
+            newTris.Add(absoluteStartIndex + i + 1);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
 
@@ -208,6 +220,9 @@ public class WireRenderer : MonoBehaviour
         _mesh.Clear();
         _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
+        
+        Debug.Log(_submeshIndexStart);
+        Debug.Log(_submeshCount);
         
         _mesh.SetTriangles(newTris, 0);
         if (_submeshIndexStart > 0)
@@ -225,7 +240,6 @@ public class WireRenderer : MonoBehaviour
         _mesh.subMeshCount = 2;
         int triIndexStart = startPoint * 6 * nEdgesInSegments;
         int triCount = count * 6 * nEdgesInSegments;
-
         
         if (triIndexStart < 0)
         {
