@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -121,6 +122,16 @@ public class WireCreator : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             SetSelectedSegment(_selectedSegment - 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            string builder = "";
+            foreach (Vector3 point in _wireRenderer.Positions)
+            {
+                builder += "[" + point.x.ToString("F", CultureInfo.InvariantCulture) + "," + point.y.ToString("F", CultureInfo.InvariantCulture) + "," + point.z.ToString("F", CultureInfo.InvariantCulture) + "],\n";
+            }
+
+            Debug.Log(builder);
         }
         
         
