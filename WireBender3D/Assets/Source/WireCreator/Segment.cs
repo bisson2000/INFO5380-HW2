@@ -1,77 +1,54 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Segment
+public abstract class Segment
 {
     public int StartPointIndex;
     public int EndPointIndex;
+    public float AngleTwistDegrees;
 
-    public Segment(int startPointIndex, int endPointIndex)
+    protected Segment(int startPointIndex, int endPointIndex, float angleTwistDegrees)
     {
         StartPointIndex = startPointIndex;
         EndPointIndex = endPointIndex;
+        AngleTwistDegrees = angleTwistDegrees;
     }
+
+    public abstract Segment Clone();
 }
 
-public class Curve
+public class Curve : Segment
 {
-    public int StartPointIndex;
-    public int EndPointIndex;
-    public CurveData CurveData;
-    public Curve(int startPointIndex, int endPointIndex, CurveData curveData)
+    public float CurvatureAngleDegrees;
+    public Curve(int startPointIndex, int endPointIndex, float angleTwistDegrees, float curvatureAngleDegrees) 
+        : base(startPointIndex, endPointIndex, angleTwistDegrees)
     {
-        StartPointIndex = startPointIndex;
-        EndPointIndex = endPointIndex;
-        this.CurveData = curveData;
+        CurvatureAngleDegrees = curvatureAngleDegrees;
     }
-    
-    public Curve(int startPointIndex, int endPointIndex)
+
+
+    public override Segment Clone()
     {
-        StartPointIndex = startPointIndex;
-        EndPointIndex = endPointIndex;
-        this.CurveData = new CurveData();
+        return new Curve(StartPointIndex, EndPointIndex, AngleTwistDegrees, CurvatureAngleDegrees);
     }
 }
 
-public class CurveData
+public class Line : Segment
 {
-    public float PivotAngleDegrees;
-    public float AngleDegrees;
-    public float DistanceFromEnd;
+    public float Length;
 
-    public CurveData(float pivotAngleDegrees, float angleDegrees, float distanceFromEnd)
+    public Line(int startPointIndex, int endPointIndex, float angleTwistDegrees, float length) 
+        : base(startPointIndex, endPointIndex, angleTwistDegrees)
     {
-        PivotAngleDegrees = pivotAngleDegrees;
-        AngleDegrees = angleDegrees;
-        DistanceFromEnd = distanceFromEnd;
-    }
-    
-    public CurveData()
-    {
-        PivotAngleDegrees = 0;
-        AngleDegrees = 0;
-        DistanceFromEnd = 0;
+        Length = length;
     }
 
-    public CurveData Clone()
+    public override Segment Clone()
     {
-        return new CurveData(PivotAngleDegrees, AngleDegrees, DistanceFromEnd);
-    }
-
-    public static CurveData GetDifference(CurveData from, CurveData to)
-    {
-        float pivotAngleDegrees = to.PivotAngleDegrees - from.PivotAngleDegrees;
-        float angleDegrees = to.PivotAngleDegrees - from.PivotAngleDegrees;
-        float distanceFromEnd = to.PivotAngleDegrees - from.PivotAngleDegrees;
-        return new CurveData(pivotAngleDegrees, angleDegrees, distanceFromEnd);
+        return new Line(StartPointIndex, EndPointIndex, AngleTwistDegrees, Length);
     }
 }
 
-public enum SegmentType
-{
-    Line,
-    Curve
-}
