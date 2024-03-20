@@ -140,11 +140,15 @@ public class WireCreator : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Sets the selected segment to the passed index. Will also set the submesh for the wire renderer.
+    /// </summary>
+    /// <param name="selectedIndex">The index of the segment to select</param>
     private void SetSelectedSegment(int selectedIndex)
     {
         if (_segmentList.Count == 0)
         {
-            _selectedSegment = 1;
+            _selectedSegment = -1;
             _wireRenderer.SetSubmesh(-1,  0);
             return;
         }
@@ -155,6 +159,9 @@ public class WireCreator : MonoBehaviour
         _wireRenderer.SetSubmesh(start,  count);
     }
     
+    /// <summary>
+    /// Adds a new curve after the current selection index.
+    /// </summary>
     private void AddNewCurve()
     {
         int segmentInsertionIndex = _segmentList.Count;
@@ -173,6 +180,9 @@ public class WireCreator : MonoBehaviour
         SetSelectedSegment(segmentInsertionIndex);
     }
     
+    /// <summary>
+    /// Adds a new line after the current selection index.
+    /// </summary>
     private void AddNewLine()
     {
         int segmentInsertionIndex = _segmentList.Count;
@@ -191,6 +201,11 @@ public class WireCreator : MonoBehaviour
         SetSelectedSegment(segmentInsertionIndex);
     }
     
+    /// <summary>
+    /// Replaces an old segment with a new one.
+    /// </summary>
+    /// <param name="oldSegmentIndex">The segment index representing the old segment</param>
+    /// <param name="newSegmentData">The new segment to replace it with</param>
     private void ReplaceSegment(int oldSegmentIndex, Segment newSegmentData)
     {
         // save change
@@ -207,6 +222,10 @@ public class WireCreator : MonoBehaviour
         SetSelectedSegment(_selectedSegment);
     }
     
+    /// <summary>
+    /// Removes the segment at the specified index and propagate the changes.
+    /// </summary>
+    /// <param name="segmentIndex"></param>
     private void RemoveSegmentAndPropagate(int segmentIndex)
     {
         float twistChange = _segmentList[segmentIndex].AngleTwistDegrees * -1.0f;
@@ -216,10 +235,10 @@ public class WireCreator : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Propagate changes from one segment to the next ones.
     /// </summary>
-    /// <param name="twistDegrees"></param>
-    /// <param name="nextSegmentIndex"></param>
+    /// <param name="twistDegrees">The change to propagate</param>
+    /// <param name="nextSegmentIndex">The next segment index to start propagating the change to</param>
     /// <param name="unfoldStyle">The style how the change is propagated. By setting to true, it will apply changes
     /// the same way as if the curves were "unfolded" and then refolded. By setting to false, the curves will
     /// be modified by the changes</param>
@@ -249,6 +268,12 @@ public class WireCreator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Inserts a segment at the desired location
+    /// </summary>
+    /// <param name="segmentInsertionIndex">The segment index to insert the segment to</param>
+    /// <param name="pointInsertionIndex">The point used by WireRenderer to insert the segment to</param>
+    /// <param name="segment">The segment to insert</param>
     private void InsertNewSegment(int segmentInsertionIndex, int pointInsertionIndex, Segment segment)
     {
         if (segment is Curve curve)
@@ -261,6 +286,13 @@ public class WireCreator : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Inserts a curve at the desired location
+    /// </summary>
+    /// <param name="segmentInsertionIndex">The segment index to insert the segment to</param>
+    /// <param name="pointInsertionIndex">The point used by WireRenderer to insert the segment to</param>
+    /// <param name="twistDegrees"></param>
+    /// <param name="curvatureAngleDegrees"></param>
     private void InsertNewCurve(int segmentInsertionIndex, int pointInsertionIndex, float twistDegrees, float curvatureAngleDegrees)
     {
         int startIndex = pointInsertionIndex - 1;
@@ -270,7 +302,13 @@ public class WireCreator : MonoBehaviour
         _segmentList.Insert(segmentInsertionIndex, newSegment);
     }
     
-    // TODO: Add twist to CreateLine
+    /// <summary>
+    /// Inserts a line at the desired location
+    /// </summary>
+    /// <param name="segmentInsertionIndex">The segment index to insert the segment to</param>
+    /// <param name="pointInsertionIndex">The point used by WireRenderer to insert the segment to</param>
+    /// <param name="twistDegrees"></param>
+    /// <param name="length"></param>
     private void InsertNewLine(int segmentInsertionIndex, int pointInsertionIndex, float twistDegrees, float length)
     {
         int startIndex = pointInsertionIndex - 1;
@@ -280,6 +318,10 @@ public class WireCreator : MonoBehaviour
         _segmentList.Insert(segmentInsertionIndex, newSegment);
     }
     
+    /// <summary>
+    /// Erase a segment at the desired index.
+    /// </summary>
+    /// <param name="segmentIndex">Index of the segment to erase</param>
     private void EraseSegment(int segmentIndex)
     {
         Segment segment = _segmentList[segmentIndex];
@@ -289,6 +331,12 @@ public class WireCreator : MonoBehaviour
         _wireRenderer.EraseRange(start, count);
     }
 
+    /// <summary>
+    /// Create a line in the WireRenderer
+    /// </summary>
+    /// <param name="insertionIndex">The position in WireRenderer to insert to</param>
+    /// <param name="length">The length of the line</param>
+    /// <returns>The number of points created</returns>
     public int CreateLine(int insertionIndex, float length)
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetPositionRotation(insertionIndex - 1);
@@ -299,6 +347,13 @@ public class WireCreator : MonoBehaviour
         return 1;
     }
 
+    /// <summary>
+    /// Create a curve in the WireRenderer
+    /// </summary>
+    /// <param name="insertionIndex">The position in WireRenderer to insert to</param>
+    /// <param name="pivotAngleDegrees">The rotation around itself</param>
+    /// <param name="curvatureDegrees">The curvature</param>
+    /// <returns>The number of points created</returns>
     private int CreateCurve(int insertionIndex, float pivotAngleDegrees, float curvatureDegrees)
     {
         float curvatureFlip = 1.0f;
