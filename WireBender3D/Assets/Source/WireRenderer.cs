@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -26,7 +25,7 @@ public class WireRenderer : MonoBehaviour
         set
         {
             nEdgesInSegments = value;
-            MarkDirty();
+            MarkDirty(true);
         }
     }
     
@@ -40,7 +39,7 @@ public class WireRenderer : MonoBehaviour
         set
         {
             radius = value;
-            MarkDirty();
+            MarkDirty(true);
         }
     }
     
@@ -62,6 +61,9 @@ public class WireRenderer : MonoBehaviour
     [Tooltip("The orientation of each segment in the wire. Forward is in the Z axis")]
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>();
+
+    // List to hold the last created tris
+    private List<int> _lastCreatedTris = new List<int>();
     
     // Submesh information
     private int _submeshIndexStart = -1;
@@ -69,6 +71,7 @@ public class WireRenderer : MonoBehaviour
 
     // Flag to indicate to regenerate the mesh
     private bool _dirty = true;
+    private bool _rebuildMesh = true;
     
     /// <summary>
     /// Start is called before the first frame update.
@@ -88,7 +91,7 @@ public class WireRenderer : MonoBehaviour
             _mesh = _meshFilter.sharedMesh;
         }
         BuildMesh();
-        MarkDirty();
+        MarkDirty(true);
     }
 
     
@@ -109,8 +112,10 @@ public class WireRenderer : MonoBehaviour
         // Only build if the mesh has changed
         if (_dirty)
         {
+            Debug.Log(_rebuildMesh);
             BuildMesh();
             _dirty = false;
+            _rebuildMesh = false;
         }
     }
 
@@ -135,6 +140,28 @@ public class WireRenderer : MonoBehaviour
             _mesh.SetTriangles(newTris, 0);
             _mesh.SetUVs(0, newUVs);
             _mesh.SetNormals(newNormals);
+            _mesh.RecalculateBounds();
+            return;
+        }
+
+        // Special flag for speed up
+        if (!_rebuildMesh)
+        {
+            newTris = new List<int>(_lastCreatedTris);
+            _mesh.subMeshCount = 2;
+        
+            if (_submeshIndexStart >= 0)
+            {
+                List<int> submeshTris = newTris.GetRange(_submeshIndexStart, _submeshCount);
+                newTris.RemoveRange(_submeshIndexStart, _submeshCount);
+                _mesh.SetTriangles(newTris, 0);
+                _mesh.SetTriangles(submeshTris, 1);
+            }
+            else
+            {
+                _mesh.SetTriangles(newTris, 0);
+            }
+            
             _mesh.RecalculateBounds();
             return;
         }
@@ -215,6 +242,9 @@ public class WireRenderer : MonoBehaviour
             newTris.Add(absoluteStartIndex + i + 1);
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
+        
+        // Save tris
+        _lastCreatedTris = new List<int>(newTris);
 
         // Set the new mesh
         _mesh.Clear();
@@ -255,7 +285,7 @@ public class WireRenderer : MonoBehaviour
             _submeshCount = triCount;
         }
         
-        MarkDirty();
+        MarkDirty(false);
     }
 
     /// <summary>
@@ -295,7 +325,7 @@ public class WireRenderer : MonoBehaviour
     {
         positions.RemoveRange(start, count);
         orientations.RemoveRange(start, count);
-        MarkDirty();
+        MarkDirty(true);
     }
 
     /// <summary>
@@ -308,7 +338,7 @@ public class WireRenderer : MonoBehaviour
     {
         positions[index] = position;
         orientations[index] = rotation.normalized;
-        MarkDirty();
+        MarkDirty(true);
     }
     
     /// <summary>
@@ -320,7 +350,7 @@ public class WireRenderer : MonoBehaviour
     {
         positions.Add(position);
         orientations.Add(rotation.normalized);
-        MarkDirty();
+        MarkDirty(true);
     }
     
     /// <summary>
@@ -333,7 +363,7 @@ public class WireRenderer : MonoBehaviour
     {
         positions.Insert(index, position);
         orientations.Insert(index, rotation.normalized);
-        MarkDirty();
+        MarkDirty(true);
     }
 
     /// <summary>
@@ -341,9 +371,11 @@ public class WireRenderer : MonoBehaviour
     /// This will make the wire mesh rebuild itself
     /// Call this when the wire has seen changes
     /// </summary>
-    private void MarkDirty()
+    /// <param name="rebuildMesh"></param>
+    private void MarkDirty(bool rebuildMesh)
     {
         _dirty = true;
+        _rebuildMesh = _rebuildMesh || rebuildMesh;
     }
 
     /// <summary>
