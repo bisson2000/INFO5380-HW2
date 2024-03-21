@@ -149,14 +149,14 @@ public class WireCreator : MonoBehaviour
         if (_segmentList.Count == 0)
         {
             _selectedSegment = -1;
-            _wireRenderer.SetSubmesh(-1,  0);
+            _wireRenderer.SetSubmesh(-1,  0, 1);
             return;
         }
         
         _selectedSegment = Mathf.Clamp(selectedIndex, 0, _segmentList.Count - 1);
         int start = _segmentList[_selectedSegment].StartPointIndex;
         int count = _segmentList[_selectedSegment].EndPointIndex - start;
-        _wireRenderer.SetSubmesh(start,  count);
+        _wireRenderer.SetSubmesh(start,  count, 1);
     }
     
     /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -48,6 +49,11 @@ public class WireRenderer : MonoBehaviour
     private Mesh _mesh;
     public Mesh CurrentMesh => _mesh;
     
+    // Submesh information
+    [HideInInspector]
+    [SerializeField]
+    private List<SubmeshInfo> _submeshInfos = new List<SubmeshInfo>(new SubmeshInfo[3]);
+    
     [Header("--------Debug Information--------")]
     public bool showDebugPoints = true;
 
@@ -62,12 +68,11 @@ public class WireRenderer : MonoBehaviour
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>();
 
+    // 
+    public event Action OnMeshGenerated;
+    
     // List to hold the last created tris
     private List<int> _lastCreatedTris = new List<int>();
-    
-    // Submesh information
-    private int _submeshIndexStart = -1;
-    private int _submeshCount = 0;
 
     // Flag to indicate to regenerate the mesh
     private bool _dirty = true;
@@ -79,6 +84,7 @@ public class WireRenderer : MonoBehaviour
     /// </summary>
     public void Start()
     {
+        
         _meshFilter = GetComponent<MeshFilter>();
         if (_meshFilter.sharedMesh == null)
         {
@@ -90,6 +96,7 @@ public class WireRenderer : MonoBehaviour
         {
             _mesh = _meshFilter.sharedMesh;
         }
+        
         BuildMesh();
         MarkDirty(true);
     }
@@ -112,10 +119,13 @@ public class WireRenderer : MonoBehaviour
         // Only build if the mesh has changed
         if (_dirty)
         {
-            Debug.Log(_rebuildMesh);
             BuildMesh();
             _dirty = false;
-            _rebuildMesh = false;
+            if (_rebuildMesh)
+            {
+                _rebuildMesh = false;
+                OnMeshGenerated?.Invoke();
+            }
         }
     }
 
@@ -126,20 +136,15 @@ public class WireRenderer : MonoBehaviour
     /// </summary>
     private void BuildMesh()
     {
-        List<Vector3> newVertices = new List<Vector3>();
-        List<int> newTris = new List<int>();
-        List<Vector2> newUVs = new List<Vector2>();
-        List<Vector3> newNormals = new List<Vector3>();
-
         // Edge case
         if (positions.Count == 0)
         {
             _mesh.Clear();
-            _mesh.subMeshCount = 2;
-            _mesh.SetVertices(newVertices);
-            _mesh.SetTriangles(newTris, 0);
-            _mesh.SetUVs(0, newUVs);
-            _mesh.SetNormals(newNormals);
+            _mesh.subMeshCount = _submeshInfos.Count;
+            _mesh.SetVertices(new List<Vector3>());
+            _mesh.SetTriangles(new List<int>(), 0);
+            _mesh.SetUVs(0, new List<Vector2>());
+            _mesh.SetNormals(new List<Vector3>());
             _mesh.RecalculateBounds();
             return;
         }
@@ -147,25 +152,24 @@ public class WireRenderer : MonoBehaviour
         // Special flag for speed up
         if (!_rebuildMesh)
         {
-            newTris = new List<int>(_lastCreatedTris);
-            _mesh.subMeshCount = 2;
-        
-            if (_submeshIndexStart >= 0)
-            {
-                List<int> submeshTris = newTris.GetRange(_submeshIndexStart, _submeshCount);
-                newTris.RemoveRange(_submeshIndexStart, _submeshCount);
-                _mesh.SetTriangles(newTris, 0);
-                _mesh.SetTriangles(submeshTris, 1);
-            }
-            else
-            {
-                _mesh.SetTriangles(newTris, 0);
-            }
-            
+            SetMeshTriangles(_lastCreatedTris);
             _mesh.RecalculateBounds();
             return;
         }
+        
+        GenerateMesh();
+    }
 
+    /// <summary>
+    /// Generates the mesh
+    /// </summary>
+    private void GenerateMesh()
+    {
+        List<Vector3> newVertices = new List<Vector3>();
+        List<int> newTris = new List<int>();
+        List<Vector2> newUVs = new List<Vector2>();
+        List<Vector3> newNormals = new List<Vector3>();
+        
         // Contour
         for (int i = 0; i < positions.Count; i++)
         {
@@ -243,48 +247,95 @@ public class WireRenderer : MonoBehaviour
             newTris.Add(newVertices.Count - 1); // Current Vertex
         }
         
-        // Save tris
-        _lastCreatedTris = new List<int>(newTris);
 
         // Set the new mesh
         _mesh.Clear();
-        _mesh.subMeshCount = 2;
         _mesh.SetVertices(newVertices);
-        
-        if (_submeshIndexStart >= 0)
-        {
-            List<int> submeshTris = newTris.GetRange(_submeshIndexStart, _submeshCount);
-            newTris.RemoveRange(_submeshIndexStart, _submeshCount);
-            _mesh.SetTriangles(newTris, 0);
-            _mesh.SetTriangles(submeshTris, 1);
-        }
-        else
-        {
-            _mesh.SetTriangles(newTris, 0);
-        }
-        
+        SetMeshTriangles(newTris);
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
     }
 
-    public void SetSubmesh(int startPoint, int count)
+    /// <summary>
+    /// Set the triangles for each mesh
+    /// </summary>
+    /// <param name="newTris"></param>
+    private void SetMeshTriangles(List<int> newTris)
     {
-        _mesh.subMeshCount = 2;
-        int triIndexStart = startPoint * 6 * nEdgesInSegments;
-        int triCount = count * 6 * nEdgesInSegments;
-        
-        if (triIndexStart < 0)
+        _lastCreatedTris = new List<int>(newTris);
+        _mesh.subMeshCount = _submeshInfos.Count;
+
+        List<List<int>> submeshesLists = new List<List<int>>();
+        for (int i = 0; i < _submeshInfos.Count; ++i)
         {
-            _submeshIndexStart = -1;
-            _submeshCount = 0;
+            submeshesLists.Add(new List<int>());
+        }
+        
+        int triCount = 6 * nEdgesInSegments;
+        for (int i = 0; i < Positions.Count - 1; i++)
+        {
+            int triIndexStart = i * triCount;
+            
+            // skip 0
+            bool taken = false;
+            for (int j = _submeshInfos.Count - 1; j > 0; j--)
+            {
+                if (_submeshInfos[j].affectedPoints.Contains(i))
+                {
+                    submeshesLists[j].AddRange(newTris.GetRange(triIndexStart, triCount));
+                    taken = true;
+                    break;
+                }
+            }
+            
+            // 0 accumulates everything not taken
+            if (!taken)
+            {
+                submeshesLists[0].AddRange(newTris.GetRange(triIndexStart, triCount));
+            }
+        }
+        
+        // edges
+        int triCountEdge = 3 * nEdgesInSegments;
+        submeshesLists[0].AddRange(newTris.GetRange(newTris.Count - 2 * triCountEdge, 2 * triCountEdge));
+        
+        //Debug.Log("submeshesLists[0].Count = " + submeshesLists[0].Count);
+        //Debug.Log("submeshesLists[1].Count = " + submeshesLists[1].Count);
+        //Debug.Log("submeshesLists[2].Count = " + submeshesLists[2].Count);
+        
+        for (int i = 0; i < submeshesLists.Count; ++i)
+        {
+            _mesh.SetTriangles(submeshesLists[i], i);
+        }
+    }
+
+    /// <summary>
+    /// Sets the submesh at a specific index
+    /// </summary>
+    /// <param name="startPoint"></param>
+    /// <param name="count"></param>
+    /// <param name="submeshIndex"></param>
+    public void SetSubmesh(int startPoint, int count, int submeshIndex)
+    {
+        // int triIndexStart = startPoint * 6 * nEdgesInSegments;
+        // int triCount = count * 6 * nEdgesInSegments;
+        
+        if (startPoint < 0)
+        {
+            _submeshInfos[submeshIndex].affectedPoints.Clear();
         }
         else
         {
-            _submeshIndexStart = triIndexStart;
-            _submeshCount = triCount;
+            _submeshInfos[submeshIndex].affectedPoints = Enumerable.Range(startPoint, count).ToHashSet();
         }
         
+        MarkDirty(false);
+    }
+    
+    public void SetSubmesh(HashSet<int> affectedPoints, int submeshIndex)
+    {
+        _submeshInfos[submeshIndex].affectedPoints = new HashSet<int>(affectedPoints);
         MarkDirty(false);
     }
 
@@ -421,6 +472,16 @@ public class WireRenderer : MonoBehaviour
     }
 #endif
     
+    [Serializable]
+    private class SubmeshInfo
+    {
+        public HashSet<int> affectedPoints;
+
+        public SubmeshInfo()
+        {
+            affectedPoints = new HashSet<int>();
+        }
+    }
 }
 
 #if UNITY_EDITOR

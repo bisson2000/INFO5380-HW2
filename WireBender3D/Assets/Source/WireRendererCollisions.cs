@@ -1,35 +1,74 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class WireRendererCollisions : MonoBehaviour
 {
     private WireRenderer _wireRenderer;
-
-    [SerializeField] private List<Vector3> _myList = new List<Vector3>() { Vector3.zero, Vector3.zero,Vector3.zero,Vector3.zero};
-    
     
     // Start is called before the first frame update
     void Start()
     {
         _wireRenderer = GetComponent<WireRenderer>();
+        _wireRenderer.OnMeshGenerated += CalculateCollisions;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float dist = GetClosestDistance(_myList[0], _myList[1], _myList[2], _myList[3]);
-        Debug.Log("Dist = " + dist);
+        //float dist = GetClosestDistance(_myList[0], _myList[1], _myList[2], _myList[3]);
     }
 
-    public void CalculateCollisions()
+    private void OnDestroy()
     {
+        _wireRenderer.OnMeshGenerated -= CalculateCollisions;
+    }
+
+    private void CalculateCollisions()
+    {
+        HashSet<int> affectedPositions = new HashSet<int>();
+        IReadOnlyList<Vector3> positions = _wireRenderer.Positions;
+        float radius = _wireRenderer.Radius;
+        
+        for (int i = 0; i < positions.Count - 1; i++)
+        {
+            bool checkForIntersection = false;
+            Vector3 currentDirection = positions[i + 1] - positions[i];
+            for (int j = i + 1; j < positions.Count - 1; j++)
+            {
+                Vector3 nextDirection = positions[j + 1] - positions[j];
+
+                float angle = Vector3.Angle(currentDirection, nextDirection);
+                if (angle >= 90.0f)
+                {
+                    checkForIntersection = true;
+                }
+
+                if (j <= i + 1 || !checkForIntersection)
+                {
+                    continue;
+                }
+
+                DistanceHelper dist = GetClosestDistance(positions[i], positions[i + 1], positions[j], positions[j + 1]);
+
+                if (dist.Distance < radius * 2.0f)
+                {
+                    Debug.Log("Collision at " + i + " with dist = " + dist.Distance);
+                    affectedPositions.Add(i);
+                    affectedPositions.Add(j);
+                }
+            }
+        }
+
+        _wireRenderer.SetSubmesh(affectedPositions, 2);
         
     }
 
-    private float GetClosestDistance(Vector3 aStart, Vector3 aEnd, Vector3 bStart, Vector3 bEnd)
+    private DistanceHelper GetClosestDistance(Vector3 aStart, Vector3 aEnd, Vector3 bStart, Vector3 bEnd)
     {
+        DistanceHelper res = new DistanceHelper();
+        
         Vector3 a = aEnd - aStart;
         Vector3 b = bEnd - bStart;
         
@@ -55,9 +94,16 @@ public class WireRendererCollisions : MonoBehaviour
                 // bStart is closer
                 if (Mathf.Abs(bStartDot) < Mathf.Abs(bEndDot))
                 {
-                    return (aStart - bStart).magnitude;
+                    res.PointA = aStart;
+                    res.PointB = bStart;
+                    res.Distance = (aStart - bStart).magnitude;
+                    return res;
                 }
-                return (aStart - bEnd).magnitude;
+                
+                res.PointA = aStart;
+                res.PointB = bEnd;
+                res.Distance = (aStart - bEnd).magnitude;
+                return res;
             }
             
             // segment b is in front
@@ -66,12 +112,22 @@ public class WireRendererCollisions : MonoBehaviour
                 // bStart is closer
                 if (Mathf.Abs(bStartDot) < Mathf.Abs(bEndDot))
                 {
-                    return (aEnd - bStart).magnitude;
+                    res.PointA = aEnd;
+                    res.PointB = bStart;
+                    res.Distance = (aEnd - bStart).magnitude;
+                    return res;
                 }
-                return (aEnd - bEnd).magnitude;
+                
+                res.PointA = aEnd;
+                res.PointB = bEnd;
+                res.Distance = (aEnd - bEnd).magnitude;
+                return res;
             }
 
-            return 0.0f;
+            res.PointA = Vector3.zero;
+            res.PointB = Vector3.zero;
+            res.Distance = (((bStartDot * a) + aStart) - bStart).magnitude;
+            return res;
         }
 
         Matrix4x4 proximityA = Matrix4x4.identity;
@@ -114,6 +170,16 @@ public class WireRendererCollisions : MonoBehaviour
             closestA = aStart + (a * dot);
         }
 
-        return Vector3.Distance(closestA, closestB);
+        res.PointA = closestA;
+        res.PointB = closestB;
+        res.Distance = Vector3.Distance(closestA, closestB);
+        return res;
+    }
+    
+    private class DistanceHelper
+    {
+        public Vector3 PointA = Vector3.zero;
+        public Vector3 PointB = Vector3.zero;
+        public float Distance = 0.0f;
     }
 }
