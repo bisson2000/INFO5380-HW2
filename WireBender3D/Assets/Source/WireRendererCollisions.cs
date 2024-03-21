@@ -54,7 +54,6 @@ public class WireRendererCollisions : MonoBehaviour
 
                 if (dist.Distance < radius * 2.0f)
                 {
-                    Debug.Log("Collision at " + i + " with dist = " + dist.Distance);
                     affectedPositions.Add(i);
                     affectedPositions.Add(j);
                 }

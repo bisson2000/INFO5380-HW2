@@ -156,6 +156,11 @@ public class WireRenderer : MonoBehaviour
             _mesh.RecalculateBounds();
             return;
         }
+        else
+        {
+            // clear collisions
+            _submeshInfos[2].affectedPoints.Clear();
+        }
         
         GenerateMesh();
     }
@@ -299,10 +304,6 @@ public class WireRenderer : MonoBehaviour
         // edges
         int triCountEdge = 3 * nEdgesInSegments;
         submeshesLists[0].AddRange(newTris.GetRange(newTris.Count - 2 * triCountEdge, 2 * triCountEdge));
-        
-        //Debug.Log("submeshesLists[0].Count = " + submeshesLists[0].Count);
-        //Debug.Log("submeshesLists[1].Count = " + submeshesLists[1].Count);
-        //Debug.Log("submeshesLists[2].Count = " + submeshesLists[2].Count);
         
         for (int i = 0; i < submeshesLists.Count; ++i)
         {
