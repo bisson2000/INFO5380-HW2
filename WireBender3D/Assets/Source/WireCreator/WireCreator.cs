@@ -103,7 +103,7 @@ public class WireCreator : MonoBehaviour
             Segment data = _segmentList[i].Clone();
             if (!unfoldStyle && data is Curve curve)
             {
-                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistDegrees) % 360.0f;
+                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistDegrees + 360.0f) % 360.0f;
             }
             
             EraseSegment(i);

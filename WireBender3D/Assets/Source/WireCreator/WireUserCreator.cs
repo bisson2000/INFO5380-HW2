@@ -41,7 +41,7 @@ public class WireUserCreator : WireCreator
             float twistChange = 15.0f;
             if (newSegmentData is Curve curve)
             {
-                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange) % 360.0f;
+                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange + 360.0f) % 360.0f;
             }
             ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
             
@@ -53,7 +53,7 @@ public class WireUserCreator : WireCreator
             float twistChange = -15.0f;
             if (newSegmentData is Curve curve)
             {
-                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange) % 360.0f;
+                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange + 360.0f) % 360.0f;
             }
             ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
             
@@ -64,7 +64,8 @@ public class WireUserCreator : WireCreator
             Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Curve curve)
             {
-                curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees + 15.0f) % 360.0f;
+                float curvatureChange = 15.0f;
+                curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees + curvatureChange + 360.0f) % 360.0f;
                 ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
         }
@@ -74,7 +75,8 @@ public class WireUserCreator : WireCreator
             Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Curve curve)
             {
-                curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees - 15.0f) % 360.0f;
+                float curvatureChange = -15.0f;
+                curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees + curvatureChange + 360.0f) % 360.0f;
                 ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
             
