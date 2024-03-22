@@ -28,22 +28,10 @@ public class WireCreator : MonoBehaviour
         }
     }
 
-    /*public void SetSegments(List<Segment> segments)
+    public static float IncrementAngleDegrees(float source, float addedValue)
     {
-        // Erase everything
-        for (int i = _segmentList.Count - 1; i >= 0; i--)
-        {
-            EraseSegment(i);
-        }
-        
-        // Set all segments
-        for (int i = 0; i < segments.Count; i++)
-        {
-            
-            InsertNewSegment(i, segments[i].StartPointIndex + 1, segments[i]);
-        }
-        
-    }*/
+        return (source + addedValue + 360.0f) % 360.0f;
+    }
     
     /// <summary>
     /// Replaces an old segment with a new one.
@@ -103,7 +91,7 @@ public class WireCreator : MonoBehaviour
             Segment data = _segmentList[i].Clone();
             if (!unfoldStyle && data is Curve curve)
             {
-                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistDegrees + 360.0f) % 360.0f;
+                curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, twistDegrees);
             }
             
             EraseSegment(i);
@@ -213,7 +201,8 @@ public class WireCreator : MonoBehaviour
         // Get the pivot point
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetPositionRotation(insertionIndex - 1);
         Vector3 startForward = WireRenderer.GetForward(startPoint, startRotation);
-        Vector3 pivotDirection = WireRenderer.GetUp(startPoint, startRotation) * curvatureFlip;
+        // The original pivot direction
+        Vector3 pivotDirection = WireRenderer.GetRight(startPoint, startRotation) * curvatureFlip;
         pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
         Vector3 pivotPoint = pivotDirection + startPoint;
         
@@ -239,14 +228,12 @@ public class WireCreator : MonoBehaviour
     public void AddDebugCurve()
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
-        Vector3 up = WireRenderer.GetUp(lastPos, lastRot);
         CreateCurve(_wireRenderer.GetPositionsCount(), 0, 90);
     }
     
     public void AddDebugLine()
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
-        Vector3 up = WireRenderer.GetUp(lastPos, lastRot);
         CreateLine(_wireRenderer.GetPositionsCount(), 1);
     }
 }

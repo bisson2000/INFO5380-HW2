@@ -8,8 +8,8 @@ using UnityEngine;
 /// Computes the collisions with the machine.
 /// The wire is formed in 4 steps:
 /// 1. Extend.
-/// 2. Curve.
-/// 3. rotate on self.
+/// 2. rotate on self.
+/// 3. Curve.
 /// 4. loop back to 1 until  there are no segments to extend.
 /// </summary>
 public class MachineCollisions : WireCreator
