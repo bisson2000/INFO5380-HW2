@@ -1,23 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class MachineCollisions : MonoBehaviour
+public class MachineCollisions : WireCreator
 {
     // Start is called before the first frame update
-    /*
-    [SerializeField] private WireCreator _wireCreator;
-
-    private List<Segment> lastSavedSegments = new List<Segment>();
-
+    [SerializeField] private WireCreator _referencedCreator;
     [SerializeField] private int _nSegments = 1;
 
-    private bool _isReplaying = false;
+    private List<Segment> _sourceSegments = new List<Segment>();
     
-    void Start()
+    private bool _isReplaying = false;
+    private MeshRenderer _meshRenderer;
+
+    public override void Start()
     {
+        base.Start();
         Collider a;
-        Physics.CheckCapsule()
+        //Physics.CheckCapsule();
+
+        _meshRenderer = gameObject.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -25,25 +28,47 @@ public class MachineCollisions : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1) && !_isReplaying)
         {
-            lastSavedSegments.Clear();
-            foreach (Segment s in _wireCreator.SegmentList)
-            {
-                lastSavedSegments.Add(s.Clone());
-            }
+            // Save
+            SaveSegments(_referencedCreator.SegmentList);
             
             // Set the new segments
-            _wireCreator.SetSegments(new List<Segment>());
-            
-            _wireCreator.SetEnabledInputs(false);
+            SetSegments(_sourceSegments);
+
+            _referencedCreator.gameObject.SetActive(false);
+            _meshRenderer.enabled = true;
             _isReplaying = true;
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha2) && _isReplaying)
         {
-            _wireCreator.SetSegments(lastSavedSegments);
-            
-            _wireCreator.SetEnabledInputs(true);
+            _referencedCreator.gameObject.SetActive(true);
+            _meshRenderer.enabled = false;
             _isReplaying = false;
+        }
+    }
+
+    private void SetSegments(List<Segment> source)
+    {
+        // delete what was there
+        for (int i = _segmentList.Count - 1; i >= 0; i--)
+        {
+            EraseSegment(i);
+        }
+        
+        // Set all segments
+        for (int i = 0; i < source.Count; i++)
+        {
+            
+            InsertNewSegment(i, source[i].StartPointIndex + 1, source[i]);
+        }
+    }
+
+    private void SaveSegments(IReadOnlyList<Segment> segments)
+    {
+        _sourceSegments.Clear();
+        foreach (Segment s in segments)
+        {
+            _sourceSegments.Add(s.Clone());
         }
     }
 
@@ -51,7 +76,7 @@ public class MachineCollisions : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="numSegment"> must be >0 </param>
-    void PlaceSegmentFromEnd(int numSegment)
+    /*void PlaceSegmentFromEnd(int numSegment)
     {
         float removedTwist = _wireCreator.SegmentList[^numSegment].AngleTwistDegrees;
         
@@ -62,6 +87,6 @@ public class MachineCollisions : MonoBehaviour
             clone.AngleTwistDegrees -= removedTwist;
             newSegments.Add(clone);
         }
-    }
-    */
+    }*/
+    
 }

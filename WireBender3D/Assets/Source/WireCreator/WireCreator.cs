@@ -14,9 +14,10 @@ public class WireCreator : MonoBehaviour
     
     protected WireRenderer _wireRenderer;
     protected List<Segment> _segmentList = new List<Segment>();
+    public IReadOnlyList<Segment> SegmentList => _segmentList.AsReadOnly();
     
     // Start is called before the first frame update
-    public void Start()
+    public virtual void Start()
     {
         _wireRenderer = GetComponent<WireRenderer>();
         for (int i = 0; i < _wireRenderer.Positions.Count - 1; i++)
@@ -162,7 +163,7 @@ public class WireCreator : MonoBehaviour
     /// Erase a segment at the desired index.
     /// </summary>
     /// <param name="segmentIndex">Index of the segment to erase</param>
-    private void EraseSegment(int segmentIndex)
+    protected void EraseSegment(int segmentIndex)
     {
         Segment segment = _segmentList[segmentIndex];
         _segmentList.RemoveAt(segmentIndex);
