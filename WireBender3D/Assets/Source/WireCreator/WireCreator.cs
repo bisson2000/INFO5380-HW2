@@ -1,12 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using Unity.VisualScripting;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [RequireComponent(typeof(WireRenderer))]
 public class WireCreator : MonoBehaviour
@@ -30,11 +25,6 @@ public class WireCreator : MonoBehaviour
             Line newLine = new Line(i, i + 1, 0.0f, length);
             _segmentList.Add(newLine);
         }
-    }
-
-    // Update is called once per frame
-    public void Update()
-    {
     }
 
     /*public void SetSegments(List<Segment> segments)
@@ -256,34 +246,4 @@ public class WireCreator : MonoBehaviour
         Vector3 up = WireRenderer.GetUp(lastPos, lastRot);
         CreateLine(_wireRenderer.GetPositionsCount(), 1);
     }
-    
 }
-
-
-#if UNITY_EDITOR
-
-[CustomEditor(typeof(WireCreator))]
-public class WirCreatorEditor : Editor
-{
-    public override void OnInspectorGUI() {
-        base.OnInspectorGUI();
-        
-        WireCreator wireCreator = target as WireCreator;
-        if (wireCreator == null)
-        {
-            return;
-        }
-        
-        if (GUILayout.Button("Quick add line"))
-        {
-            wireCreator.AddDebugLine();
-        }
-
-        if (GUILayout.Button("Quick add curve"))
-        {
-            wireCreator.AddDebugCurve();
-        }
-    }
-}
-
-#endif
