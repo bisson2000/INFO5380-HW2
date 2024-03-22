@@ -37,59 +37,67 @@ public class WireUserCreator : WireCreator
         else if (Input.GetKeyDown(KeyCode.R))
         {
             // rotate
-            Segment newSegmentData = currentSegment.Clone();;
-            newSegmentData.AngleTwistDegrees = (newSegmentData.AngleTwistDegrees + 15.0f) % 360.0f;
-            ReplaceSegment(_selectedSegment, newSegmentData);
+            Segment newSegmentData = currentSegment.Clone();
+            float twistChange = 15.0f;
+            if (newSegmentData is Curve curve)
+            {
+                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange) % 360.0f;
+            }
+            ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
             
         }
         else if (Input.GetKeyDown(KeyCode.T))
         {
             // counter-rotate
-            Segment newSegmentData = currentSegment.Clone();;
-            newSegmentData.AngleTwistDegrees = (newSegmentData.AngleTwistDegrees - 15.0f) % 360.0f;
-            ReplaceSegment(_selectedSegment, newSegmentData);
+            Segment newSegmentData = currentSegment.Clone();
+            float twistChange = -15.0f;
+            if (newSegmentData is Curve curve)
+            {
+                curve.AngleTwistDegrees = (curve.AngleTwistDegrees + twistChange) % 360.0f;
+            }
+            ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
             
         }
         else if (Input.GetKeyDown(KeyCode.F))
         {
             // extend curvature
-            Segment newSegmentData = currentSegment.Clone();;
+            Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Curve curve)
             {
                 curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees + 15.0f) % 360.0f;
-                ReplaceSegment(_selectedSegment, newSegmentData);
+                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
         }
         else if (Input.GetKeyDown(KeyCode.G))
         {
             // retract curvature
-            Segment newSegmentData = currentSegment.Clone();;
+            Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Curve curve)
             {
                 curve.CurvatureAngleDegrees = (curve.CurvatureAngleDegrees - 15.0f) % 360.0f;
-                ReplaceSegment(_selectedSegment, newSegmentData);
+                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
             
         }
         else if (Input.GetKeyDown(KeyCode.V))
         {
             // extend line
-            Segment newSegmentData = currentSegment.Clone();;
+            Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Line line)
             {
                 line.Length = Mathf.Max(0.0f, line.Length + 0.1f);
-                ReplaceSegment(_selectedSegment, newSegmentData);
+                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
             
         }
         else if (Input.GetKeyDown(KeyCode.B))
         {
             // retract line
-            Segment newSegmentData = currentSegment.Clone();;
+            Segment newSegmentData = currentSegment.Clone();
             if (newSegmentData is Line line)
             {
                 line.Length = Mathf.Max(0.0f, line.Length - 0.1f);
-                ReplaceSegment(_selectedSegment, newSegmentData);
+                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -166,21 +174,17 @@ public class WireUserCreator : WireCreator
         }
         
         const float twistDegrees = 0.0f;
-        InsertNewLine(segmentInsertionIndex, pointInsertionIndex, twistDegrees, 1.0f);
+        InsertNewLine(segmentInsertionIndex, pointInsertionIndex, 1.0f);
         
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
         
         SetSelectedSegment(segmentInsertionIndex);
     }
     
-    /// <summary>
-    /// Replaces an old segment with a new one.
-    /// </summary>
-    /// <param name="oldSegmentIndex">The segment index representing the old segment</param>
-    /// <param name="newSegmentData">The new segment to replace it with</param>
-    protected override void ReplaceSegment(int oldSegmentIndex, Segment newSegmentData)
+    
+    protected override void ReplaceSegment(int oldSegmentIndex, Segment newSegmentData, float twistChange)
     {
-        base.ReplaceSegment(oldSegmentIndex, newSegmentData);
+        base.ReplaceSegment(oldSegmentIndex, newSegmentData, twistChange);
         
         // Update selection
         SetSelectedSegment(_selectedSegment);

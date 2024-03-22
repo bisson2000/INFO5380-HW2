@@ -7,7 +7,7 @@ public class MachineCollisions : WireCreator
 {
     // Start is called before the first frame update
     [SerializeField] private WireCreator _referencedCreator;
-    [SerializeField] private int _nSegments = 1;
+    [SerializeField] private int _currentSegmentAnalysis = 1;
 
     private List<Segment> _sourceSegments = new List<Segment>();
     
@@ -26,14 +26,23 @@ public class MachineCollisions : WireCreator
     // Update is called once per frame
     void Update()
     {
+        if (_isReplaying || true)
+        {
+            SaveSegments(_referencedCreator.SegmentList);
+            SetSegments(_currentSegmentAnalysis);
+            return;
+        }
+        
+        
         if (Input.GetKeyDown(KeyCode.Alpha1) && !_isReplaying)
         {
             // Save
             SaveSegments(_referencedCreator.SegmentList);
             
             // Set the new segments
-            SetSegments(_sourceSegments);
+            // SetSegments(_sourceSegments);
 
+            _currentSegmentAnalysis = 1;
             _referencedCreator.gameObject.SetActive(false);
             _meshRenderer.enabled = true;
             _isReplaying = true;
@@ -47,7 +56,7 @@ public class MachineCollisions : WireCreator
         }
     }
 
-    private void SetSegments(List<Segment> source)
+    private void SetSegments(int countFromLast)
     {
         // delete what was there
         for (int i = _segmentList.Count - 1; i >= 0; i--)
@@ -56,10 +65,20 @@ public class MachineCollisions : WireCreator
         }
         
         // Set all segments
-        for (int i = 0; i < source.Count; i++)
+        int startIndex = _sourceSegments.Count - countFromLast;
+        Segment sourceSegment = _sourceSegments[startIndex];
+        for (int i = 0; i < countFromLast; i++)
         {
+            int indexInSource = startIndex + i;
+            Segment newSegment = _sourceSegments[indexInSource].Clone();
+            if (newSegment is Curve newCurve && sourceSegment is Curve sourceCurve)
+            {
+                newCurve.AngleTwistDegrees -= sourceCurve.AngleTwistDegrees;
+            }
             
-            InsertNewSegment(i, source[i].StartPointIndex + 1, source[i]);
+            newSegment.StartPointIndex -= sourceSegment.StartPointIndex;
+            newSegment.EndPointIndex -= sourceSegment.StartPointIndex;
+            InsertNewSegment(i, newSegment.StartPointIndex + 1, newSegment);
         }
     }
 
