@@ -577,6 +577,8 @@ GameObject:
   - component: {fileID: 1735342551}
   - component: {fileID: 1735342550}
   - component: {fileID: 1735342549}
+  - component: {fileID: 1735342553}
+  - component: {fileID: 1735342552}
   m_Layer: 0
   m_Name: WireRenderer
   m_TagString: Untagged
@@ -651,6 +653,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1735342552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735342545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d92209a90d2a21847a519f189a448040, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _curveAngleStep: 15
+--- !u!114 &1735342553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735342545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c30cb9bd0c48e449a0ac87c0185307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nEdgesInSegments: 8
+  radius: 0.5
+  _submeshInfos: []
+  showDebugPoints: 0
+  positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 0, z: 2}
+  orientations:
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0, y: 0, z: 0, w: 1}
+  - {x: 0, y: 0, z: 0, w: 1}
 --- !u!43 &2065512235
 Mesh:
   m_ObjectHideFlags: 0
