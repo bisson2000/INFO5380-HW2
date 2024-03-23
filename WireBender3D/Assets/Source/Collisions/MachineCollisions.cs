@@ -24,12 +24,10 @@ public class MachineCollisions : WireCreator
     private int _currentPointCounter = 0;
 
     private List<Segment> _sourceSegments = new List<Segment>();
-    
-    [SerializeField]
     private List<bool> _flipRotationAtPoint = new List<bool>();
-    
-    [SerializeField]
     private List<float> _removedTwist = new List<float>();
+
+    private HashSet<int> _foundCollisions = new HashSet<int>();
     
     private bool _isReplaying = false;
     private bool _isFinished = false;
@@ -55,6 +53,9 @@ public class MachineCollisions : WireCreator
         
         if (Input.GetKeyDown(KeyCode.Alpha1) && !_isReplaying)
         {
+            // remove previous results
+            SetFoundCollisions(true);
+            
             // Save
             SaveSegments(_referencedCreator.SegmentList);
             
@@ -190,8 +191,9 @@ public class MachineCollisions : WireCreator
 
     private void DetectCollisions()
     {
+        int startIndex = _sourceSegments[^_segmentAnalysisCount].StartPointIndex;
+        
         // Detect the collisions
-        HashSet<int> collisionIndexes = new HashSet<int>();
         for (int i = _currentPointCounter; i < _wireRenderer.Positions.Count - 1; i++)
         {
             Vector3 start = transform.TransformPoint(_wireRenderer.Positions[i]);
@@ -199,7 +201,8 @@ public class MachineCollisions : WireCreator
             bool hit = Physics.CheckCapsule(start, end, _wireRenderer.Radius);
             if (hit)
             {
-                collisionIndexes.Add(_currentPointCounter);
+                int pointAbsoluteIndex = startIndex + i;
+                _foundCollisions.Add(pointAbsoluteIndex);
                 Debug.Log("Collision at " + i);
             }
         }
@@ -213,10 +216,10 @@ public class MachineCollisions : WireCreator
             _segmentAnalysisCount++;
             _currentPointCounter = 0;
 
-            if (_segmentAnalysisCount >= _sourceSegments.Count)
+            if (_segmentAnalysisCount > _sourceSegments.Count)
             {
                 _isFinished = true;
-                Debug.Log("Finished!");
+                SetFoundCollisions(false);
             }
             else
             {
@@ -245,21 +248,16 @@ public class MachineCollisions : WireCreator
         //}
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="numSegment"> must be >0 </param>
-    /*void PlaceSegmentFromEnd(int numSegment)
+    private void SetFoundCollisions(bool reset)
     {
-        float removedTwist = _wireCreator.SegmentList[^numSegment].AngleTwistDegrees;
-        
-        List<Segment> newSegments = new List<Segment>();
-        for (int i = numSegment; i > 0; i--)
+        if (reset)
         {
-            Segment clone = _wireCreator.SegmentList[^i].Clone();
-            clone.AngleTwistDegrees -= removedTwist;
-            newSegments.Add(clone);
+            _wireRenderer.SetSubmesh(_foundCollisions, 0);
+            _foundCollisions.Clear();
         }
-    }*/
+        
+        _wireRenderer.SetSubmesh(_foundCollisions, 2);
+        
+    }
     
 }
