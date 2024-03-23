@@ -15,7 +15,11 @@ public class MachineCollisions : WireCreator
 {
     // Start is called before the first frame update
     [SerializeField] private WireCreator _referencedCreator;
-    [SerializeField] private int _segmentAnalysisCount = 1;
+    private int _segmentAnalysisCount = 1;
+    
+    [SerializeField]
+    private string layerName = "MachineMesh";
+    private int _layerMask;
     
     [Min(0)]
     [SerializeField] 
@@ -35,6 +39,7 @@ public class MachineCollisions : WireCreator
     public override void Start()
     {
         base.Start();
+        _layerMask = 1 << LayerMask.NameToLayer(layerName);
         _meshRenderer = gameObject.GetComponent<MeshRenderer>();
     }
 
@@ -191,7 +196,7 @@ public class MachineCollisions : WireCreator
         {
             Vector3 start = transform.TransformPoint(_wireRenderer.Positions[i]);
             Vector3 end = transform.TransformPoint(_wireRenderer.Positions[i + 1]);
-            bool hit = Physics.CheckCapsule(start, end, _wireRenderer.Radius);
+            bool hit = Physics.CheckCapsule(start, end, _wireRenderer.Radius, _layerMask);
             if (hit)
             {
                 int pointAbsoluteIndex = startIndex + i;

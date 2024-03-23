@@ -765,6 +765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wireUserCreator: {fileID: 1735342552}
+  layerName: MainMesh
 --- !u!4 &1462072526
 Transform:
   m_ObjectHideFlags: 0
@@ -1136,7 +1137,6 @@ GameObject:
   - component: {fileID: 2112502091}
   - component: {fileID: 2112502090}
   - component: {fileID: 2112502089}
-  - component: {fileID: 2112502094}
   - component: {fileID: 2112502093}
   - component: {fileID: 2112502092}
   m_Layer: 0
@@ -1227,7 +1227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _curveAngleStep: 15
   _referencedCreator: {fileID: 1735342552}
-  _segmentAnalysisCount: 1
+  layerName: MachineMesh
   _raycastsPerFrame: 1
 --- !u!114 &2112502093
 MonoBehaviour:
@@ -1248,28 +1248,6 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   orientations:
   - {x: 0, y: 0, z: 0, w: 1}
---- !u!64 &2112502094
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2112502086}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 1245497554}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
