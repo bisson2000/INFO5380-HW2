@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 
@@ -58,16 +57,13 @@ public class MachineCollisions : WireCreator
             
             // Save
             SaveSegments(_referencedCreator.SegmentList);
-            
-            // Set the new segments
-            // SetSegments(_sourceSegments);
 
             _isFinished = false;
             _segmentAnalysisCount = 1;
             if (_segmentAnalysisCount > _sourceSegments.Count)
             {
+                _segmentAnalysisCount = _sourceSegments.Count;
                 _isFinished = true;
-                Debug.Log("Finished!");
             }
             SetSegments(_segmentAnalysisCount);
             
@@ -86,6 +82,10 @@ public class MachineCollisions : WireCreator
         }
     }
     
+    /// <summary>
+    /// Save the segments for later use
+    /// </summary>
+    /// <param name="segments">The segments to save</param>
     private void SaveSegments(IReadOnlyList<Segment> segments)
     {
         _sourceSegments = new List<Segment>(segments.Count);
@@ -120,14 +120,8 @@ public class MachineCollisions : WireCreator
         
         // get where to flip the rotations
         float lastLocalRotation = 0.0f;
-        float copiedTwist = _removedTwist[^1];
         for (int i = segments.Count - 1; i >= 0; i--)
         {
-            //if (!Mathf.Approximately(copiedTwist,_removedTwist[i]))
-            //{
-            //    copiedTwist = _removedTwist[i];
-            //}
-            //_removedTwist[i] = copiedTwist;
             
             // propagate from previous
             _flipRotationAtPoint[i] = _flipRotationAtPoint[i + 1];
@@ -136,7 +130,6 @@ public class MachineCollisions : WireCreator
             if (segments[i] is Curve curve)
             {
                 _removedTwist[i] = curve.AngleTwistDegrees;
-                //_removedTwist[i + 1] = curve.AngleTwistDegrees; // TODO remove this. it just is more beautiful
                 
                 // Flip when the last rotation was pointing "downwards"
                 bool flip = (lastLocalRotation >= 180.0f && !_flipRotationAtPoint[i + 1])
@@ -155,6 +148,10 @@ public class MachineCollisions : WireCreator
         _removedTwist.RemoveAt(_removedTwist.Count - 1);
     }
 
+    /// <summary>
+    /// Set the current segments on the renderer
+    /// </summary>
+    /// <param name="countFromLast">The number of segments to take from the source, starting from the last</param>
     private void SetSegments(int countFromLast)
     {
         // delete what was there
@@ -172,7 +169,6 @@ public class MachineCollisions : WireCreator
         int startIndex = _sourceSegments.Count - countFromLast;
         Segment sourceSegment = _sourceSegments[startIndex];
         float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
-        //twistAlteration = -1.0f * _removedTwist[startIndex];
         
         for (int i = 0; i < countFromLast; i++)
         {
@@ -203,7 +199,6 @@ public class MachineCollisions : WireCreator
             {
                 int pointAbsoluteIndex = startIndex + i;
                 _foundCollisions.Add(pointAbsoluteIndex);
-                Debug.Log("Collision at " + i);
             }
         }
 
@@ -226,28 +221,12 @@ public class MachineCollisions : WireCreator
                 SetSegments(_segmentAnalysisCount);
             }
         }
-        
-
-        return;
-
-
-        //for (int i = _currentSegmentCounter; i < _segmentList.Count; ++)
-        //{
-        //    for (int j = 0 j < s.EndPointIndex; j++)
-        //    {
-        //        Vector3 start = transform.TransformPoint(_wireRenderer.Positions[j]);
-        //        Vector3 end = transform.TransformPoint(_wireRenderer.Positions[j + 1]);
-        //        
-        //        bool hit = Physics.CheckCapsule(start, end, _wireRenderer.Radius);
-        //        Debug.DrawLine(start, end);
-        //        if (hit)
-        //        {
-        //            Debug.Log("hit at " + j);
-        //        }
-        //    }
-        //}
     }
 
+    /// <summary>
+    /// Sets the feedback for detected collisions
+    /// </summary>
+    /// <param name="reset">Reset the feedback and the found collisions</param>
     private void SetFoundCollisions(bool reset)
     {
         if (reset)
