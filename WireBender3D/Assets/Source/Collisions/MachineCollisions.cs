@@ -35,9 +35,6 @@ public class MachineCollisions : WireCreator
     public override void Start()
     {
         base.Start();
-        Collider a;
-        //Physics.CheckCapsule();
-
         _meshRenderer = gameObject.GetComponent<MeshRenderer>();
     }
 

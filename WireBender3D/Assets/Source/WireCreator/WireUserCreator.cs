@@ -126,7 +126,7 @@ public class WireUserCreator : WireCreator
     /// Sets the selected segment to the passed index. Will also set the submesh for the wire renderer.
     /// </summary>
     /// <param name="selectedIndex">The index of the segment to select</param>
-    private void SetSelectedSegment(int selectedIndex)
+    public void SetSelectedSegment(int selectedIndex)
     {
         if (_segmentList.Count == 0 || selectedIndex < -1)
         {

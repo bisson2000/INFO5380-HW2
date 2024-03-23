@@ -53,6 +53,10 @@ public class WireRenderer : MonoBehaviour
     private int _submeshCount = 3;
     private List<SubmeshInfo> _submeshInfos = new List<SubmeshInfo>();
     
+    // Mesh collider
+    private MeshCollider _meshCollider;
+    private bool _isMeshColliderSet = false;
+    
     [Header("--------Debug Information--------")]
     public bool showDebugPoints = true;
 
@@ -67,7 +71,7 @@ public class WireRenderer : MonoBehaviour
     [SerializeField]
     private List<Quaternion> orientations = new List<Quaternion>();
 
-    // 
+    // callBack to mesh generated
     public event Action OnMeshGenerated;
     
     // List to hold the last created tris
@@ -83,7 +87,7 @@ public class WireRenderer : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        
+        // set mesh;
         _meshFilter = GetComponent<MeshFilter>();
         if (_meshFilter.sharedMesh == null)
         {
@@ -96,10 +100,22 @@ public class WireRenderer : MonoBehaviour
             _mesh = _meshFilter.sharedMesh;
         }
 
+        // set submesh
         for (int i = 0; i < _submeshCount; i++)
         {
             _submeshInfos.Add(new SubmeshInfo());
         }
+        
+        // set Mesh Collider
+        _meshCollider = GetComponent<MeshCollider>();
+        _isMeshColliderSet = false;
+        if (_meshCollider != null)
+        {
+            _meshCollider.sharedMesh = _mesh;
+            _isMeshColliderSet = true;
+        }
+        
+        // first build
         BuildMesh();
         MarkDirty(true);
     }
@@ -263,6 +279,13 @@ public class WireRenderer : MonoBehaviour
         _mesh.SetUVs(0, newUVs);
         _mesh.SetNormals(newNormals);
         _mesh.RecalculateBounds();
+        
+        // Set the mesh collider
+        if (_isMeshColliderSet)
+        {
+            _meshCollider.sharedMesh = null;
+            _meshCollider.sharedMesh = _mesh;
+        }
     }
 
     /// <summary>
