@@ -748,6 +748,7 @@ GameObject:
   - component: {fileID: 1735342549}
   - component: {fileID: 1735342553}
   - component: {fileID: 1735342552}
+  - component: {fileID: 1735342554}
   m_Layer: 0
   m_Name: WireRenderer
   m_TagString: Untagged
@@ -858,6 +859,19 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0, w: 1}
   - {x: 0, y: 0, z: 0, w: 1}
   - {x: 0, y: 0, z: 0, w: 1}
+--- !u!114 &1735342554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735342545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5965dd354341ce444b2504f633cf4d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comparisonsPerFrame: 40
 --- !u!43 &2065512235
 Mesh:
   m_ObjectHideFlags: 0
@@ -1146,8 +1160,6 @@ MonoBehaviour:
   _referencedCreator: {fileID: 1735342552}
   _segmentAnalysisCount: 1
   _raycastsPerFrame: 1
-  _flipRotationAtPoint: 
-  _removedTwist: []
 --- !u!114 &2112502093
 MonoBehaviour:
   m_ObjectHideFlags: 0
