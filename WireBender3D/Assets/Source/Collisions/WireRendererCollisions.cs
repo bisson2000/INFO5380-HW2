@@ -6,38 +6,71 @@ using UnityEngine;
 public class WireRendererCollisions : MonoBehaviour
 {
     private WireRenderer _wireRenderer;
+
+    [Tooltip("The number of comparisons to execute every frame")]
+    [Min(0)]
+    [SerializeField] 
+    private int comparisonsPerFrame = 40;
+
+    private List<Vector3> _savedPositions = new List<Vector3>();
+    private float _savedRadius = 0.0f;
+
+    private HashSet<int> _collisions = new HashSet<int>();
+
+    private int _currentPreviousIndex = 0;
+    private int _currentNextIndex = 1;
+    private bool _canAnalyse = false;
+    
     
     // Start is called before the first frame update
     void Start()
     {
         _wireRenderer = GetComponent<WireRenderer>();
-        _wireRenderer.OnMeshGenerated += CalculateCollisions;
+        _wireRenderer.OnMeshGenerated += PrepareCollisionDetection;
     }
 
     // Update is called once per frame
     void Update()
     {
         //float dist = GetClosestDistance(_myList[0], _myList[1], _myList[2], _myList[3]);
+        if (!_canAnalyse)
+        {
+            return;
+        }
+        
+        CalculateCollisions();
     }
 
     private void OnDestroy()
     {
-        _wireRenderer.OnMeshGenerated -= CalculateCollisions;
+        _wireRenderer.OnMeshGenerated -= PrepareCollisionDetection;
+    }
+
+    private void PrepareCollisionDetection()
+    {
+        _savedPositions = new List<Vector3>(_wireRenderer.Positions);
+        _savedRadius = _wireRenderer.Radius;
+        
+        _collisions.Clear();
+
+        _currentPreviousIndex = 0;
+        _currentNextIndex = 1;
+
+        _canAnalyse = true;
     }
 
     private void CalculateCollisions()
     {
-        HashSet<int> affectedPositions = new HashSet<int>();
-        IReadOnlyList<Vector3> positions = _wireRenderer.Positions;
-        float radius = _wireRenderer.Radius;
+        int comnparisonsCounter = 0;
         
-        for (int i = 0; i < positions.Count - 1; i++)
+        IReadOnlyList<Vector3> positions = _savedPositions;
+        for (; _currentPreviousIndex < positions.Count - 1; _currentPreviousIndex++)
         {
             bool checkForIntersection = false;
-            Vector3 currentDirection = positions[i + 1] - positions[i];
-            for (int j = i + 1; j < positions.Count - 1; j++)
+            Vector3 currentDirection = positions[_currentPreviousIndex + 1] - positions[_currentPreviousIndex];
+            for (; _currentNextIndex < positions.Count - 1; _currentNextIndex++)
             {
-                Vector3 nextDirection = positions[j + 1] - positions[j];
+                Vector3 nextDirection = positions[_currentNextIndex + 1] - positions[_currentNextIndex];
 
                 float angle = Vector3.Angle(currentDirection, nextDirection);
                 if (angle >= 90.0f)
@@ -45,22 +78,35 @@ public class WireRendererCollisions : MonoBehaviour
                     checkForIntersection = true;
                 }
 
-                if (j <= i + 1 || !checkForIntersection)
+                if (_currentNextIndex <= _currentPreviousIndex + 1 || !checkForIntersection)
                 {
                     continue;
                 }
 
-                DistanceHelper dist = GetClosestDistance(positions[i], positions[i + 1], positions[j], positions[j + 1]);
+                Vector3 aStart = positions[_currentPreviousIndex];
+                Vector3 aEnd = positions[_currentPreviousIndex + 1];
+                Vector3 bStart = positions[_currentNextIndex];
+                Vector3 bEnd = positions[_currentNextIndex + 1];
+                DistanceHelper dist = GetClosestDistance(aStart, aEnd, bStart, bEnd);
 
-                if (dist.Distance < radius * 2.0f)
+                if (dist.Distance < _savedRadius * 2.0f)
                 {
-                    affectedPositions.Add(i);
-                    affectedPositions.Add(j);
+                    _collisions.Add(_currentPreviousIndex);
+                    _collisions.Add(_currentNextIndex);
+                }
+
+                comnparisonsCounter++;
+                if (comnparisonsCounter >= comparisonsPerFrame)
+                {
+                    return;
                 }
             }
+
+            _currentNextIndex = _currentPreviousIndex + 2;
         }
 
-        _wireRenderer.SetSubmesh(affectedPositions, 2);
+        _canAnalyse = false;
+        _wireRenderer.SetSubmesh(_collisions, 2);
         
     }
 

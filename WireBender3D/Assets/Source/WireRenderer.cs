@@ -50,9 +50,8 @@ public class WireRenderer : MonoBehaviour
     public Mesh CurrentMesh => _mesh;
     
     // Submesh information
-    [HideInInspector]
-    [SerializeField]
-    private List<SubmeshInfo> _submeshInfos = new List<SubmeshInfo>(new SubmeshInfo[3]);
+    private int _submeshCount = 3;
+    private List<SubmeshInfo> _submeshInfos = new List<SubmeshInfo>();
     
     [Header("--------Debug Information--------")]
     public bool showDebugPoints = true;
@@ -96,7 +95,11 @@ public class WireRenderer : MonoBehaviour
         {
             _mesh = _meshFilter.sharedMesh;
         }
-        
+
+        for (int i = 0; i < _submeshCount; i++)
+        {
+            _submeshInfos.Add(new SubmeshInfo());
+        }
         BuildMesh();
         MarkDirty(true);
     }
