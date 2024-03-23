@@ -24,6 +24,11 @@ public class MachineCollisions : WireCreator
     private int _currentPointCounter = 0;
 
     private List<Segment> _sourceSegments = new List<Segment>();
+    
+    [SerializeField]
+    private List<bool> _flipRotationAtPoint = new List<bool>();
+    
+    [SerializeField]
     private List<float> _removedTwist = new List<float>();
     
     private bool _isReplaying = false;
@@ -84,27 +89,68 @@ public class MachineCollisions : WireCreator
     {
         _sourceSegments = new List<Segment>(segments.Count);
         _removedTwist = new List<float>(segments.Count + 1);
+        _flipRotationAtPoint = new List<bool>(segments.Count + 1);
+        List<float> localRotationAtPoint = new List<float>(segments.Count);
 
         if (segments.Count == 0)
         {
             return;
         }
+
         
-        _removedTwist.Add(0.0f);
-        
+        float lastSeenRotation = 0.0f;
         for (int i = 0; i < segments.Count; i++)
         {
             _sourceSegments.Add(segments[i].Clone());
             _removedTwist.Add(0.0f);
+            _flipRotationAtPoint.Add(false);
+            
+            // get local rotation
+            localRotationAtPoint.Add(0.0f);
+            if (segments[i] is Curve curve)
+            {
+                localRotationAtPoint[i] = IncrementAngleDegrees(curve.AngleTwistDegrees, -1.0f * lastSeenRotation);
+                lastSeenRotation = curve.AngleTwistDegrees;
+            }
+        }
+        
+        _flipRotationAtPoint.Add(false);
+        _removedTwist.Add(0.0f);
+        
+        // get where to flip the rotations
+        float lastLocalRotation = 0.0f;
+        float copiedTwist = _removedTwist[^1];
+        for (int i = segments.Count - 1; i >= 0; i--)
+        {
+            //if (!Mathf.Approximately(copiedTwist,_removedTwist[i]))
+            //{
+            //    copiedTwist = _removedTwist[i];
+            //}
+            //_removedTwist[i] = copiedTwist;
+            
+            // propagate from previous
+            _flipRotationAtPoint[i] = _flipRotationAtPoint[i + 1];
+            _removedTwist[i] = _removedTwist[i + 1];
             
             if (segments[i] is Curve curve)
             {
                 _removedTwist[i] = curve.AngleTwistDegrees;
-            }
+                //_removedTwist[i + 1] = curve.AngleTwistDegrees; // TODO remove this. it just is more beautiful
+                
+                // Flip when the last rotation was pointing "downwards"
+                bool flip = (lastLocalRotation >= 180.0f && !_flipRotationAtPoint[i + 1])
+                            || (lastLocalRotation <= 180.0f && _flipRotationAtPoint[i + 1]);
+                flip = flip && !Mathf.Approximately(lastLocalRotation, 0.0f); // keep current if no change
+                if (flip)
+                {
+                    _flipRotationAtPoint[i] = !_flipRotationAtPoint[i + 1];
+                }
 
-            _removedTwist[i + 1] = _removedTwist[i];
+                lastLocalRotation = localRotationAtPoint[i];
+            }
         }
         
+        _flipRotationAtPoint.RemoveAt(_flipRotationAtPoint.Count - 1);
         _removedTwist.RemoveAt(_removedTwist.Count - 1);
     }
 
@@ -124,6 +170,9 @@ public class MachineCollisions : WireCreator
         // Set all segments
         int startIndex = _sourceSegments.Count - countFromLast;
         Segment sourceSegment = _sourceSegments[startIndex];
+        float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
+        //twistAlteration = -1.0f * _removedTwist[startIndex];
+        
         for (int i = 0; i < countFromLast; i++)
         {
             int indexInSource = startIndex + i;
@@ -132,7 +181,7 @@ public class MachineCollisions : WireCreator
             newSegment.EndPointIndex -= sourceSegment.StartPointIndex;
             if (newSegment is Curve newCurve)
             {
-                newCurve.AngleTwistDegrees -= _removedTwist[startIndex];
+                newCurve.AngleTwistDegrees = IncrementAngleDegrees(newCurve.AngleTwistDegrees, twistAlteration);
             }
             
             InsertNewSegment(i, newSegment.StartPointIndex + 1, newSegment);

@@ -65,7 +65,7 @@ public class WireUserCreator : WireCreator
             if (newSegmentData is Curve curve)
             {
                 float curvatureChange = 15.0f;
-                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, curvatureChange);
+                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
                 ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
         }
@@ -76,7 +76,7 @@ public class WireUserCreator : WireCreator
             if (newSegmentData is Curve curve)
             {
                 float curvatureChange = -15.0f;
-                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, curvatureChange);
+                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
                 ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
             }
             
