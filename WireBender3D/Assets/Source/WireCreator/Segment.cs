@@ -1,20 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Segment
 {
     public int StartPointIndex;
     public int EndPointIndex;
-    public float AngleTwistDegrees;
 
-    protected Segment(int startPointIndex, int endPointIndex, float angleTwistDegrees)
+    protected Segment(int startPointIndex, int endPointIndex)
     {
         StartPointIndex = startPointIndex;
         EndPointIndex = endPointIndex;
-        AngleTwistDegrees = angleTwistDegrees;
     }
 
     public abstract Segment Clone();
@@ -23,9 +20,11 @@ public abstract class Segment
 public class Curve : Segment
 {
     public float CurvatureAngleDegrees;
+    public float AngleTwistDegrees;
     public Curve(int startPointIndex, int endPointIndex, float angleTwistDegrees, float curvatureAngleDegrees) 
-        : base(startPointIndex, endPointIndex, angleTwistDegrees)
+        : base(startPointIndex, endPointIndex)
     {
+        AngleTwistDegrees = angleTwistDegrees;
         CurvatureAngleDegrees = curvatureAngleDegrees;
     }
 
@@ -39,15 +38,15 @@ public class Curve : Segment
 public class Line : Segment
 {
     public float Length;
-
-    public Line(int startPointIndex, int endPointIndex, float angleTwistDegrees, float length) 
-        : base(startPointIndex, endPointIndex, angleTwistDegrees)
+    public Line(int startPointIndex, int endPointIndex, float length) 
+        : base(startPointIndex, endPointIndex)
     {
         Length = length;
     }
 
     public override Segment Clone()
     {
-        return new Line(StartPointIndex, EndPointIndex, AngleTwistDegrees, Length);
+        return new Line(StartPointIndex, EndPointIndex, Length);
     }
 }
+

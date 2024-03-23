@@ -28,6 +28,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "CreateLine",
+            "id": "75e82840-bb78-4ebc-a48f-d78628d2ce16",
+            "actions": [
+                {
+                    "name": "CreateLine",
+                    "type": "Button",
+                    "id": "3069997f-0a8e-4615-9c75-6e1157684a77",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "40640dbe-ec94-4c33-9171-b1f221b49805",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CreateLine",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
