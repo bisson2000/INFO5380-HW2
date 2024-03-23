@@ -7,7 +7,9 @@ using UnityEngine;
 
 public class WireUserCreator : WireCreator
 {
+    
    private int _selectedSegment = -1;
+   
 
     // Update is called once per frame
     public void Update()
@@ -27,7 +29,7 @@ public class WireUserCreator : WireCreator
         // {
         //     return;
         // }
-        //
+        
         // Segment currentSegment = _segmentList[_selectedSegment];
         // if (Input.GetKeyDown(KeyCode.Z))
         // {
@@ -47,8 +49,8 @@ public class WireUserCreator : WireCreator
         //     ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
         //     
         // }
-
-        
+        //
+        //
         // else if (Input.GetKeyDown(KeyCode.T))
         // {
         //     // counter-rotate
@@ -61,7 +63,7 @@ public class WireUserCreator : WireCreator
         //     ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
         //     
         // }
-        
+        //
         // else if (Input.GetKeyDown(KeyCode.F))
         // {
         //     // extend curvature
@@ -73,7 +75,7 @@ public class WireUserCreator : WireCreator
         //         ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
         //     }
         // }
-        
+        //
         // else if (Input.GetKeyDown(KeyCode.G))
         // {
         //     // retract curvature
@@ -86,7 +88,7 @@ public class WireUserCreator : WireCreator
         //     }
         //     
         // }
-        
+        //
         // else if (Input.GetKeyDown(KeyCode.V))
         // {
         //     // extend line
@@ -134,23 +136,20 @@ public class WireUserCreator : WireCreator
         {
             return;
         }
+        // erase segment
+        RemoveSegmentAndPropagate(_selectedSegment);
+        SetSelectedSegment(_selectedSegment - 1);
 
-        Segment currentSegment = _segmentList[_selectedSegment];
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            // erase segment
-            RemoveSegmentAndPropagate(_selectedSegment);
-            SetSelectedSegment(_selectedSegment - 1);
-        }
     }
 
-    public void RotateSegmentClockwise(Segment currentSegment, float addedRotation=15.0f)
+    public void RotateSegmentClockwise(float addedRotation=15.0f)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
         // rotate
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         // float twistChange = 15.0f;
         if (newSegmentData is Curve curve)
@@ -160,13 +159,14 @@ public class WireUserCreator : WireCreator
         ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
     }
     
-    public void RotateSegmentCounterClockwise(Segment currentSegment, float addedRotation=-15.0f)
+    public void RotateSegmentCounterClockwise(float addedRotation=-15.0f)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
         // rotate
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         // float twistChange = -15.0f;
         if (newSegmentData is Curve curve)
@@ -176,14 +176,15 @@ public class WireUserCreator : WireCreator
         ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
     }
 
-    public void ExtendCurvature(Segment currentSegment, float curvatureChange = 15.0f)
+    public void ExtendCurvature(float curvatureChange = 15.0f)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
-
+        
         // extend curvature
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Curve curve)
         {
@@ -193,7 +194,7 @@ public class WireUserCreator : WireCreator
         }
     }
     
-    public void RetractCurvature(Segment currentSegment, float curvatureChange = -15.0f)
+    public void RetractCurvature(float curvatureChange = -15.0f)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
@@ -201,6 +202,7 @@ public class WireUserCreator : WireCreator
         }
 
         // Retract curvature
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Curve curve)
         {
@@ -210,7 +212,7 @@ public class WireUserCreator : WireCreator
         }
     }
 
-    public void ExtendLine(Segment currentSegment)
+    public void ExtendLine()
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
@@ -218,6 +220,7 @@ public class WireUserCreator : WireCreator
         }
 
         // extend line
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Line line)
         {
@@ -226,7 +229,7 @@ public class WireUserCreator : WireCreator
         }
     }
     
-    public void RetractLine(Segment currentSegment)
+    public void RetractLine()
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
@@ -234,6 +237,7 @@ public class WireUserCreator : WireCreator
         }
 
         // Retract line
+        Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Line line)
         {
