@@ -3,7 +3,11 @@ using UnityEngine;
 public class OrbitCamera : MonoBehaviour
 {
     public Transform target;
+<<<<<<< HEAD
     public float distance = 250.0f;
+=======
+    public float distance = 500.0f;
+>>>>>>> 286a0983c89137e4e18d4b8957d1b4c17e510576
     public float xSpeed = 120.0f;
     public float ySpeed = 120.0f;
     public float panSpeed = 0.5f;
