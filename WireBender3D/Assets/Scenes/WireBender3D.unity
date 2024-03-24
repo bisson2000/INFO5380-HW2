@@ -135,27 +135,14 @@ GameObject:
   - component: {fileID: 32335047}
   - component: {fileID: 32335049}
   - component: {fileID: 32335046}
-  - component: {fileID: 32335045}
+  - component: {fileID: 32335050}
   m_Layer: 0
-  m_Name: WireRendererFeedback
+  m_Name: WireInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &32335045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 32335044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0f58e60e6a6c75438bd4011b5ab1095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _wireUserCreator: {fileID: 1735342552}
 --- !u!114 &32335046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,8 +156,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nEdgesInSegments: 8
-  radius: 0.1
-  showDebugPoints: 1
+  radius: 0.01
+  showDebugPoints: 0
   positions: []
   orientations: []
 --- !u!33 &32335047
@@ -239,6 +226,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &32335050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0f58e60e6a6c75438bd4011b5ab1095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wireUserCreator: {fileID: 1735342552}
+  informationPrefab: {fileID: 637436122619800079, guid: 807ffa0e5e01052479a710da941d2e41, type: 3}
 --- !u!1001 &180965229
 PrefabInstance:
   m_ObjectHideFlags: 0
