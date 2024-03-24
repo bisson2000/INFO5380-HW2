@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 48717900a1c188043b25bd972637f898, type: 2}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 478453787}
-  m_IndirectSpecularColor: {r: 0.47972792, g: 0.52416116, b: 0.59322315, a: 1}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0.4501459, g: 0.5001848, b: 0.5754372, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 6f259708f18ce3e40880099192319e13, type: 2}
+  m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -123,6 +123,123 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &32335044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 32335048}
+  - component: {fileID: 32335047}
+  - component: {fileID: 32335049}
+  - component: {fileID: 32335046}
+  - component: {fileID: 32335050}
+  m_Layer: 0
+  m_Name: WireInfo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &32335046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57c30cb9bd0c48e449a0ac87c0185307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nEdgesInSegments: 8
+  radius: 0.01
+  showDebugPoints: 0
+  positions: []
+  orientations: []
+--- !u!33 &32335047
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  m_Mesh: {fileID: 1373032592}
+--- !u!4 &32335048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &32335049
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 5be4b1c6a2a72cd479a02f04a96bd7af, type: 2}
+  - {fileID: 2100000, guid: a7300c49b6262dd409dd9e4cbec7ee9c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &32335050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32335044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0f58e60e6a6c75438bd4011b5ab1095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wireUserCreator: {fileID: 1735342552}
+  informationPrefab: {fileID: 637436122619800079, guid: 807ffa0e5e01052479a710da941d2e41, type: 3}
 --- !u!1001 &180965229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -735,6 +852,191 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 24.4, y: -45, z: 0}
+--- !u!43 &1373032592
+Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WireRenderer
+  serializedVersion: 11
+  m_SubMeshes:
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 0
+    topology: 0
+    baseVertex: 0
+    firstVertex: 0
+    vertexCount: 0
+    localAABB:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 0
+    topology: 0
+    baseVertex: 0
+    firstVertex: 0
+    vertexCount: 0
+    localAABB:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+  - serializedVersion: 2
+    firstByte: 0
+    indexCount: 0
+    topology: 0
+    baseVertex: 0
+    firstVertex: 0
+    vertexCount: 0
+    localAABB:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+  m_Shapes:
+    vertices: []
+    shapes: []
+    channels: []
+    fullWeights: []
+  m_BindPose: []
+  m_BoneNameHashes: 
+  m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
+  m_MeshCompression: 0
+  m_IsReadable: 1
+  m_KeepVertices: 1
+  m_KeepIndices: 1
+  m_IndexFormat: 0
+  m_IndexBuffer: 
+  m_VertexData:
+    serializedVersion: 3
+    m_VertexCount: 0
+    m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 3
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    m_DataSize: 0
+    _typelessdata: 
+  m_CompressedMesh:
+    m_Vertices:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UV:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Normals:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Tangents:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Weights:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_NormalSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_TangentSigns:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_FloatColors:
+      m_NumItems: 0
+      m_Range: 0
+      m_Start: 0
+      m_Data: 
+      m_BitSize: 0
+    m_BoneIndices:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_Triangles:
+      m_NumItems: 0
+      m_Data: 
+      m_BitSize: 0
+    m_UVInfo: 0
+  m_LocalAABB:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_MeshUsageFlags: 0
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  m_MeshMetrics[0]: 1
+  m_MeshMetrics[1]: 1
+  m_MeshOptimizationFlags: 1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!1 &1462072524
 GameObject:
   m_ObjectHideFlags: 0
@@ -775,7 +1077,7 @@ Transform:
   m_GameObject: {fileID: 1462072524}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.2037532, y: -78.15588, z: 62.944256}
+  m_LocalPosition: {x: 0, y: 15.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -796,7 +1098,6 @@ GameObject:
   - component: {fileID: 1735342553}
   - component: {fileID: 1735342552}
   - component: {fileID: 1735342554}
-  - component: {fileID: 1735342556}
   m_Layer: 8
   m_Name: WireRenderer
   m_TagString: Untagged
@@ -942,174 +1243,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2065512235}
---- !u!114 &1735342556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1735342545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03e065bb5a3d33946b171a96d2152061, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  createCurveAction:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Create curve
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 38f02067-827c-4676-b65c-83e2520c5b97
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 6268373456792319316, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  extendCurvature:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Erase selected segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: a68eb211-05de-4c2f-b8bb-c95d81b6781c
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -5250153730730576810, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  retractCurvature:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Erase selected segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: d7330aa1-232a-47a2-aeee-91df06e693f4
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 6610778539707504686, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  createLineAction:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Create straight segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 6c85bae2-b72f-4bc8-8209-a1fed7d8849c
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -1783388902377407651, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  extendLine:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Create straight segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 7761bd1c-4921-43d4-a9a8-4b1c646eba4d
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -5629519876736537816, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  retractLine:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Create straight segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 968cdd7f-72ff-495d-a5a9-c6d839374d3a
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -8148911325691261962, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  eraseSegment:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Erase selected segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: d1fbe4d0-bd9e-4339-a19a-0b25a5e99f20
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -4199599314454260015, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  rotateSegmentClockwise:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Erase selected segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 128bbfd6-6b80-43c1-a4eb-36c60c03b6c1
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 2574741851637705102, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  rotateSegmentCounterClockwise:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Erase selected segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: c5b5d2ef-b176-4a0a-b6e6-58ab4c77eefe
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -2461578559009403514, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  selectNextSegment:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Select Next Segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 66c49c5f-ae01-4f64-887d-40c9c08820ac
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 7121705584099963645, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  selectPreviousSegment:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Select Prvious Segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: afa91f07-c946-4b8b-a4ad-697025cfcd26
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -3160501563780675071, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  printCoordinatesAsArray:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Select Prvious Segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: d3d0f803-6dc3-4a11-9b8f-11ba076d0394
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -7804818603885599353, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
-  exportCoordinates2CSV:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Select Prvious Segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 31077f1f-c7ae-4c09-b965-d111bd944974
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: -5281683183466868932, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
 --- !u!43 &2065512235
 Mesh:
   m_ObjectHideFlags: 0
@@ -1429,3 +1562,4 @@ SceneRoots:
   - {fileID: 374206955}
   - {fileID: 2112502091}
   - {fileID: 1462072526}
+  - {fileID: 32335048}
