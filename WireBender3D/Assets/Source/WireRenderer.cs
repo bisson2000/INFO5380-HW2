@@ -178,6 +178,7 @@ public class WireRenderer : MonoBehaviour
         else
         {
             // clear collisions
+            // TODO: Test if we need to add _submeshInfos[1].affectedPoints.Clear(); as well
             _submeshInfos[2].affectedPoints.Clear();
         }
         
