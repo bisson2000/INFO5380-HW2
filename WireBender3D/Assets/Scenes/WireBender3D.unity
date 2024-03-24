@@ -37,13 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-<<<<<<< HEAD
   m_Sun: {fileID: 478453787}
   m_IndirectSpecularColor: {r: 0.4797281, g: 0.5241612, b: 0.5932247, a: 1}
-=======
-  m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4501459, g: 0.5001847, b: 0.57543725, a: 1}
->>>>>>> 286a0983c89137e4e18d4b8957d1b4c17e510576
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -128,121 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &159448161
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 159448165}
-  - component: {fileID: 159448164}
-  - component: {fileID: 159448163}
-  - component: {fileID: 159448162}
-  m_Layer: 0
-  m_Name: OrbitCamera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &159448162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159448161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88555ddcdddf644be932447fa403531b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1735342551}
-  distance: 500
-  xSpeed: 120
-  ySpeed: 120
-  panSpeed: 0.5
-  zoomSpeed: 5
-  yMinLimit: -20
-  yMaxLimit: 80
-  distanceMin: 0.5
-  distanceMax: 15
---- !u!81 &159448163
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159448161}
-  m_Enabled: 1
---- !u!20 &159448164
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159448161}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 5000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &159448165
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159448161}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 53.51953, y: 144.16626, z: 313.14795}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &180965229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -763,7 +643,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
-<<<<<<< HEAD
 --- !u!1 &1253217001
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,7 +745,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1253217001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88555ddcdddf644be932447fa403531b, type: 3}
+  m_Script: {fileID: 11500000, guid: 075123f2abefe4b859e95f26d99c621c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1735342551}
@@ -879,8 +758,6 @@ MonoBehaviour:
   yMaxLimit: 8000
   distanceMin: 0.5
   distanceMax: 1500
-=======
->>>>>>> 286a0983c89137e4e18d4b8957d1b4c17e510576
 --- !u!1 &1462072524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1113,149 +990,149 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 6268373456792319316, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   extendCurvature:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Extend curvature of selected curve
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  retractCurvature:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Retract curvature of selected curve
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  createLineAction:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Create straight segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  extendLine:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Extend selected straight line segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  retractLine:
-    m_UseReference: 0
-    m_Action:
-      m_Name: Reduce selected straight line segment
-      m_Type: 1
-      m_ExpectedControlType: 
-      m_Id: 
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  eraseSegment:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Erase selected segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: a68eb211-05de-4c2f-b8bb-c95d81b6781c
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -5250153730730576810, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  retractCurvature:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Erase selected segment
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: d7330aa1-232a-47a2-aeee-91df06e693f4
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 6610778539707504686, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  createLineAction:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Create straight segment
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 6c85bae2-b72f-4bc8-8209-a1fed7d8849c
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1783388902377407651, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  extendLine:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Create straight segment
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 7761bd1c-4921-43d4-a9a8-4b1c646eba4d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -5629519876736537816, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  retractLine:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Create straight segment
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 968cdd7f-72ff-495d-a5a9-c6d839374d3a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8148911325691261962, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  eraseSegment:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Erase selected segment
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: d1fbe4d0-bd9e-4339-a19a-0b25a5e99f20
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -4199599314454260015, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   rotateSegmentClockwise:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: Rotate Selected Segment Clockwise
+      m_Name: Erase selected segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: 128bbfd6-6b80-43c1-a4eb-36c60c03b6c1
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: 2574741851637705102, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   rotateSegmentCounterClockwise:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: Rotate Selected Segment Counter-Clockwise
+      m_Name: Erase selected segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: c5b5d2ef-b176-4a0a-b6e6-58ab4c77eefe
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -2461578559009403514, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   selectNextSegment:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Select Next Segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: 66c49c5f-ae01-4f64-887d-40c9c08820ac
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: 7121705584099963645, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   selectPreviousSegment:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Select Prvious Segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: afa91f07-c946-4b8b-a4ad-697025cfcd26
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -3160501563780675071, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   printCoordinatesAsArray:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Select Prvious Segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: d3d0f803-6dc3-4a11-9b8f-11ba076d0394
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -7804818603885599353, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   exportCoordinates2CSV:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: Select Previous Segment
+      m_Name: Select Prvious Segment
       m_Type: 1
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: 31077f1f-c7ae-4c09-b965-d111bd944974
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -5281683183466868932, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
 --- !u!43 &2065512235
 Mesh:
   m_ObjectHideFlags: 0
@@ -1567,6 +1444,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1253217004}
   - {fileID: 478453788}
   - {fileID: 291403264}
   - {fileID: 1735342551}
@@ -1574,4 +1452,3 @@ SceneRoots:
   - {fileID: 374206955}
   - {fileID: 2112502091}
   - {fileID: 1462072526}
-  - {fileID: 159448165}
