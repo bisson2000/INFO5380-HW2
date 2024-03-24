@@ -27,7 +27,7 @@ public class WireUserCreator : WireCreator
     /// <summary>
     /// Rotates the the orientation of the wire and indiviual bends clockwise.   
     /// </summary>
-    public void RotateSegmentClockwise(float addedRotation=15.0f)
+    public void RotateSegmentClockwise(float addedRotation)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
@@ -36,76 +36,36 @@ public class WireUserCreator : WireCreator
         // rotate
         Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
-        // float twistChange = 15.0f;
         if (newSegmentData is Curve curve)
         {
             curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
         }
         ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
     }
-    /// <summary>
-    /// Rotates the the orientation of the wire and indiviual bends counter-clockwise.   
-    /// </summary>
-    public void RotateSegmentCounterClockwise(float addedRotation=-15.0f)
-    {
-        if (_segmentList.Count == 0 || _selectedSegment == -1)
-        {
-            return;
-        }
-        // rotate
-        Segment currentSegment = _segmentList[_selectedSegment];
-        Segment newSegmentData = currentSegment.Clone();
-        // float twistChange = -15.0f;
-        if (newSegmentData is Curve curve)
-        {
-            curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
-        }
-        ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
-    }
+    
     /// <summary>
     /// Increases the bend of the selected curve segment.   
     /// </summary>
-    public void ExtendCurvature(float curvatureChange = 15.0f)
+    public void ExtendCurvature(float curvatureChange)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
         
-        // extend curvature
         Segment currentSegment = _segmentList[_selectedSegment];
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Curve curve)
         {
-            // float curvatureChange = 15.0f;
             curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
         }
     }
-    /// <summary>
-    /// Reduces the bend of the selected curve segment.   
-    /// </summary>
-    public void RetractCurvature(float curvatureChange = -15.0f)
-    {
-        if (_segmentList.Count == 0 || _selectedSegment == -1)
-        {
-            return;
-        }
-
-        // Retract curvature
-        Segment currentSegment = _segmentList[_selectedSegment];
-        Segment newSegmentData = currentSegment.Clone();
-        if (newSegmentData is Curve curve)
-        {
-            // float curvatureChange = 15.0f;
-            curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
-            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-        }
-    }
+    
     /// <summary>
     /// Increases the length of the selected straight line segment by 0.1 unity meters.   
     /// </summary>
-    public void ExtendLine()
+    public void ExtendLine(float extension)
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
@@ -117,29 +77,11 @@ public class WireUserCreator : WireCreator
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Line line)
         {
-            line.Length = Mathf.Max(0.0f, line.Length + 0.1f);
+            line.Length = Mathf.Max(0.0f, line.Length + extension);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
         }
     }
-    /// <summary>
-    /// Reduces the length of the selected straight line segment by 0.1 unity meters.   
-    /// </summary>
-    public void RetractLine()
-    {
-        if (_segmentList.Count == 0 || _selectedSegment == -1)
-        {
-            return;
-        }
-
-        // Retract line
-        Segment currentSegment = _segmentList[_selectedSegment];
-        Segment newSegmentData = currentSegment.Clone();
-        if (newSegmentData is Line line)
-        {
-            line.Length = Mathf.Max(0.0f, line.Length - 0.1f);
-            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-        }
-    }
+    
     /// <summary>
     /// Selects the segment immediately ahead of the selected segment in the wire.   
     /// </summary>
