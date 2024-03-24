@@ -1,127 +1,229 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using UnityEngine;
 
 
 public class WireUserCreator : WireCreator
 {
+    
    private int _selectedSegment = -1;
-
-    // Update is called once per frame
-    public void Update()
+   
+   /// <summary>
+   /// Deletes selected segment.   
+   /// </summary>
+    public void EraseSegment()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
-            // Add curve
-            AddNewCurve();
+            return;
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        // erase segment
+        RemoveSegmentAndPropagate(_selectedSegment);
+        SetSelectedSegment(_selectedSegment - 1);
+
+    }
+    /// <summary>
+    /// Rotates the the orientation of the wire and indiviual bends clockwise.   
+    /// </summary>
+    public void RotateSegmentClockwise(float addedRotation=15.0f)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
-            // Add line
-            AddNewLine();
+            return;
         }
-        
+        // rotate
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        // float twistChange = 15.0f;
+        if (newSegmentData is Curve curve)
+        {
+            curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
+        }
+        ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
+    }
+    /// <summary>
+    /// Rotates the the orientation of the wire and indiviual bends counter-clockwise.   
+    /// </summary>
+    public void RotateSegmentCounterClockwise(float addedRotation=-15.0f)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+        // rotate
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        // float twistChange = -15.0f;
+        if (newSegmentData is Curve curve)
+        {
+            curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
+        }
+        ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
+    }
+    /// <summary>
+    /// Increases the bend of the selected curve segment.   
+    /// </summary>
+    public void ExtendCurvature(float curvatureChange = 15.0f)
+    {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
         {
             return;
         }
         
+        // extend curvature
         Segment currentSegment = _segmentList[_selectedSegment];
-        if (Input.GetKeyDown(KeyCode.Z))
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Curve curve)
         {
-            // erase segment
-            RemoveSegmentAndPropagate(_selectedSegment);
-            SetSelectedSegment(_selectedSegment - 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.R))
-        {
-            // rotate
-            Segment newSegmentData = currentSegment.Clone();
-            float twistChange = 15.0f;
-            if (newSegmentData is Curve curve)
-            {
-                curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, twistChange);
-            }
-            ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
-            
-        }
-        else if (Input.GetKeyDown(KeyCode.T))
-        {
-            // counter-rotate
-            Segment newSegmentData = currentSegment.Clone();
-            float twistChange = -15.0f;
-            if (newSegmentData is Curve curve)
-            {
-                curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, twistChange);
-            }
-            ReplaceSegment(_selectedSegment, newSegmentData, twistChange);
-            
-        }
-        else if (Input.GetKeyDown(KeyCode.F))
-        {
-            // extend curvature
-            Segment newSegmentData = currentSegment.Clone();
-            if (newSegmentData is Curve curve)
-            {
-                float curvatureChange = 15.0f;
-                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
-                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.G))
-        {
-            // retract curvature
-            Segment newSegmentData = currentSegment.Clone();
-            if (newSegmentData is Curve curve)
-            {
-                float curvatureChange = -15.0f;
-                curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
-                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-            }
-            
-        }
-        else if (Input.GetKeyDown(KeyCode.V))
-        {
-            // extend line
-            Segment newSegmentData = currentSegment.Clone();
-            if (newSegmentData is Line line)
-            {
-                line.Length = Mathf.Max(0.0f, line.Length + 0.1f);
-                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-            }
-            
-        }
-        else if (Input.GetKeyDown(KeyCode.B))
-        {
-            // retract line
-            Segment newSegmentData = currentSegment.Clone();
-            if (newSegmentData is Line line)
-            {
-                line.Length = Mathf.Max(0.0f, line.Length - 0.1f);
-                ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            SetSelectedSegment(_selectedSegment + 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            SetSelectedSegment(_selectedSegment - 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            string builder = "";
-            foreach (Vector3 point in _wireRenderer.Positions)
-            {
-                builder += "[" + point.x.ToString("F", CultureInfo.InvariantCulture) + "," + point.y.ToString("F", CultureInfo.InvariantCulture) + "," + point.z.ToString("F", CultureInfo.InvariantCulture) + "],\n";
-            }
-
-            Debug.Log(builder);
+            // float curvatureChange = 15.0f;
+            curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
         }
     }
+    /// <summary>
+    /// Reduces the bend of the selected curve segment.   
+    /// </summary>
+    public void RetractCurvature(float curvatureChange = -15.0f)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
 
+        // Retract curvature
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Curve curve)
+        {
+            // float curvatureChange = 15.0f;
+            curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+        }
+    }
+    /// <summary>
+    /// Increases the length of the selected straight line segment by 0.1 unity meters.   
+    /// </summary>
+    public void ExtendLine()
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+
+        // extend line
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Line line)
+        {
+            line.Length = Mathf.Max(0.0f, line.Length + 0.1f);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+        }
+    }
+    /// <summary>
+    /// Reduces the length of the selected straight line segment by 0.1 unity meters.   
+    /// </summary>
+    public void RetractLine()
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+
+        // Retract line
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Line line)
+        {
+            line.Length = Mathf.Max(0.0f, line.Length - 0.1f);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+        }
+    }
+    /// <summary>
+    /// Selects the segment immediately ahead of the selected segment in the wire.   
+    /// </summary>
+    public void SelectNextSegment()
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+        SetSelectedSegment(_selectedSegment + 1);
+    }
+    /// <summary>
+    /// Selects the segment immediately behind the selected segment in the wire.   
+    /// </summary>
+    public void SelectPreviousSegment()
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+        SetSelectedSegment(_selectedSegment - 1);
+    }
+    /// <summary>
+    /// Prints raw Unity coordinates to Unity terminal in the following format: [x,y,z].  
+    /// </summary>
+    public void PrintCoordinatesAsArray()
+    {
+        string builder = "";
+        foreach (Vector3 point in _wireRenderer.Positions)
+        {
+            builder += "[" + point.x.ToString("F", CultureInfo.InvariantCulture) + "," +
+                       point.y.ToString("F", CultureInfo.InvariantCulture) + "," +
+                       point.z.ToString("F", CultureInfo.InvariantCulture) + "],\n";
+        }
+
+        Debug.Log(builder);
+    }
+    
+    /// <summary>
+    /// Scales the coordinates from "Unity meters" to centimeters and saves a csv file with the coordinates to produce the wire rendered on the Wire Terminal Software. 
+    /// </summary>
+    public void ExportCoordinates2CSV()
+    {
+        // CSV content builder
+        string csvContent = "";
+
+        // Header
+        csvContent += "X,Y,Z\n";
+
+        // Build the CSV content
+        foreach (Vector3 point in _wireRenderer.Positions)
+        {
+            // Multiply each coordinate by "unityScaleFactor" to convert from Unity meters (effectively mm) to centimeters. TODO: Need to confirm this with the machine output.
+            int unityScaleFactor = 10; // TODO: Need to test the appropriate scale factor to map from Unity meters to centimeters
+            Vector3 scaledPoint = point * unityScaleFactor;
+            // Reorient the [x, y, z] to [z, x, y] to match WireTerminal Orientation of machine TODO: Need to confirm this again in the lab. 
+            csvContent += scaledPoint.z.ToString("F", CultureInfo.InvariantCulture) + "," + // Z is the direction straight out of the machine
+                          scaledPoint.x.ToString("F", CultureInfo.InvariantCulture)+ "," +  // X is the left or right relative to the machine
+                          scaledPoint.y.ToString("F", CultureInfo.InvariantCulture)  + "\n"; // Y is the direction up or down relative to the machine
+        }
+        
+        // Use Application.dataPath to build a relative path
+        // Note: Application.dataPath points to the "Assets" folder in Unity project // Relative to the "Assets" folder
+        // Relative path from the Assets directory
+        string relativePath = Path.Combine("Output", "Coordinates.csv");
+
+        // Construct the full path using Application.dataPath
+        string fullPath = Path.Combine(Application.dataPath, relativePath);
+
+        // Ensure the directory exists
+        string directoryPath = Path.GetDirectoryName(fullPath);
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+        
+        // Write to file
+        File.WriteAllText(fullPath, csvContent);
+        
+        // Normalize the path to use forward slashes
+        fullPath = fullPath.Replace("\\", "/");
+        
+        Debug.Log($"Coordinates exported to CSV at: {fullPath}");
+    }
     /// <summary>
     /// Sets the selected segment to the passed index. Will also set the submesh for the wire renderer.
     /// </summary>
@@ -144,7 +246,7 @@ public class WireUserCreator : WireCreator
     /// <summary>
     /// Adds a new curve after the current selection index.
     /// </summary>
-    private void AddNewCurve()
+    public void AddNewCurve()
     {
         int segmentInsertionIndex = _segmentList.Count;
         int pointInsertionIndex = _wireRenderer.GetPositionsCount();
@@ -165,7 +267,7 @@ public class WireUserCreator : WireCreator
     /// <summary>
     /// Adds a new line after the current selection index.
     /// </summary>
-    private void AddNewLine()
+    public void AddNewLine()
     {
         int segmentInsertionIndex = _segmentList.Count;
         int pointInsertionIndex = _wireRenderer.GetPositionsCount();

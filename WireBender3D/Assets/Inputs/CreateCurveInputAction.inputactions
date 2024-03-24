@@ -28,6 +28,342 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "ExtendCurvature",
+            "id": "0e45be9a-47c7-4b1a-b6b3-2f7fd028a80b",
+            "actions": [
+                {
+                    "name": "Extend Curvature",
+                    "type": "Button",
+                    "id": "d7ede0f4-f66a-4270-a790-7ad77b190538",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "07d61765-33b4-421f-9508-6f8c35b787fd",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Extend Curvature",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "RetractCurvature",
+            "id": "89d1cc98-c311-4fa7-9c74-1b1d836677e0",
+            "actions": [
+                {
+                    "name": "Retract Curvature",
+                    "type": "Button",
+                    "id": "14d57293-48f4-4b8a-8842-74f3213faa7b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2fed8b75-7750-4f53-8b34-9dcc6301bc5b",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Retract Curvature",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CreateLine",
+            "id": "75e82840-bb78-4ebc-a48f-d78628d2ce16",
+            "actions": [
+                {
+                    "name": "CreateLine",
+                    "type": "Button",
+                    "id": "3069997f-0a8e-4615-9c75-6e1157684a77",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "40640dbe-ec94-4c33-9171-b1f221b49805",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CreateLine",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "ExtendLine",
+            "id": "4e9cad24-0791-4419-b989-9d7098f3bfde",
+            "actions": [
+                {
+                    "name": "Extend Line",
+                    "type": "Button",
+                    "id": "48f6964d-578f-4b11-aa29-15a44634f1be",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2edfc6c8-b85f-4fec-97c3-559a6ee141d3",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Extend Line",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "RetractLine",
+            "id": "b60ace9f-7676-40eb-9266-29753f549d5b",
+            "actions": [
+                {
+                    "name": "Retract Line",
+                    "type": "Button",
+                    "id": "05fe052e-620c-4a59-89a6-8b85bbd7824b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "35367b08-43b9-429c-9c2e-cc929e553a89",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Retract Line",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "EraseSegment",
+            "id": "64998524-3e01-40d5-81fc-fcd6109b2747",
+            "actions": [
+                {
+                    "name": "EraseSegment",
+                    "type": "Button",
+                    "id": "e249186c-7d01-4178-aa60-2cef59a2c039",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8f4d4b27-b49f-413b-ac56-16d13055e16e",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EraseSegment",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "RotateClockwise",
+            "id": "5537c6a9-6210-4798-a357-361324c4c758",
+            "actions": [
+                {
+                    "name": "Rotate Clockwise",
+                    "type": "Button",
+                    "id": "6d10669e-be56-4ad0-b978-addba8eb52fa",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0ff10bb8-a7e2-4396-9e97-f838cd79fee4",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate Clockwise",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "RotateCounterClockwise",
+            "id": "4f7f3469-c41d-4752-880b-e936e90f7b9d",
+            "actions": [
+                {
+                    "name": "Rotate CounterClockwise",
+                    "type": "Button",
+                    "id": "776b96e4-3c08-416d-9a95-b62df6497581",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "92ccc830-6dda-4a3d-affe-eee230b2b4ab",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate CounterClockwise",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "SelectNextSegment",
+            "id": "f144b081-0b4e-4d1d-a022-e39a444660ae",
+            "actions": [
+                {
+                    "name": "Select Next Segment",
+                    "type": "Button",
+                    "id": "3ccd5cc4-9cc4-4f45-80cd-e5db5dfb2f59",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "82b896dc-b79f-47ee-936e-ed9eeb2b1cf6",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select Next Segment",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "SelectPreviousSegment",
+            "id": "6281ca91-e871-495e-9446-9c11d9452996",
+            "actions": [
+                {
+                    "name": "Select Previous Segment",
+                    "type": "Button",
+                    "id": "f9a2cacf-9d80-4b88-8225-6e0c678761ca",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "81f1fcfd-80fb-4a31-b037-ba25e7d568fe",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select Previous Segment",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "PrintCoordinates",
+            "id": "b620503f-47fd-4b71-a6f4-664c18efd93a",
+            "actions": [
+                {
+                    "name": "PrintCoordinates",
+                    "type": "Button",
+                    "id": "21ca0535-4255-40f0-b750-a7368befe3e8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "fbfd3092-6883-48e4-b344-3c423cffbe30",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrintCoordinates",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "ExportCoordinates",
+            "id": "64e3027d-c602-4249-9328-0ae4aed1d01e",
+            "actions": [
+                {
+                    "name": "PrintCoordinates",
+                    "type": "Button",
+                    "id": "90861b2c-e6c6-439e-8485-4049379a80b1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b1f9e849-d586-4843-80fd-de1389ba814d",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrintCoordinates",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
