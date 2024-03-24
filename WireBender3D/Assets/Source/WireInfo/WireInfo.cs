@@ -24,12 +24,12 @@ public class WireInfo : MonoBehaviour
     void Start()
     {
         _wireUserRenderer = _wireUserCreator.gameObject.GetComponent<WireRenderer>();
+        _wireUserRenderer.OnMeshGenerated += PlaceMeasurements;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        PlaceMeasurements();
+        _wireUserRenderer.OnMeshGenerated -= PlaceMeasurements;
     }
 
     void PlaceMeasurements()
