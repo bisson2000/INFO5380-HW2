@@ -187,7 +187,7 @@ public class WireUserCreator : WireCreator
         string csvContent = "";
 
         // Header
-        csvContent += "x,y,z\n";
+        csvContent += "X,Y,Z\n";
 
         // Build the CSV content
         foreach (Vector3 point in _wireRenderer.Positions)
