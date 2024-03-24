@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public class WireInfo : MonoBehaviour
@@ -14,7 +15,13 @@ public class WireInfo : MonoBehaviour
 
     [SerializeField] 
     private GameObject informationPrefab;
+    
+    [SerializeField] 
+    private Transform activationChild;
 
+    [SerializeField] 
+    private InputActionProperty displayInfoAction = new InputActionProperty(new InputAction("Display Info", type: InputActionType.Button));
+    
     private List<GameObject> _createdInformation = new List<GameObject>();
     
 
@@ -25,14 +32,32 @@ public class WireInfo : MonoBehaviour
     {
         _wireUserRenderer = _wireUserCreator.gameObject.GetComponent<WireRenderer>();
         _wireUserRenderer.OnMeshGenerated += PlaceMeasurements;
+        displayInfoAction.action.performed += ShowInfo;
     }
 
     private void OnDestroy()
     {
         _wireUserRenderer.OnMeshGenerated -= PlaceMeasurements;
+        displayInfoAction.action.performed -= ShowInfo;
+
     }
 
-    void PlaceMeasurements()
+    private void OnEnable()
+    {
+        displayInfoAction.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        displayInfoAction.action.Disable();
+    }
+
+    private void ShowInfo(InputAction.CallbackContext obj)
+    {
+        activationChild.gameObject.SetActive(!activationChild.gameObject.activeSelf);
+    }
+
+    private void PlaceMeasurements()
     {
         
         // Erase last information
@@ -97,7 +122,7 @@ public class WireInfo : MonoBehaviour
         Vector3 end = _wireUserRenderer.Positions[endindex];
         Vector3 up = WireRenderer.GetUp(start, startRot);
 
-        GameObject go = Instantiate(informationPrefab, transform);
+        GameObject go = Instantiate(informationPrefab, activationChild);
         go.GetComponent<WireInfoMediator>().SetLine(start, end, up, _wireUserRenderer.Radius);
         _createdInformation.Add(go);
     }
@@ -141,7 +166,7 @@ public class WireInfo : MonoBehaviour
         Vector3 endUp = (end - pivotPoint).normalized;
         
         
-        GameObject go = Instantiate(informationPrefab, transform);
+        GameObject go = Instantiate(informationPrefab, activationChild);
         go.GetComponent<WireInfoMediator>().SetCurve(start, middle, end, middleUp, _wireUserRenderer.Radius, curve);
         _createdInformation.Add(go);
     }
