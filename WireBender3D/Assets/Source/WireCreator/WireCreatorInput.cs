@@ -81,7 +81,7 @@ public class WireCreatorInput : MonoBehaviour
         if (IsShiftHeld())
         {
             // Perform action only if Left or Right Shift Key is pressed down + Mapped Key in Input Action (Key Mapped: "L")
-            _wireUserCreator.ExtendLine();
+            _wireUserCreator.ExtendLine(0.1f);
         }
     }
     private void OnRetractLine(InputAction.CallbackContext obj)
@@ -89,7 +89,7 @@ public class WireCreatorInput : MonoBehaviour
         if (IsDeletePressed())
         {
             // Perform action only if "Delete" Key is pressed down + Mapped Key in Input Action (Key Mapped: "L")
-            _wireUserCreator.RetractLine();
+            _wireUserCreator.ExtendLine(-0.1f);
         }
     }
     private void OnCreateCurve(InputAction.CallbackContext obj)
@@ -104,7 +104,7 @@ public class WireCreatorInput : MonoBehaviour
         if (IsShiftHeld())
         {
             // Perform action only if Left or Right Shift Key is pressed down + Mapped Key in Input Action (Key Mapped: "C")
-            _wireUserCreator.ExtendCurvature();
+            _wireUserCreator.ExtendCurvature(15.0f);
         }
     }
     private void OnRetractCurvature(InputAction.CallbackContext obj)
@@ -112,7 +112,7 @@ public class WireCreatorInput : MonoBehaviour
         if (IsDeletePressed())
         {
             // Perform action only if "Delete" key is pressed down + Mapped Key in Input Action (Key Mapped: "C")
-            _wireUserCreator.RetractCurvature();
+            _wireUserCreator.ExtendCurvature(-15.0f);
         }
     }
     private void OnEraseSegment(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Backspace")
@@ -123,14 +123,14 @@ public class WireCreatorInput : MonoBehaviour
     {
         if (!IsShiftHeld()) // Perform action only if Left or Right Shift Key is NOT pressed down + Mapped Key in Input Action (Key Mapped: "R")
         {
-            _wireUserCreator.RotateSegmentClockwise();
+            _wireUserCreator.RotateSegmentClockwise(15.0f);
         }
     }
     private void OnRotateSegmentCounterClockwise(InputAction.CallbackContext obj)
     {
         if (IsShiftHeld()) // Perform action only if Left or Right Shift Key is pressed down + Mapped Key in Input Action (Key Mapped: "R")
         {
-            _wireUserCreator.RotateSegmentCounterClockwise();
+            _wireUserCreator.RotateSegmentClockwise(-15.0f);
         }
     }
     private void OnSelectNextSegment(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Up Arrow key")
