@@ -27,8 +27,9 @@ public class MouseSelector : MonoBehaviour
         {
             RaycastHit hitInfo = new RaycastHit();
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            bool isOverUI = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
             bool hit = Physics.Raycast(ray, out hitInfo, Mathf.Infinity, _layerMask);
-            if (hit)
+            if (hit && !isOverUI)
             {
                 SetSelection(hitInfo.point);
             }
