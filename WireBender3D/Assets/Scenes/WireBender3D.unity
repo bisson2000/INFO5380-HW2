@@ -714,6 +714,7 @@ GameObject:
   - component: {fileID: 1253217004}
   - component: {fileID: 1253217003}
   - component: {fileID: 1253217002}
+  - component: {fileID: 1253217005}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -788,13 +789,136 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1253217001}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.077182464, y: -0.4133995, z: 0.03513328, w: 0.90659225}
-  m_LocalPosition: {x: 11.958466, y: 5.4936476, z: -1.3593788}
+  m_LocalRotation: {x: 0.122654475, y: -0.33909407, z: 0.044642568, w: 0.9316535}
+  m_LocalPosition: {x: 6.57, y: 4.7, z: -1.3593788}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 24.4, y: -45, z: 0}
+  m_LocalEulerAnglesHint: {x: 15, y: -40, z: 0}
+--- !u!114 &1253217005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253217001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c55429a5111b594da31ef9d2f30abe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xSpeed: 8
+  ySpeed: 8
+  movementSpeed: 5
+  movementClick:
+    m_UseReference: 1
+    m_Action:
+      m_Name: forward
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 7cd63e47-a8c4-4be4-9522-de5e9e765cb9
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 980385117439490873, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  forward:
+    m_UseReference: 1
+    m_Action:
+      m_Name: forward
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 8d5456ab-9d47-42f0-becf-0d982237fd90
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 3092017334608850583, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  backwards:
+    m_UseReference: 1
+    m_Action:
+      m_Name: backwards
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 0125d7e5-97fd-4e3a-a65a-eeec40bf4032
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 9095853939650702350, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  left:
+    m_UseReference: 1
+    m_Action:
+      m_Name: left
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 2b91ca36-534e-4df3-ae5b-de37693d2d9a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 7336545085580162111, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  right:
+    m_UseReference: 1
+    m_Action:
+      m_Name: right
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 01b5922c-3a56-4e1f-8b7c-6413d5f796f7
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2422567546470619585, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  up:
+    m_UseReference: 1
+    m_Action:
+      m_Name: up
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 947fac5e-3516-46d2-9269-a98d11138434
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8938654379697871919, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  down:
+    m_UseReference: 1
+    m_Action:
+      m_Name: down
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: ccc880a1-1b69-4f5f-ae3b-4073fbe8cb0d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 8178314802183242881, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  mouseHorizontal:
+    m_UseReference: 1
+    m_Action:
+      m_Name: mouseHorizontal
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 950bbefb-ebdf-4288-ad64-55ecaac0cd6c
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 7040833081821554849, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
+  mouseVertical:
+    m_UseReference: 1
+    m_Action:
+      m_Name: mouseVertical
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 5aa97d1a-0b49-4f9a-a0f6-717b6d81f657
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -5241816192113574375, guid: 8e41cf46fba0ca34d905b0f3af3e157e, type: 3}
 --- !u!1 &1359068791
 GameObject:
   m_ObjectHideFlags: 0

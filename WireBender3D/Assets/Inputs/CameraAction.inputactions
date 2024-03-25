@@ -1,0 +1,258 @@
+{
+    "name": "CameraAction",
+    "maps": [
+        {
+            "name": "EnableCamera",
+            "id": "00646304-5a64-414d-907f-a40ea3ac7b7a",
+            "actions": [
+                {
+                    "name": "EnableCamera",
+                    "type": "Button",
+                    "id": "0f7ee434-baf4-4ca6-9f65-3f92574b00eb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e2922199-f9bc-4220-b4ac-6c3eff9ed66c",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EnableCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraForward",
+            "id": "5865fe70-bc38-48fe-8ecb-7e42756d6752",
+            "actions": [
+                {
+                    "name": "CameraForward",
+                    "type": "Button",
+                    "id": "77a1fe53-fa1c-4d23-b593-d636b2da55e8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "40a4ee3e-de45-45e2-8ad0-b6f1132abfa7",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraForward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraBackwards",
+            "id": "51203cba-1935-41c1-a4fc-f602b6a72b49",
+            "actions": [
+                {
+                    "name": "CameraBackwards",
+                    "type": "Button",
+                    "id": "43cf8106-c0a5-4207-ac98-636f5dfecf3b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9d9c4bad-4d16-479a-a144-bf68370311a7",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraBackwards",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraLeft",
+            "id": "69613904-dd5e-4551-a443-90cfa44854f1",
+            "actions": [
+                {
+                    "name": "CameraLeft",
+                    "type": "Button",
+                    "id": "ac9693b5-7af1-4845-bfe3-f1725140b902",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c2791894-9b81-4984-ba31-92622c47c287",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraRight",
+            "id": "96523f6a-f3aa-44af-bf59-57b77964ccc1",
+            "actions": [
+                {
+                    "name": "CameraRight",
+                    "type": "Button",
+                    "id": "fe52f8d4-a66a-4abe-b176-0adeaa1fa008",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f75d19ea-3b15-487a-bc09-6baf0372273b",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraUp",
+            "id": "29d428f9-5476-4bb1-94a3-c016353aff0e",
+            "actions": [
+                {
+                    "name": "CameraUp",
+                    "type": "Button",
+                    "id": "33a44f6c-d13e-4748-aa2c-a58d2fffc2d7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9880406c-c06e-4a10-9a3c-decc209183e6",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraDown",
+            "id": "20a6edbb-9fc2-4959-b158-6feb96279ca5",
+            "actions": [
+                {
+                    "name": "CameraDown",
+                    "type": "Button",
+                    "id": "7d061292-d96d-496c-bfbe-ef8fe7f2e0ef",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "612b71f2-5c01-4485-946b-1cf2b6c9e458",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "MouseHorizontal",
+            "id": "9a535eb9-24ae-42d2-b59c-5b1d5e1d21a4",
+            "actions": [
+                {
+                    "name": "MouseHorizontal",
+                    "type": "Value",
+                    "id": "bc408424-89b9-469c-906d-19d58c21b3ad",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9266eeae-4bcf-49d4-bb99-69fb9b9a36c6",
+                    "path": "<Mouse>/delta/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseHorizontal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "MouseVertical",
+            "id": "dfe3fe56-dce6-423e-a374-b35c40099253",
+            "actions": [
+                {
+                    "name": "MouseVertical",
+                    "type": "Value",
+                    "id": "98e31b2b-c7ba-4ecf-ab6f-68bc9d126a45",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "63f91d4e-ea51-4632-9f31-738f2bb6b7a8",
+                    "path": "<Mouse>/delta/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseVertical",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
