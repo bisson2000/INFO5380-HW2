@@ -83,7 +83,7 @@ public class WireInfoMediator : MonoBehaviour
 
     public void SetCurve(Vector3 start, Vector3 middle, Vector3 end, Vector3 middleUp, float radius, Curve curve)
     {
-        float curveLength = curve.CurvatureAngleDegrees * Mathf.Deg2Rad * radius; // L = Theta * radius
+        float curveLength = curve.CurvatureAngleDegrees * Mathf.Deg2Rad * curve.DistanceFromCenter; // L = Theta * radius
         
         // Set info
         segmentType.text = "Type: Curve";
