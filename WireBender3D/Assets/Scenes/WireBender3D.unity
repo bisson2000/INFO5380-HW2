@@ -5604,6 +5604,30 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 6610778539707504686, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  tightenCurve:
+    m_UseReference: 1
+    m_Action:
+      m_Name: tighten curve
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: a583d79b-5850-4e11-87dc-02ad55d4ddb7
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8776881236972317788, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  loosenCurve:
+    m_UseReference: 1
+    m_Action:
+      m_Name: loosen curve
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 818d5083-99ab-4b80-878c-26e6cef5de9f
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1628414689254613935, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
   createLineAction:
     m_UseReference: 1
     m_Action:

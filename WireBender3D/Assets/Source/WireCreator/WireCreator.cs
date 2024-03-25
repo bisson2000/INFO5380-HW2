@@ -109,7 +109,7 @@ public class WireCreator : MonoBehaviour
     {
         if (segment is Curve curve)
         {
-            InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, curve.AngleTwistDegrees, curve.CurvatureAngleDegrees);
+            InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, curve.AngleTwistDegrees, curve.CurvatureAngleDegrees, curve.DistanceFromCenter);
         }
         else if (segment is Line line)
         {
@@ -124,12 +124,12 @@ public class WireCreator : MonoBehaviour
     /// <param name="pointInsertionIndex">The point used by WireRenderer to insert the segment to</param>
     /// <param name="twistDegrees"></param>
     /// <param name="curvatureAngleDegrees"></param>
-    protected void InsertNewCurve(int segmentInsertionIndex, int pointInsertionIndex, float twistDegrees, float curvatureAngleDegrees)
+    protected void InsertNewCurve(int segmentInsertionIndex, int pointInsertionIndex, float twistDegrees, float curvatureAngleDegrees, float distanceFromCenter)
     {
         int startIndex = pointInsertionIndex - 1;
-        int totalPoints = CreateCurve(pointInsertionIndex, twistDegrees, curvatureAngleDegrees);
+        int totalPoints = CreateCurve(pointInsertionIndex, twistDegrees, curvatureAngleDegrees, distanceFromCenter);
         int endIndex = startIndex + totalPoints;
-        Curve newSegment = new Curve(startIndex, endIndex, twistDegrees, curvatureAngleDegrees);
+        Curve newSegment = new Curve(startIndex, endIndex, twistDegrees, curvatureAngleDegrees, distanceFromCenter);
         _segmentList.Insert(segmentInsertionIndex, newSegment);
     }
     
@@ -184,8 +184,9 @@ public class WireCreator : MonoBehaviour
     /// <param name="insertionIndex">The position in WireRenderer to insert to</param>
     /// <param name="pivotAngleDegrees">The rotation around itself</param>
     /// <param name="curvatureDegrees">The curvature</param>
+    /// <param name="distanceFromCenter">The distance from the center</param>
     /// <returns>The number of points created</returns>
-    private int CreateCurve(int insertionIndex, float pivotAngleDegrees, float curvatureDegrees)
+    private int CreateCurve(int insertionIndex, float pivotAngleDegrees, float curvatureDegrees, float distanceFromCenter)
     {
         float curvatureFlip = 1.0f;
         if (curvatureDegrees < 0)
@@ -196,14 +197,14 @@ public class WireCreator : MonoBehaviour
         
         int nSteps = Mathf.Max(1, (int) (curvatureDegrees / _curveAngleStep));
         float angleStep = curvatureDegrees / nSteps;
-        const float DIST_FROM_CENTER = 1.5f;
+        //const float DIST_FROM_CENTER = 1.5f;
         
         // Get the pivot point
         (Vector3 startPoint, Quaternion startRotation) = _wireRenderer.GetPositionRotation(insertionIndex - 1);
         Vector3 startForward = WireRenderer.GetForward(startPoint, startRotation);
         // The original pivot direction
         Vector3 pivotDirection = WireRenderer.GetRight(startPoint, startRotation) * curvatureFlip;
-        pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
+        pivotDirection = Quaternion.AngleAxis(pivotAngleDegrees, startForward) * pivotDirection * distanceFromCenter;
         Vector3 pivotPoint = pivotDirection + startPoint;
         
         // Get the rotation that must be completed around the pivot
@@ -228,7 +229,7 @@ public class WireCreator : MonoBehaviour
     public void AddDebugCurve()
     {
         (Vector3 lastPos, Quaternion lastRot) = _wireRenderer.GetLastPositionRotation();
-        CreateCurve(_wireRenderer.GetPositionsCount(), 0, 90);
+        CreateCurve(_wireRenderer.GetPositionsCount(), 0, 90, 1.5f);
     }
     
     public void AddDebugLine()
