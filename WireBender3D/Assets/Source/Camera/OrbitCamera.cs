@@ -6,7 +6,8 @@ public class OrbitCamera : MonoBehaviour
 {
     public float xSpeed = 8.0f;
     public float ySpeed = 8.0f;
-    public float movementSpeed = 5.0f;
+    public float movementSpeed = 5.0f; // for pan()
+    public float zoomSpeed = 5.0f; // for zooming with wheel of mouse
     
     [SerializeField] 
     private InputActionProperty movementClick = new InputActionProperty(new InputAction("forward", type: InputActionType.Button));
@@ -29,6 +30,7 @@ public class OrbitCamera : MonoBehaviour
 
     private float _mouseX = 0.0f;
     private float _mouseY = 0.0f;
+    private float moveSpeed = 1.5f;
 
     private Vector2 _horizontal = Vector2.zero;
     private Vector2 _vertical = Vector2.zero;
@@ -167,8 +169,25 @@ public class OrbitCamera : MonoBehaviour
         {
             orbit();
         }
+        panMouseWheel();
+        HandleZoomMouse();
     }
 
+    private void panMouseWheel()
+    {
+        // Simplified operation to Pan by pressing the wheel button on the mouse.
+        if (Input.GetMouseButton(2)) {
+            transform.Translate(Vector3.right * -Input.GetAxis("Mouse X") * moveSpeed);
+            transform.Translate(transform.up * -Input.GetAxis("Mouse Y") * moveSpeed, Space.World);
+        }
+    }
+    
+    private void HandleZoomMouse() {
+        // Simplified operation to zoom in or out with the mouse wheel.
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        transform.Translate(transform.forward * scroll * zoomSpeed, Space.World);
+    }
+    
     private void orbit()
     {
         // Set rotation
