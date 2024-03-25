@@ -138,14 +138,13 @@ public class WireInfo : MonoBehaviour
         }
         
         float angleStep = curve.CurvatureAngleDegrees / 2.0f;
-        const float DIST_FROM_CENTER = 1.5f;
         
         // Get the pivot point
         (Vector3 startPoint, Quaternion startRotation) = _wireUserRenderer.GetPositionRotation(curve.StartPointIndex);
         Vector3 startForward = WireRenderer.GetForward(startPoint, startRotation);
         // The original pivot direction
         Vector3 pivotDirection = WireRenderer.GetRight(startPoint, startRotation) * curvatureFlip;
-        pivotDirection = Quaternion.AngleAxis(curve.AngleTwistDegrees, startForward) * pivotDirection * DIST_FROM_CENTER;
+        pivotDirection = Quaternion.AngleAxis(curve.AngleTwistDegrees, startForward) * pivotDirection * curve.DistanceFromCenter;
         Vector3 pivotPoint = pivotDirection + startPoint;
         
         // Get the rotation that must be completed around the pivot
