@@ -63,6 +63,25 @@ public class WireUserCreator : WireCreator
     }
     
     /// <summary>
+    /// Increases the curve distance from center.   
+    /// </summary>
+    public void ExtendtCurveDistanceFromCenter(float distanceChange)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+        
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Curve curve)
+        {
+            curve.DistanceFromCenter += distanceChange;
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+        }
+    }
+    
+    /// <summary>
     /// Increases the length of the selected straight line segment by 0.1 unity meters.   
     /// </summary>
     public void ExtendLine(float extension)
@@ -199,7 +218,7 @@ public class WireUserCreator : WireCreator
         }
         
         const float twistDegrees = 0.0f;
-        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, 90.0f);
+        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, 90.0f, 1.5f);
         
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
         
