@@ -76,7 +76,7 @@ public class WireUserCreator : WireCreator
         Segment newSegmentData = currentSegment.Clone();
         if (newSegmentData is Curve curve)
         {
-            curve.DistanceFromCenter += Mathf.Max(0.0f, distanceChange);
+            curve.DistanceFromCenter = Mathf.Max(0.0f, curve.DistanceFromCenter + distanceChange);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
         }
     }
