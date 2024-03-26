@@ -83,6 +83,26 @@ public class WireUserCreator : WireCreator
     }
     
     /// <summary>
+    /// Increases the length of the selected straight line segment by 0.1 unity meters.   
+    /// </summary>
+    public void SetLineLength(float length)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+
+        // extend line
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Line line)
+        {
+            line.Length = Mathf.Max(0.0f, length);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+        }
+    }
+    
+    /// <summary>
     /// Selects the segment immediately ahead of the selected segment in the wire.   
     /// </summary>
     public void SelectNextSegment()
