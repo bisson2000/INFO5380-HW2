@@ -234,11 +234,15 @@ public class WireCreatorInput : MonoBehaviour
     }
 
     // Helper Functions to Map two Keyboard keys to Input Action
-    private bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
+    public bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
     {
         return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
     }
-    private bool IsDeletePressed() // Returns True if Delete Key is Pressed
+    public bool IsSpaceHeld() // Returns True if Space is 
+    {
+        return Keyboard.current.spaceKey.isPressed;
+    }
+    public bool IsDeletePressed() // Returns True if Delete Key is Pressed
     {
         return Keyboard.current.deleteKey.isPressed;
     }
