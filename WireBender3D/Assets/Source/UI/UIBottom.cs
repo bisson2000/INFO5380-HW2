@@ -5,6 +5,23 @@ using UnityEngine;
 public class UIBottom : MonoBehaviour
 {
     [SerializeField] private WireUserCreator _wireUserCreator;
+    [SerializeField] private WireInfo _wireInfo;
+    
+    public void OnTighten()
+    {
+        _wireUserCreator.ExtendCurveDistanceFromCenter(-0.1f);
+        Debug.Log("Tighten curvature");
+    }
+    public void OnLoosen()
+    {
+        _wireUserCreator.ExtendCurveDistanceFromCenter(0.1f);
+        Debug.Log("Loosen curvature");
+    }
+    public void OnWireInfo()
+    {
+        _wireInfo.ToggleInfo();
+        Debug.Log("Displayed Wire Info");
+    }
     public void OnButtonAddNewLine()
     {
         _wireUserCreator.AddNewLine();
@@ -20,6 +37,16 @@ public class UIBottom : MonoBehaviour
     {
         _wireUserCreator.ExtendLine(-0.1f);
         Debug.Log("Retracted Line");
+    }
+    public void OnValueChanged(string stringValue)
+    {
+        bool parsed = float.TryParse(stringValue, out float result);
+        if (!parsed)
+        {
+            return;
+        }
+        Debug.Log(result);
+        _wireUserCreator.SetLineLength(result);
     }
     public void OnButtonAddNewCurve()
     {
