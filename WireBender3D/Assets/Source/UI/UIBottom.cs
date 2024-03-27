@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIBottom : MonoBehaviour
 {
     [SerializeField] private WireUserCreator _wireUserCreator;
     [SerializeField] private WireInfo _wireInfo;
-    
+    [SerializeField] private MachineCollisions _machineCollisions;
+    public void OnToggleMachineCollisions() // Mapped Key in Input Action (Key Mapped: "Backspace")
+    {
+        _machineCollisions.ToggleMachineCollisions();
+    }
     public void OnTighten()
     {
         _wireUserCreator.ExtendCurveDistanceFromCenter(-0.1f);

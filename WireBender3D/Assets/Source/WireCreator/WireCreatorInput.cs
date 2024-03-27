@@ -58,6 +58,7 @@ public class WireCreatorInput : MonoBehaviour
     private InputActionProperty toggleInfo = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
     
     
+    
     // private WireCreator _wireCreator;
 
     private WireUserCreator _wireUserCreator;
