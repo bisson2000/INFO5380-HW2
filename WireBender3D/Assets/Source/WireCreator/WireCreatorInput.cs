@@ -52,10 +52,17 @@ public class WireCreatorInput : MonoBehaviour
     [Tooltip("Export Coordinates to CSV")]
     [SerializeField] 
     private InputActionProperty exportCoordinates2CSV = new InputActionProperty(new InputAction("Select Previous Segment", type: InputActionType.Button));
-
+    // Save coordinates to /Output/Coordinates.csv
+    [Tooltip("Export Coordinates to CSV")]
+    [SerializeField] 
+    private InputActionProperty toggleInfo = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
+    
+    
+    
     // private WireCreator _wireCreator;
 
     private WireUserCreator _wireUserCreator;
+    private WireInfo _wireInfo;
     
     // Start is called before the first frame update
     void Start()
@@ -76,8 +83,13 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.performed += OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed += OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed += OnExportCoordinates2CSV;
+        toggleInfo.action.performed += OnToggleInfo;
     }
-
+    
+    private void OnToggleInfo(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Backspace")
+    {
+        _wireInfo.ToggleInfo();
+    }
     private void OnCreateLine(InputAction.CallbackContext obj)
     {
         if (!IsShiftHeld() && !IsDeletePressed()) // If Shift is not held
@@ -145,12 +157,12 @@ public class WireCreatorInput : MonoBehaviour
     
     private void OnTightenCurve(InputAction.CallbackContext obj)
     {
-        _wireUserCreator.ExtendtCurveDistanceFromCenter(-0.1f);
+        _wireUserCreator.ExtendCurveDistanceFromCenter(-0.1f);
     }
     
     private void OnLoosenCurve(InputAction.CallbackContext obj)
     {
-        _wireUserCreator.ExtendtCurveDistanceFromCenter(0.1f);
+        _wireUserCreator.ExtendCurveDistanceFromCenter(0.1f);
     }
     
     private void OnSelectNextSegment(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Up Arrow key")
@@ -193,6 +205,7 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Enable();
         printCoordinatesAsArray.action.Enable();
         exportCoordinates2CSV.action.Enable();
+        toggleInfo.action.Enable();
     }
 
     private void OnDisable()
@@ -212,6 +225,7 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Disable();
         printCoordinatesAsArray.action.Disable();
         exportCoordinates2CSV.action.Disable();
+        toggleInfo.action.Disable();
     }
 
     private void OnDestroy()
@@ -231,14 +245,19 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.performed -= OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed -= OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed -= OnExportCoordinates2CSV;
+        toggleInfo.action.performed -= OnToggleInfo;
     }
 
     // Helper Functions to Map two Keyboard keys to Input Action
-    private bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
+    public bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
     {
         return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
     }
-    private bool IsDeletePressed() // Returns True if Delete Key is Pressed
+    public bool IsSpaceHeld() // Returns True if Space is 
+    {
+        return Keyboard.current.spaceKey.isPressed;
+    }
+    public bool IsDeletePressed() // Returns True if Delete Key is Pressed
     {
         return Keyboard.current.deleteKey.isPressed;
     }

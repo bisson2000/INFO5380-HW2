@@ -56,6 +56,11 @@ public class WireInfo : MonoBehaviour
     {
         activationChild.gameObject.SetActive(!activationChild.gameObject.activeSelf);
     }
+    public void ToggleInfo()
+    {
+        activationChild.gameObject.SetActive(!activationChild.gameObject.activeSelf);
+    }
+
 
     private void PlaceMeasurements()
     {

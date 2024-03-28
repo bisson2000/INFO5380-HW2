@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 /// <summary>
@@ -13,17 +14,18 @@ using UnityEngine;
 /// </summary>
 public class MachineCollisions : WireCreator
 {
+    [SerializeField] 
+    private InputActionProperty toogleMachineCollision = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
+
+    
     // Start is called before the first frame update
     [SerializeField] private WireCreator _referencedCreator;
     private int _segmentAnalysisCount = 1;
-    
-    [SerializeField]
-    private string layerName = "MachineMesh";
+
+    [SerializeField] private string layerName = "MachineMesh";
     private int _layerMask;
-    
-    [Min(0)]
-    [SerializeField] 
-    private int _raycastsPerFrame = 1;
+
+    [Min(0)] [SerializeField] private int _raycastsPerFrame = 1;
     private int _currentPointCounter = 0;
 
     private List<Segment> _sourceSegments = new List<Segment>();
@@ -31,16 +33,39 @@ public class MachineCollisions : WireCreator
     private List<float> _removedTwist = new List<float>();
 
     private HashSet<int> _foundCollisions = new HashSet<int>();
-    
+
     private bool _isReplaying = false;
     private bool _isFinished = false;
     private MeshRenderer _meshRenderer;
+    
+    private void OnToggleMachineCollisions(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Backspace")
+    {
+        ToggleMachineCollisions();
+    }
+    
 
     public override void Start()
     {
         base.Start();
         _layerMask = 1 << LayerMask.NameToLayer(layerName);
         _meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        
+        toogleMachineCollision.action.performed += OnToggleMachineCollisions;
+    }
+    
+    private void OnEnable()
+    {
+        toogleMachineCollision.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        toogleMachineCollision.action.Disable();
+    }
+    
+    private void OnDestroy()
+    {
+        toogleMachineCollision.action.performed -= OnToggleMachineCollisions;
     }
 
     // Update is called once per frame
@@ -50,9 +75,17 @@ public class MachineCollisions : WireCreator
         {
             DetectCollisions();
         }
-        
-        
-        if (Input.GetKeyDown(KeyCode.Alpha1) && !_isReplaying)
+
+
+        // if (Input.GetKeyDown(KeyCode.Alpha1))
+        // {
+        //     ToggleMachineCollisions();
+        // }
+    }
+
+    public void ToggleMachineCollisions()
+    {
+        if (!_isReplaying)
         {
             // remove previous results
             SetFoundCollisions(true);
@@ -74,17 +107,18 @@ public class MachineCollisions : WireCreator
             _meshRenderer.enabled = true;
             _isReplaying = true;
         }
-        
-        if (Input.GetKeyDown(KeyCode.Alpha2) && _isReplaying)
+        else
         {
             // reset visuals
             _referencedCreator.gameObject.SetActive(true);
             _meshRenderer.enabled = false;
             _isReplaying = false;
         }
+        
+        
     }
-    
-    /// <summary>
+
+/// <summary>
     /// Save the segments for later use
     /// </summary>
     /// <param name="segments">The segments to save</param>

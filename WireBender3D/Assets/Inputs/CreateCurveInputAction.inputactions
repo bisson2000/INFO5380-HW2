@@ -448,6 +448,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Collision",
+            "id": "11720330-508c-448a-85c4-8a00ff936f83",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "4b045e28-aa12-4e75-8b18-d6b19d2d9070",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ff82b769-26b0-4424-807c-ebb3139cc0ff",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
