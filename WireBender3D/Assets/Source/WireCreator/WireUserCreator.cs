@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,12 +8,31 @@ using UnityEngine;
 
 public class WireUserCreator : WireCreator
 {
+    public Action OnChange;
+    private int _selectedSegment = -1;
     
-   private int _selectedSegment = -1;
+    /// <summary>
+    /// Delete all segments.   
+    /// </summary>
+    public void EraseAllSegments()
+    {
+        if (_segmentList.Count == 0)
+        {
+            return;
+        }
+        
+        SetSelectedSegment(-2);
+        for (int i = _segmentList.Count - 1; i >= 0; i--)
+        {
+            RemoveSegmentAndPropagate(i);
+        }
+        
+        OnChange?.Invoke();
+    }
    
-   /// <summary>
-   /// Deletes selected segment.   
-   /// </summary>
+    /// <summary>
+    /// Deletes selected segment.   
+    /// </summary>
     public void EraseSegment()
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
@@ -22,6 +42,7 @@ public class WireUserCreator : WireCreator
         // erase segment
         RemoveSegmentAndPropagate(_selectedSegment);
         SetSelectedSegment(_selectedSegment - 1);
+        OnChange?.Invoke();
 
     }
     /// <summary>
@@ -41,6 +62,7 @@ public class WireUserCreator : WireCreator
             curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
         }
         ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
+        OnChange?.Invoke();
     }
     
     /// <summary>
@@ -59,6 +81,7 @@ public class WireUserCreator : WireCreator
         {
             curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
     
@@ -78,6 +101,7 @@ public class WireUserCreator : WireCreator
         {
             curve.DistanceFromCenter = Mathf.Max(0.0f, curve.DistanceFromCenter + distanceChange);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
     
@@ -98,6 +122,7 @@ public class WireUserCreator : WireCreator
         {
             line.Length = Mathf.Max(0.0f, line.Length + extension);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
     /// <summary>
@@ -117,6 +142,7 @@ public class WireUserCreator : WireCreator
         {
             line.Length = Mathf.Max(0.0f, length);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
     /// <summary>
@@ -241,6 +267,20 @@ public class WireUserCreator : WireCreator
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
         
         SetSelectedSegment(segmentInsertionIndex);
+        
+        OnChange?.Invoke();
+    }
+
+    public void AppendNewCurve(float twistDegrees, float curvatureAngleDegrees, float distanceFromCenter)
+    {
+        int segmentInsertionIndex = _segmentList.Count;
+        int pointInsertionIndex = _wireRenderer.GetPositionsCount();
+        
+        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, curvatureAngleDegrees, distanceFromCenter);
+        
+        PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
+        
+        OnChange?.Invoke();
     }
     
     /// <summary>
@@ -260,8 +300,23 @@ public class WireUserCreator : WireCreator
         InsertNewLine(segmentInsertionIndex, pointInsertionIndex, 1.0f);
         
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
-        
+                
         SetSelectedSegment(segmentInsertionIndex);
+        
+        OnChange?.Invoke();
+    }
+
+    public void AppendNewLine(float length)
+    {
+        int segmentInsertionIndex = _segmentList.Count;
+        int pointInsertionIndex = _wireRenderer.GetPositionsCount();
+        
+        const float twistDegrees = 0.0f;
+        InsertNewLine(segmentInsertionIndex, pointInsertionIndex, length);
+        
+        PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
+        
+        OnChange?.Invoke();
     }
     
     
@@ -272,6 +327,4 @@ public class WireUserCreator : WireCreator
         // Update selection
         SetSelectedSegment(_selectedSegment);
     }
-
-    
 }
