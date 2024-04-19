@@ -3,10 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class BendScriptHook : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField _inputField;
+    [SerializeField] 
+    private TMP_InputField _inputField;
+
+    [SerializeField]
+    [Tooltip("The input action map to disable when editing")]
+    private InputActionAsset _creatorActionMap;
+    
     public bool IsWritingText => _isWritingText;
     private bool _isWritingText = false;
  
@@ -38,7 +45,7 @@ public class BendScriptHook : MonoBehaviour
     private void OnSelect(string arg0)
     {
         _isWritingText = true;
-        //TODO: throw new NotImplementedException();
+        _creatorActionMap.Disable();
     }
     
     /// <summary>
@@ -48,6 +55,6 @@ public class BendScriptHook : MonoBehaviour
     private void OnDeselect(string arg0)
     {
         _isWritingText = false;
-        //TODO: throw new NotImplementedException();
+        _creatorActionMap.Enable();
     }
 }
