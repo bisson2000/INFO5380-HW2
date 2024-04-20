@@ -9,6 +9,7 @@ using UnityEngine;
 public class WireUserCreator : WireCreator
 {
     public Action OnChange;
+    public Action OnSelectionChange;
     private int _selectedSegment = -1;
     public int SelectedSegment => _selectedSegment;
     
@@ -247,6 +248,8 @@ public class WireUserCreator : WireCreator
         int start = _segmentList[_selectedSegment].StartPointIndex;
         int count = _segmentList[_selectedSegment].EndPointIndex - start;
         _wireRenderer.SetSubmesh(start,  count, 1);
+        
+        OnSelectionChange?.Invoke();
     }
     
     /// <summary>

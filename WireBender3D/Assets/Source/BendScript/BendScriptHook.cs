@@ -2,18 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ColorUtility = UnityEngine.ColorUtility;
 
 public class BendScriptHook : MonoBehaviour
 {
     [SerializeField] 
-    private TMP_InputField _inputField;
+    private TMPCustomInputField _inputField;
 
     [SerializeField] 
     private TMP_Text _lineNumber;
 
-    public HashSet<int> lineColor = new HashSet<int>();
+    public Dictionary<int, Color> lineColor = new Dictionary<int, Color>();
 
     [SerializeField]
     [Tooltip("The input action map to disable when editing")]
@@ -23,7 +25,7 @@ public class BendScriptHook : MonoBehaviour
     private bool _isWritingText = false;
  
     // callBack to mesh generated
-    public event Action<string> OnTextChanged;
+    public event Action<string, int> OnTextChanged;
     
     // Start is called before the first frame update
     void Start()
@@ -31,12 +33,20 @@ public class BendScriptHook : MonoBehaviour
         _inputField.onValueChanged.AddListener(OnTextChange);
         _inputField.onSelect.AddListener(OnSelect);
         _inputField.onDeselect.AddListener(OnDeselect);
+        _inputField.onCaretUpdateEvent += OnCaretUpdateEvent;
+    }
+
+    private void OnCaretUpdateEvent(int caretPosition)
+    {
+        //OnCaretChanged?.Invoke(caretPosition);
+        OnTextChanged?.Invoke(_inputField.text, caretPosition);
+        //throw new NotImplementedException();
     }
 
     private void OnTextChange(string text)
     {
         DisplayLineColor(text);
-        OnTextChanged?.Invoke(text);
+        OnTextChanged?.Invoke(text, _inputField.caretPosition);
     }
 
     public void DisplayLineColor()
@@ -50,9 +60,9 @@ public class BendScriptHook : MonoBehaviour
         _lineNumber.text = "";
         for (int i = 1; i <= nLines; i++)
         {
-            if (lineColor.Contains(i - 1))
+            if (lineColor.ContainsKey(i - 1))
             {
-                _lineNumber.text += "<color=#" + ColorUtility.ToHtmlStringRGB(Color.red) + "><b>" + i + "</b></color>";
+                _lineNumber.text += "<color=#" + ColorUtility.ToHtmlStringRGB(lineColor[i - 1]) + "><b>" + i + "</b></color>";
             }
             else
             {

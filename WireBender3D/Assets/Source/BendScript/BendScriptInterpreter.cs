@@ -18,12 +18,14 @@ public class BendScriptInterpreter : MonoBehaviour
     {
         bendScriptHook.OnTextChanged += OnTextChanged;
         wireUserCreator.OnChange += OnWireChange;
+        wireUserCreator.OnSelectionChange += OnWireChange;
     }
 
     private void OnDestroy()
     {
         bendScriptHook.OnTextChanged -= OnTextChanged;
         wireUserCreator.OnChange -= OnWireChange;
+        wireUserCreator.OnSelectionChange -= OnWireChange;
     }
 
     private void OnWireChange()
@@ -36,14 +38,14 @@ public class BendScriptInterpreter : MonoBehaviour
         CreateScriptFromBend();
     }
 
-    private void OnTextChanged(string text)
+    private void OnTextChanged(string text, int caretPosition)
     {
         if (!bendScriptHook.IsWritingText)
         {
             return;
         }
         
-        CreateBendFromText(text);
+        CreateBendFromText(text, caretPosition);
     }
 
     // Update is called once per frame
@@ -56,7 +58,9 @@ public class BendScriptInterpreter : MonoBehaviour
     {
         IReadOnlyList<Segment> segmentList = wireUserCreator.SegmentList;
         StringBuilder stringBuilder =  new StringBuilder();
-        
+
+        int selectedLine = 0;
+        int lineCounter = -1;
         float lastSeenRotation = 0.0f;
         for (int i = 0; i < segmentList.Count; i++)
         {
@@ -71,25 +75,39 @@ public class BendScriptInterpreter : MonoBehaviour
                 stringBuilder.Insert(0, "arc " + curve.DistanceFromCenter.ToString("F", CultureInfo.InvariantCulture));
                 
                 lastSeenRotation = curve.AngleTwistDegrees;
+                lineCounter += 2;
             } 
             else if (segmentList[i] is Line line)
             {
                 stringBuilder.Insert(0, "feed " + line.Length.ToString("F", CultureInfo.InvariantCulture) + "\n");
+                lineCounter += 1;
+            }
+
+            if (i == wireUserCreator.SegmentList.Count - wireUserCreator.SelectedSegment - 1)
+            {
+                selectedLine = lineCounter;
             }
         }
         
         bendScriptHook.SetText(stringBuilder.ToString());
+        
+        // Set line colors
+        bendScriptHook.lineColor.Clear();
+        bendScriptHook.lineColor.Add(selectedLine, Color.yellow);
+        bendScriptHook.DisplayLineColor();
     }
 
-    private void CreateBendFromText(string text)
+    private void CreateBendFromText(string text, int caretPosition)
     {
         string[] lines = text.Split("\n");
         List<Segment> segmentCreation = new List<Segment>();
-        HashSet<int> syntaxErrorLines = new HashSet<int>();
+        Dictionary<int, Color> syntaxErrorLines = new Dictionary<int, Color>();
+        
+        int targetIndex = -1;
+        int caretPositionFromLast = text.Length - caretPosition;
+        int selectedLine = 0;
         
         // TODO: Parse text
-        //string parsedText = _inputField.textComponent.GetParsedText();
-        //Debug.Log(parsedText); Does not work
 
         float accumulatedRotation = 0.0f;
         for (int i = lines.Length - 1; i >= 0; i--)
@@ -103,7 +121,12 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxErrorLines.Add(i);
+                    syntaxErrorLines.Add(i, Color.red);
+                }
+                
+                if (caretPositionFromLast >= 0)
+                {
+                    targetIndex++;
                 }
             }
             else if (currentLine.StartsWith("arc "))
@@ -118,7 +141,12 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxErrorLines.Add(i);
+                    syntaxErrorLines.Add(i, Color.red);
+                }
+                
+                if (caretPositionFromLast >= 0)
+                {
+                    targetIndex++;
                 }
             }
             else if (currentLine.StartsWith("rotate "))
@@ -129,25 +157,34 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxErrorLines.Add(i);
+                    syntaxErrorLines.Add(i, Color.red);
                 }
             }
             else if (currentLine != "")
             {
-                syntaxErrorLines.Add(i);
+                syntaxErrorLines.Add(i, Color.red);
+            }
+
+            if (caretPositionFromLast >= 0)
+            {
+                caretPositionFromLast -= currentLine.Length + 1;
+                selectedLine = i;
             }
         }
 
-        bendScriptHook.lineColor = syntaxErrorLines;
-        bendScriptHook.DisplayLineColor();
+        // Set line colors
+        bendScriptHook.lineColor.Clear();
         if (syntaxErrorLines.Count > 0)
         {
+            bendScriptHook.lineColor = syntaxErrorLines;
+            bendScriptHook.DisplayLineColor();
             Debug.Log("Syntax error");
-            
             return;
         }
+        bendScriptHook.lineColor.Add(selectedLine, Color.yellow);
+        bendScriptHook.DisplayLineColor();
 
-        int selectedSegment = wireUserCreator.SelectedSegment;
+        // Create segments
         wireUserCreator.EraseAllSegments();
         for (int i =  0; i < segmentCreation.Count; i++)
         {
@@ -160,22 +197,7 @@ public class BendScriptInterpreter : MonoBehaviour
                 wireUserCreator.AppendNewLine(line.Length);
             }
         }
-        wireUserCreator.SetSelectedSegment(selectedSegment);
-        
-    }
-
-    private void ParseFeed(string line)
-    {
-        
-    }
-    
-    private void ParseRotate(string line)
-    {
-        
-    }
-
-    private void ParseArc(string line)
-    {
+        wireUserCreator.SetSelectedSegment(targetIndex);
         
     }
 }
