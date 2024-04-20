@@ -10,6 +10,11 @@ public class BendScriptHook : MonoBehaviour
     [SerializeField] 
     private TMP_InputField _inputField;
 
+    [SerializeField] 
+    private TMP_Text _lineNumber;
+
+    public HashSet<int> lineColor = new HashSet<int>();
+
     [SerializeField]
     [Tooltip("The input action map to disable when editing")]
     private InputActionAsset _creatorActionMap;
@@ -30,7 +35,31 @@ public class BendScriptHook : MonoBehaviour
 
     private void OnTextChange(string text)
     {
+        DisplayLineColor(text);
         OnTextChanged?.Invoke(text);
+    }
+
+    public void DisplayLineColor()
+    {
+        DisplayLineColor(_inputField.text);
+    }
+
+    private void DisplayLineColor(string text)
+    {
+        int nLines = text.Split('\n').Length;
+        _lineNumber.text = "";
+        for (int i = 1; i <= nLines; i++)
+        {
+            if (lineColor.Contains(i - 1))
+            {
+                _lineNumber.text += "<color=#" + ColorUtility.ToHtmlStringRGB(Color.red) + "><b>" + i + "</b></color>";
+            }
+            else
+            {
+                _lineNumber.text += i;
+            }
+            _lineNumber.text += "\n";
+        }
     }
 
     public void SetText(string text)

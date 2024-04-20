@@ -83,14 +83,14 @@ public class BendScriptInterpreter : MonoBehaviour
 
     private void CreateBendFromText(string text)
     {
-        string[] lines = text.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+        string[] lines = text.Split("\n");
         List<Segment> segmentCreation = new List<Segment>();
+        HashSet<int> syntaxErrorLines = new HashSet<int>();
         
         // TODO: Parse text
         //string parsedText = _inputField.textComponent.GetParsedText();
         //Debug.Log(parsedText); Does not work
 
-        bool syntaxError = false;
         float accumulatedRotation = 0.0f;
         for (int i = lines.Length - 1; i >= 0; i--)
         {
@@ -103,8 +103,7 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxError = true;
-                    break;
+                    syntaxErrorLines.Add(i);
                 }
             }
             else if (currentLine.StartsWith("arc "))
@@ -119,8 +118,7 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxError = true;
-                    break;
+                    syntaxErrorLines.Add(i);
                 }
             }
             else if (currentLine.StartsWith("rotate "))
@@ -131,23 +129,25 @@ public class BendScriptInterpreter : MonoBehaviour
                 }
                 else
                 {
-                    syntaxError = true;
-                    break;
+                    syntaxErrorLines.Add(i);
                 }
             }
-            else
+            else if (currentLine != "")
             {
-                syntaxError = true;
-                break;
+                syntaxErrorLines.Add(i);
             }
         }
 
-        if (syntaxError)
+        bendScriptHook.lineColor = syntaxErrorLines;
+        bendScriptHook.DisplayLineColor();
+        if (syntaxErrorLines.Count > 0)
         {
             Debug.Log("Syntax error");
+            
             return;
         }
 
+        int selectedSegment = wireUserCreator.SelectedSegment;
         wireUserCreator.EraseAllSegments();
         for (int i =  0; i < segmentCreation.Count; i++)
         {
@@ -160,6 +160,7 @@ public class BendScriptInterpreter : MonoBehaviour
                 wireUserCreator.AppendNewLine(line.Length);
             }
         }
+        wireUserCreator.SetSelectedSegment(selectedSegment);
         
     }
 

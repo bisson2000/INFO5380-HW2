@@ -10,6 +10,7 @@ public class WireUserCreator : WireCreator
 {
     public Action OnChange;
     private int _selectedSegment = -1;
+    public int SelectedSegment => _selectedSegment;
     
     /// <summary>
     /// Delete all segments.   
