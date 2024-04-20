@@ -178,7 +178,6 @@ public class BendScriptInterpreter : MonoBehaviour
         {
             bendScriptHook.lineColor = syntaxErrorLines;
             bendScriptHook.DisplayLineColor();
-            Debug.Log("Syntax error");
             return;
         }
         bendScriptHook.lineColor.Add(selectedLine, Color.yellow);
