@@ -2913,10 +2913,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1341215738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 55, y: 0}
-  m_SizeDelta: {x: 110, y: 143.02}
+  m_SizeDelta: {x: 110, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &326419874
 GameObject:
@@ -9079,10 +9079,10 @@ RectTransform:
   - {fileID: 1067186538}
   m_Father: {fileID: 1341215738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 255, y: 0}
-  m_SizeDelta: {x: 290, y: 139.01999}
+  m_SizeDelta: {x: 290, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1585912589
 MonoBehaviour:
@@ -11623,9 +11623,10 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 5108002753781944529, guid: e28abd589eea0c74db9bf82cb2e5a6d2, type: 3}
+  _referencedInfo: {fileID: 717194925}
   _referencedCreator: {fileID: 1735342552}
   layerName: MachineMesh
-  _raycastsPerFrame: 1
+  _raycastsPerFrame: 1000
 --- !u!114 &2112502093
 MonoBehaviour:
   m_ObjectHideFlags: 0
