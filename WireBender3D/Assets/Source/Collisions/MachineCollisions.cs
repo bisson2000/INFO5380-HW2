@@ -35,8 +35,15 @@ public class MachineCollisions : WireCreator
     [Tooltip("Units / frame")]
     [Min(1e-6f)]
     //[SerializeField] 
-    private float _speed = 0.1f;
-    private float _currentRatio = 0.0f;
+    private float _feedSpeed = 0.1f;
+    private float _currentRatio = 1.0f;
+    
+    [Tooltip("Units / frame")]
+    [Min(1e-6f)]
+    //[SerializeField] 
+    private float _turningSpeed = 1.0f;
+    private float _currentTwistRatio = 0.0f;
+    private bool _firstTwistEncounter = false;
     
 
     private List<Segment> _sourceSegments = new List<Segment>();
@@ -104,9 +111,12 @@ public class MachineCollisions : WireCreator
             {
                 _segmentAnalysisCount = _sourceSegments.Count;
                 _isFinished = true;
+                return;
             }
 
             _currentRatio = 1.0f;
+            _currentTwistRatio = GetTwistDifference(_segmentAnalysisCount);
+            _firstTwistEncounter = false;
             SetSegments(_segmentAnalysisCount);
             
             // Set visuals
@@ -213,7 +223,7 @@ public class MachineCollisions : WireCreator
         // Set all segments
         int startIndex = _sourceSegments.Count - countFromLast;
         float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
-        
+        twistAlteration += _currentTwistRatio;
         
         for (int i = 0; i < countFromLast; i++)
         {
@@ -273,6 +283,19 @@ public class MachineCollisions : WireCreator
                 SetSegments(_segmentAnalysisCount);
                 return;
             }
+
+            float twistDifference = GetTwistDifference(_segmentAnalysisCount);
+            if (Mathf.Abs(_currentTwistRatio) < Mathf.Abs(twistDifference))
+            {
+                if (_firstTwistEncounter)
+                {
+                    _currentTwistRatio += _turningSpeed * Mathf.Sign(twistDifference);
+                    SetSegments(_segmentAnalysisCount);
+                    return;
+                }
+                _firstTwistEncounter = true;
+            }
+            
             
             // Add another segment
             _segmentAnalysisCount++;
@@ -285,6 +308,7 @@ public class MachineCollisions : WireCreator
             else
             {
                 _currentRatio = Mathf.Min(GetSegmentIncrement(_segmentAnalysisCount), 1.0f);
+                _currentTwistRatio = 0.0f;
                 SetSegments(_segmentAnalysisCount);
             }
         }
@@ -326,14 +350,43 @@ public class MachineCollisions : WireCreator
         float increment = 0.0f;
         if (sourceSegment is Curve curve)
         {
-            increment = _speed / (curve.CurvatureAngleDegrees * Mathf.Deg2Rad * curve.DistanceFromCenter);
+            increment = _feedSpeed / (curve.CurvatureAngleDegrees * Mathf.Deg2Rad * curve.DistanceFromCenter);
         }
         else if (sourceSegment is Line line)
         {
-            increment = _speed / line.Length;
+            increment = _feedSpeed / line.Length;
         }
 
         return increment;
+    }
+
+    private float GetTwistIncrement(int countFromLast)
+    {
+        int startIndex = _sourceSegments.Count - countFromLast;
+        Segment sourceSegment = _sourceSegments[startIndex];
+
+        if (sourceSegment is Curve curve)
+        {
+            float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
+            return Mathf.Abs(_turningSpeed / twistAlteration);
+            //increment = _turningSpeed / curve.AngleTwistDegrees;
+        }
+
+        return 1.0f;
+    }
+
+    private float GetTwistDifference(int countFromLast)
+    {
+        int startIndex = _sourceSegments.Count - countFromLast;
+        int nextIndex = startIndex - 1;
+        float startTwistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
+        if (nextIndex < 0)
+        {
+            return startTwistAlteration;
+        }
+        
+        float nextTwistAlteration =  -1.0f * _removedTwist[nextIndex] + (_flipRotationAtPoint[nextIndex] ? 180.0f : 0.0f);
+        return nextTwistAlteration - startTwistAlteration;
     }
     
 }
