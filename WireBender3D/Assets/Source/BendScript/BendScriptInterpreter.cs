@@ -137,7 +137,7 @@ public class BendScriptInterpreter : MonoBehaviour
                     && Single.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float angle))
                 {
                     segmentCreation.Add(new Curve(0, 0, accumulatedRotation, angle, radius));
-                    accumulatedRotation = 0.0f;
+                    //accumulatedRotation = 0.0f;
                 }
                 else
                 {
