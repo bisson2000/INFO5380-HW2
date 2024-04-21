@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +18,9 @@ public class MachineCollisions : WireCreator
     [SerializeField] 
     private InputActionProperty toogleMachineCollision = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
 
+    [Tooltip("The referenced information component")]
+    [SerializeField]
+    private WireInfo _referencedInfo;
     
     // Start is called before the first frame update
     [SerializeField] private WireCreator _referencedCreator;
@@ -27,6 +31,13 @@ public class MachineCollisions : WireCreator
 
     [Min(0)] [SerializeField] private int _raycastsPerFrame = 1;
     private int _currentPointCounter = 0;
+
+    [Tooltip("Units / frame")]
+    [Min(1e-6f)]
+    //[SerializeField] 
+    private float _speed = 0.1f;
+    private float _currentRatio = 0.0f;
+    
 
     private List<Segment> _sourceSegments = new List<Segment>();
     private List<bool> _flipRotationAtPoint = new List<bool>();
@@ -75,12 +86,6 @@ public class MachineCollisions : WireCreator
         {
             DetectCollisions();
         }
-
-
-        // if (Input.GetKeyDown(KeyCode.Alpha1))
-        // {
-        //     ToggleMachineCollisions();
-        // }
     }
 
     public void ToggleMachineCollisions()
@@ -100,9 +105,12 @@ public class MachineCollisions : WireCreator
                 _segmentAnalysisCount = _sourceSegments.Count;
                 _isFinished = true;
             }
+
+            _currentRatio = 1.0f;
             SetSegments(_segmentAnalysisCount);
             
             // Set visuals
+            _referencedInfo.gameObject.SetActive(false);
             _referencedCreator.gameObject.SetActive(false);
             _meshRenderer.enabled = true;
             _isReplaying = true;
@@ -110,6 +118,7 @@ public class MachineCollisions : WireCreator
         else
         {
             // reset visuals
+            _referencedInfo.gameObject.SetActive(true);
             _referencedCreator.gameObject.SetActive(true);
             _meshRenderer.enabled = false;
             _isReplaying = false;
@@ -203,18 +212,25 @@ public class MachineCollisions : WireCreator
         
         // Set all segments
         int startIndex = _sourceSegments.Count - countFromLast;
-        Segment sourceSegment = _sourceSegments[startIndex];
         float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
+        
         
         for (int i = 0; i < countFromLast; i++)
         {
             int indexInSource = startIndex + i;
             Segment newSegment = _sourceSegments[indexInSource].Clone();
-            newSegment.StartPointIndex -= sourceSegment.StartPointIndex;
-            newSegment.EndPointIndex -= sourceSegment.StartPointIndex;
+            newSegment.StartPointIndex = i == 0 ? 0 : _segmentList[i - 1].EndPointIndex;
             if (newSegment is Curve newCurve)
             {
                 newCurve.AngleTwistDegrees = IncrementAngleDegrees(newCurve.AngleTwistDegrees, twistAlteration);
+                if (i == 0)
+                {
+                    newCurve.CurvatureAngleDegrees *= _currentRatio;
+                }
+            }
+            else if (i == 0 && newSegment is Line newLine)
+            { 
+                newLine.Length *= _currentRatio;
             }
             
             InsertNewSegment(i, newSegment.StartPointIndex + 1, newSegment);
@@ -226,26 +242,40 @@ public class MachineCollisions : WireCreator
         int startIndex = _sourceSegments[^_segmentAnalysisCount].StartPointIndex;
         
         // Detect the collisions
-        for (int i = _currentPointCounter; i < _wireRenderer.Positions.Count - 1; i++)
+        int segmentIndex = 0;
+        for (int i = _currentPointCounter; i < _wireRenderer.Positions.Count - 1 && i < _currentPointCounter + _raycastsPerFrame; i++)
         {
+            if (i >= SegmentList[segmentIndex].EndPointIndex)
+            {
+                segmentIndex++;
+            }
             Vector3 start = transform.TransformPoint(_wireRenderer.Positions[i]);
             Vector3 end = transform.TransformPoint(_wireRenderer.Positions[i + 1]);
             bool hit = Physics.CheckCapsule(start, end, _wireRenderer.Radius, _layerMask);
             if (hit)
             {
-                int pointAbsoluteIndex = startIndex + i;
-                _foundCollisions.Add(pointAbsoluteIndex);
+                //int pointAbsoluteIndex = startIndex + i;
+                int segmentAbsoluteIndex = _sourceSegments.Count - _segmentAnalysisCount + segmentIndex;
+                _foundCollisions.Add(segmentAbsoluteIndex);
             }
         }
 
-        _currentPointCounter = Mathf.Max(_currentPointCounter + _raycastsPerFrame, _wireRenderer.Positions.Count);
+        _currentPointCounter = Mathf.Min(_currentPointCounter + _raycastsPerFrame, _wireRenderer.Positions.Count);
 
         // Everything was analysed for the current segment sublist
         if (_currentPointCounter >= _wireRenderer.Positions.Count)
         {
+            _currentPointCounter = 0;
+            if (_currentRatio < 1.0f)
+            {
+                _currentRatio += GetSegmentIncrement(_segmentAnalysisCount);
+                _currentRatio = Mathf.Min(_currentRatio, 1.0f);
+                SetSegments(_segmentAnalysisCount);
+                return;
+            }
+            
             // Add another segment
             _segmentAnalysisCount++;
-            _currentPointCounter = 0;
 
             if (_segmentAnalysisCount > _sourceSegments.Count)
             {
@@ -254,6 +284,7 @@ public class MachineCollisions : WireCreator
             }
             else
             {
+                _currentRatio = Mathf.Min(GetSegmentIncrement(_segmentAnalysisCount), 1.0f);
                 SetSegments(_segmentAnalysisCount);
             }
         }
@@ -265,14 +296,44 @@ public class MachineCollisions : WireCreator
     /// <param name="reset">Reset the feedback and the found collisions</param>
     private void SetFoundCollisions(bool reset)
     {
+        HashSet<int> affectedPoints = new HashSet<int>();
         if (reset)
         {
-            _wireRenderer.SetSubmesh(_foundCollisions, 0);
+            foreach (int i in _foundCollisions)
+            {
+                int count = _sourceSegments[i].EndPointIndex - _sourceSegments[i].StartPointIndex;
+                affectedPoints.UnionWith(Enumerable.Range(_sourceSegments[i].StartPointIndex, count));
+            }
+            _wireRenderer.SetSubmesh(affectedPoints, 0);
             _foundCollisions.Clear();
         }
         
-        _wireRenderer.SetSubmesh(_foundCollisions, 2);
+        affectedPoints.Clear();
+        foreach (int i in _foundCollisions)
+        {
+            int count = _sourceSegments[i].EndPointIndex - _sourceSegments[i].StartPointIndex;
+            affectedPoints.UnionWith(Enumerable.Range(_sourceSegments[i].StartPointIndex, count));
+        }
+        _wireRenderer.SetSubmesh(affectedPoints, 2);
         
+    }
+
+    private float GetSegmentIncrement(int countFromLast)
+    {
+        int startIndex = _sourceSegments.Count - countFromLast;
+        Segment sourceSegment = _sourceSegments[startIndex];
+
+        float increment = 0.0f;
+        if (sourceSegment is Curve curve)
+        {
+            increment = _speed / (curve.CurvatureAngleDegrees * Mathf.Deg2Rad * curve.DistanceFromCenter);
+        }
+        else if (sourceSegment is Line line)
+        {
+            increment = _speed / line.Length;
+        }
+
+        return increment;
     }
     
 }
