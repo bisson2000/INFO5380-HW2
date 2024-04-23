@@ -59,8 +59,8 @@ public class BendScriptInterpreter : MonoBehaviour
         IReadOnlyList<Segment> segmentList = wireUserCreator.SegmentList;
         StringBuilder stringBuilder =  new StringBuilder();
 
-        int selectedLine = 0;
-        int lineCounter = -1;
+        int selectedLineReversed = 0;
+        int lineCounter = 0;
         float lastSeenRotation = 0.0f;
         for (int i = 0; i < segmentList.Count; i++)
         {
@@ -83,9 +83,9 @@ public class BendScriptInterpreter : MonoBehaviour
                 lineCounter += 1;
             }
 
-            if (i == wireUserCreator.SegmentList.Count - wireUserCreator.SelectedSegment - 1)
+            if (i == wireUserCreator.SelectedSegment)
             {
-                selectedLine = lineCounter;
+                selectedLineReversed = lineCounter;
             }
         }
         
@@ -93,7 +93,7 @@ public class BendScriptInterpreter : MonoBehaviour
         
         // Set line colors
         bendScriptHook.lineColor.Clear();
-        bendScriptHook.lineColor.Add(selectedLine, Color.yellow);
+        bendScriptHook.lineColor.Add(lineCounter - selectedLineReversed, Color.yellow);
         bendScriptHook.DisplayLineColor();
     }
 
