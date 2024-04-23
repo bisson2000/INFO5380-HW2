@@ -10,7 +10,34 @@ git clone git@github.com:bisson2000/INFO5380-HW2.git
 
 ## How to get started
 
-TODO
+Requirements:
+- Unity 2022.3.7f1
+
+Steps:
+1. Clone the project
+2. Open the project in Unity 2022.3.7f1
+3. In Assets/Scenes, open MainMenu.unity
+4. Click Play
+
+## Hotkeys
+
+- Adding line: L (lowercase)
+    - If you have a line segment selected and you want to increase the line shift + L 
+    - If you have a line segment selected and you want to retract the line del + l 
+- Adding curve: C (lowercase)
+    - If you have a line segment selected and you want to increase the line shift + L
+    - If you have a line segment selected and you want to retract the line del + c
+- Rotate clockwise: R
+- Counterclockwise: shift + R
+- Tighten the curvature (increase or decrease the radius of rotation): k
+- Loosen: J
+- Toggle length, bend, angle: i
+- Erase: backspace 
+- Next segment selection: ↑ (Arrow up)
+- Previous segment: ↓ (Arrow down)
+- Show collisions: M
+- Save: Shift + P  to save coordinates to CSV
+
 
 ## How to start developing
 

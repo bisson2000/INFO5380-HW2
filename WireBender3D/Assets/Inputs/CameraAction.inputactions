@@ -15,19 +15,7 @@
                     "initialStateCheck": false
                 }
             ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "e2922199-f9bc-4220-b4ac-6c3eff9ed66c",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "EnableCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
+            "bindings": []
         },
         {
             "name": "CameraForward",

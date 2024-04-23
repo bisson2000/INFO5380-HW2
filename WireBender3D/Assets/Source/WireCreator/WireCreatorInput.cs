@@ -14,6 +14,13 @@ public class WireCreatorInput : MonoBehaviour
     // Retract Curvature
     [SerializeField] 
     private InputActionProperty retractCurvature = new InputActionProperty(new InputAction("Retract curvature of selected curve", type: InputActionType.Button));
+    // tighten Curvature
+    [SerializeField] 
+    private InputActionProperty tightenCurve = new InputActionProperty(new InputAction("tighten curve", type: InputActionType.Button));
+    // loosen Curvature
+    [SerializeField] 
+    private InputActionProperty loosenCurve = new InputActionProperty(new InputAction("loosen curve", type: InputActionType.Button));
+
     // Create Line
     [SerializeField] 
     private InputActionProperty createLineAction = new InputActionProperty(new InputAction("Create straight segment", type: InputActionType.Button));
@@ -45,10 +52,17 @@ public class WireCreatorInput : MonoBehaviour
     [Tooltip("Export Coordinates to CSV")]
     [SerializeField] 
     private InputActionProperty exportCoordinates2CSV = new InputActionProperty(new InputAction("Select Previous Segment", type: InputActionType.Button));
-
+    // Save coordinates to /Output/Coordinates.csv
+    [Tooltip("Export Coordinates to CSV")]
+    [SerializeField] 
+    private InputActionProperty toggleInfo = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
+    
+    
+    
     // private WireCreator _wireCreator;
 
     private WireUserCreator _wireUserCreator;
+    private WireInfo _wireInfo;
     
     // Start is called before the first frame update
     void Start()
@@ -57,6 +71,8 @@ public class WireCreatorInput : MonoBehaviour
         createCurveAction.action.performed += OnCreateCurve; 
         extendCurvature.action.performed += OnExtendCurvature;
         retractCurvature.action.performed += OnRetractCurvature;
+        tightenCurve.action.performed += OnTightenCurve;
+        loosenCurve.action.performed += OnLoosenCurve;
         createLineAction.action.performed += OnCreateLine; 
         extendLine.action.performed += OnExtendLine;
         retractLine.action.performed += OnRetractLine;
@@ -67,8 +83,13 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.performed += OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed += OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed += OnExportCoordinates2CSV;
+        toggleInfo.action.performed += OnToggleInfo;
     }
-
+    
+    private void OnToggleInfo(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Backspace")
+    {
+        _wireInfo.ToggleInfo();
+    }
     private void OnCreateLine(InputAction.CallbackContext obj)
     {
         if (!IsShiftHeld() && !IsDeletePressed()) // If Shift is not held
@@ -133,6 +154,17 @@ public class WireCreatorInput : MonoBehaviour
             _wireUserCreator.RotateSegmentClockwise(-15.0f);
         }
     }
+    
+    private void OnTightenCurve(InputAction.CallbackContext obj)
+    {
+        _wireUserCreator.ExtendCurveDistanceFromCenter(-0.1f);
+    }
+    
+    private void OnLoosenCurve(InputAction.CallbackContext obj)
+    {
+        _wireUserCreator.ExtendCurveDistanceFromCenter(0.1f);
+    }
+    
     private void OnSelectNextSegment(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Up Arrow key")
     {
         _wireUserCreator.SelectNextSegment();
@@ -162,6 +194,8 @@ public class WireCreatorInput : MonoBehaviour
         createLineAction.action.Enable();
         extendLine.action.Enable();
         retractLine.action.Enable();
+        tightenCurve.action.Enable();
+        loosenCurve.action.Enable();
         eraseSegment.action.Enable();
         rotateSegmentClockwise.action.Enable(); 
         rotateSegmentCounterClockwise.action.Enable();
@@ -171,6 +205,7 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Enable();
         printCoordinatesAsArray.action.Enable();
         exportCoordinates2CSV.action.Enable();
+        toggleInfo.action.Enable();
     }
 
     private void OnDisable()
@@ -179,6 +214,8 @@ public class WireCreatorInput : MonoBehaviour
         createLineAction.action.Disable();
         extendLine.action.Disable();
         retractLine.action.Disable();
+        tightenCurve.action.Enable();
+        loosenCurve.action.Enable();
         eraseSegment.action.Disable();
         rotateSegmentClockwise.action.Disable();
         rotateSegmentCounterClockwise.action.Disable();
@@ -188,6 +225,7 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Disable();
         printCoordinatesAsArray.action.Disable();
         exportCoordinates2CSV.action.Disable();
+        toggleInfo.action.Disable();
     }
 
     private void OnDestroy()
@@ -199,20 +237,27 @@ public class WireCreatorInput : MonoBehaviour
         rotateSegmentCounterClockwise.action.performed -= OnRotateSegmentCounterClockwise; 
         extendCurvature.action.performed -= OnExtendCurvature;
         retractCurvature.action.performed -= OnRetractCurvature;
+        tightenCurve.action.performed += OnTightenCurve;
+        loosenCurve.action.performed += OnLoosenCurve;
         extendLine.action.performed -= OnExtendLine;
         retractLine.action.performed -= OnRetractLine;
         selectNextSegment.action.performed -= OnSelectNextSegment;
         selectPreviousSegment.action.performed -= OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed -= OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed -= OnExportCoordinates2CSV;
+        toggleInfo.action.performed -= OnToggleInfo;
     }
-    
+
     // Helper Functions to Map two Keyboard keys to Input Action
-    private bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
+    public bool IsShiftHeld() // Returns True if Either Shift Key is Pressed
     {
         return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
     }
-    private bool IsDeletePressed() // Returns True if Delete Key is Pressed
+    public bool IsSpaceHeld() // Returns True if Space is 
+    {
+        return Keyboard.current.spaceKey.isPressed;
+    }
+    public bool IsDeletePressed() // Returns True if Delete Key is Pressed
     {
         return Keyboard.current.deleteKey.isPressed;
     }

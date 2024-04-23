@@ -392,6 +392,90 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "TightenCurve",
+            "id": "5f0fcbe9-e1b1-4922-b148-ceb15b362df4",
+            "actions": [
+                {
+                    "name": "TightenCurve",
+                    "type": "Button",
+                    "id": "5395acfd-c931-4bef-8436-bc02ff709fb2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "44c23285-29b8-4e86-941e-ded79b6e9d1b",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TightenCurve",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "LoosenCurve",
+            "id": "dcb014a4-24ce-420e-a650-19b2e4e4cab7",
+            "actions": [
+                {
+                    "name": "LoosenCurve",
+                    "type": "Button",
+                    "id": "2ecd5bf1-27c0-4613-b78b-6c4d3ba29ec0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b0a6badd-4c47-4729-8f75-87ece0d0d540",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LoosenCurve",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Collision",
+            "id": "11720330-508c-448a-85c4-8a00ff936f83",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "4b045e28-aa12-4e75-8b18-d6b19d2d9070",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ff82b769-26b0-4424-807c-ebb3139cc0ff",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

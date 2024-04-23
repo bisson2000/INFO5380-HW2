@@ -21,17 +21,19 @@ public class Curve : Segment
 {
     public float CurvatureAngleDegrees;
     public float AngleTwistDegrees;
-    public Curve(int startPointIndex, int endPointIndex, float angleTwistDegrees, float curvatureAngleDegrees) 
+    public float DistanceFromCenter;
+    public Curve(int startPointIndex, int endPointIndex, float angleTwistDegrees, float curvatureAngleDegrees, float distanceFromCenter) 
         : base(startPointIndex, endPointIndex)
     {
         AngleTwistDegrees = angleTwistDegrees;
         CurvatureAngleDegrees = curvatureAngleDegrees;
+        DistanceFromCenter = distanceFromCenter;
     }
 
 
     public override Segment Clone()
     {
-        return new Curve(StartPointIndex, EndPointIndex, AngleTwistDegrees, CurvatureAngleDegrees);
+        return new Curve(StartPointIndex, EndPointIndex, AngleTwistDegrees, CurvatureAngleDegrees, DistanceFromCenter);
     }
 }
 

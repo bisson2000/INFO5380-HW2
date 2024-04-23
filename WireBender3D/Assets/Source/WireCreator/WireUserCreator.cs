@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,12 +8,33 @@ using UnityEngine;
 
 public class WireUserCreator : WireCreator
 {
+    public Action OnChange;
+    public Action OnSelectionChange;
+    private int _selectedSegment = -1;
+    public int SelectedSegment => _selectedSegment;
     
-   private int _selectedSegment = -1;
+    /// <summary>
+    /// Delete all segments.   
+    /// </summary>
+    public void EraseAllSegments()
+    {
+        if (_segmentList.Count == 0)
+        {
+            return;
+        }
+        
+        SetSelectedSegment(-2);
+        for (int i = _segmentList.Count - 1; i >= 0; i--)
+        {
+            RemoveSegmentAndPropagate(i);
+        }
+        
+        OnChange?.Invoke();
+    }
    
-   /// <summary>
-   /// Deletes selected segment.   
-   /// </summary>
+    /// <summary>
+    /// Deletes selected segment.   
+    /// </summary>
     public void EraseSegment()
     {
         if (_segmentList.Count == 0 || _selectedSegment == -1)
@@ -22,6 +44,7 @@ public class WireUserCreator : WireCreator
         // erase segment
         RemoveSegmentAndPropagate(_selectedSegment);
         SetSelectedSegment(_selectedSegment - 1);
+        OnChange?.Invoke();
 
     }
     /// <summary>
@@ -41,6 +64,7 @@ public class WireUserCreator : WireCreator
             curve.AngleTwistDegrees = IncrementAngleDegrees(curve.AngleTwistDegrees, addedRotation);
         }
         ReplaceSegment(_selectedSegment, newSegmentData, addedRotation);
+        OnChange?.Invoke();
     }
     
     /// <summary>
@@ -59,6 +83,27 @@ public class WireUserCreator : WireCreator
         {
             curve.CurvatureAngleDegrees = IncrementAngleDegrees(curve.CurvatureAngleDegrees, curvatureChange);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
+        }
+    }
+    
+    /// <summary>
+    /// Increases the curve distance from center.   
+    /// </summary>
+    public void ExtendCurveDistanceFromCenter(float distanceChange)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+        
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Curve curve)
+        {
+            curve.DistanceFromCenter = Mathf.Max(0.0f, curve.DistanceFromCenter + distanceChange);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
     
@@ -79,9 +124,29 @@ public class WireUserCreator : WireCreator
         {
             line.Length = Mathf.Max(0.0f, line.Length + extension);
             ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
         }
     }
-    
+    /// <summary>
+    /// Increases the length of the selected straight line segment by 0.1 unity meters.   
+    /// </summary>
+    public void SetLineLength(float length)
+    {
+        if (_segmentList.Count == 0 || _selectedSegment == -1)
+        {
+            return;
+        }
+
+        // extend line
+        Segment currentSegment = _segmentList[_selectedSegment];
+        Segment newSegmentData = currentSegment.Clone();
+        if (newSegmentData is Line line)
+        {
+            line.Length = Mathf.Max(0.0f, length);
+            ReplaceSegment(_selectedSegment, newSegmentData, 0.0f);
+            OnChange?.Invoke();
+        }
+    }
     /// <summary>
     /// Selects the segment immediately ahead of the selected segment in the wire.   
     /// </summary>
@@ -183,6 +248,8 @@ public class WireUserCreator : WireCreator
         int start = _segmentList[_selectedSegment].StartPointIndex;
         int count = _segmentList[_selectedSegment].EndPointIndex - start;
         _wireRenderer.SetSubmesh(start,  count, 1);
+        
+        OnSelectionChange?.Invoke();
     }
     
     /// <summary>
@@ -199,11 +266,25 @@ public class WireUserCreator : WireCreator
         }
         
         const float twistDegrees = 0.0f;
-        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, 90.0f);
+        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, 90.0f, 1.5f);
         
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
         
         SetSelectedSegment(segmentInsertionIndex);
+        
+        OnChange?.Invoke();
+    }
+
+    public void AppendNewCurve(float twistDegrees, float curvatureAngleDegrees, float distanceFromCenter)
+    {
+        int segmentInsertionIndex = _segmentList.Count;
+        int pointInsertionIndex = _wireRenderer.GetPositionsCount();
+        
+        InsertNewCurve(segmentInsertionIndex, pointInsertionIndex, twistDegrees, curvatureAngleDegrees, distanceFromCenter);
+        
+        PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
+        
+        OnChange?.Invoke();
     }
     
     /// <summary>
@@ -223,8 +304,23 @@ public class WireUserCreator : WireCreator
         InsertNewLine(segmentInsertionIndex, pointInsertionIndex, 1.0f);
         
         PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
-        
+                
         SetSelectedSegment(segmentInsertionIndex);
+        
+        OnChange?.Invoke();
+    }
+
+    public void AppendNewLine(float length)
+    {
+        int segmentInsertionIndex = _segmentList.Count;
+        int pointInsertionIndex = _wireRenderer.GetPositionsCount();
+        
+        const float twistDegrees = 0.0f;
+        InsertNewLine(segmentInsertionIndex, pointInsertionIndex, length);
+        
+        PropagateChange(twistDegrees, segmentInsertionIndex + 1, false);
+        
+        OnChange?.Invoke();
     }
     
     
@@ -235,6 +331,4 @@ public class WireUserCreator : WireCreator
         // Update selection
         SetSelectedSegment(_selectedSegment);
     }
-
-    
 }
