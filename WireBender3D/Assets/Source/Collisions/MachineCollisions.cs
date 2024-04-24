@@ -276,6 +276,8 @@ public class MachineCollisions : WireCreator
         if (_currentPointCounter >= _wireRenderer.Positions.Count)
         {
             _currentPointCounter = 0;
+            
+            // Progressive feed
             if (_currentRatio < 1.0f)
             {
                 _currentRatio += GetSegmentIncrement(_segmentAnalysisCount);
@@ -284,16 +286,16 @@ public class MachineCollisions : WireCreator
                 return;
             }
 
-            float twistDifference = GetTwistDifference(_segmentAnalysisCount);
-            if (Mathf.Abs(_currentTwistRatio) < Mathf.Abs(twistDifference))
-            {
-                if (_firstTwistEncounter)
-                {
-                    _currentTwistRatio += _turningSpeed * Mathf.Sign(twistDifference);
-                    SetSegments(_segmentAnalysisCount);
-                    return;
-                }
+            // Progressive twist
+            if (_sourceSegments[^_segmentAnalysisCount] is Curve)
                 _firstTwistEncounter = true;
+            
+            float twistDifference = GetTwistDifference(_segmentAnalysisCount);
+            if (Mathf.Abs(_currentTwistRatio) < Mathf.Abs(twistDifference) && _segmentAnalysisCount < _sourceSegments.Count && _firstTwistEncounter)
+            {
+                _currentTwistRatio += _turningSpeed * Mathf.Sign(twistDifference);
+                SetSegments(_segmentAnalysisCount);
+                return;
             }
             
             
@@ -360,21 +362,6 @@ public class MachineCollisions : WireCreator
         return increment;
     }
 
-    private float GetTwistIncrement(int countFromLast)
-    {
-        int startIndex = _sourceSegments.Count - countFromLast;
-        Segment sourceSegment = _sourceSegments[startIndex];
-
-        if (sourceSegment is Curve curve)
-        {
-            float twistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
-            return Mathf.Abs(_turningSpeed / twistAlteration);
-            //increment = _turningSpeed / curve.AngleTwistDegrees;
-        }
-
-        return 1.0f;
-    }
-
     private float GetTwistDifference(int countFromLast)
     {
         int startIndex = _sourceSegments.Count - countFromLast;
@@ -382,11 +369,14 @@ public class MachineCollisions : WireCreator
         float startTwistAlteration = -1.0f * _removedTwist[startIndex] + (_flipRotationAtPoint[startIndex] ? 180.0f : 0.0f);
         if (nextIndex < 0)
         {
-            return startTwistAlteration;
+            return 0.0f;
         }
         
         float nextTwistAlteration =  -1.0f * _removedTwist[nextIndex] + (_flipRotationAtPoint[nextIndex] ? 180.0f : 0.0f);
-        return nextTwistAlteration - startTwistAlteration;
+        float returnedValue = (nextTwistAlteration - startTwistAlteration) % 360;
+        returnedValue = (returnedValue + 360.0f) % 360.0f;
+        returnedValue = returnedValue > 180.0f ? returnedValue - 360.0f : returnedValue;
+        return returnedValue;
     }
     
 }
