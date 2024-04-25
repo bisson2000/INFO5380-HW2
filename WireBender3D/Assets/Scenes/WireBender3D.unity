@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 478453787}
-  m_IndirectSpecularColor: {r: 0.47972792, g: 0.52416116, b: 0.59322315, a: 1}
+  m_IndirectSpecularColor: {r: 0.4797281, g: 0.5241612, b: 0.5932247, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -716,6 +716,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1251606189}
   - {fileID: 103205923}
   - {fileID: 807031682}
   - {fileID: 9606801}
@@ -7442,7 +7443,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 352
-    _typelessdata: 0000003f00000000000000000000803f0000000000000000000000000000c0fff304b53ef304b53e00000000f304353ff304353f000000000000003e0000c0ff2ebdbbb20000003f000000002ebd3bb30000803f000000000000803e0000c0fff304b5bef304b53e00000000f30435bff304353f000000000000c03e0000c0ff000000bf2ebd3bb300000000000080bf2ebdbbb3000000000000003f0000c0fff104b5bef504b5be00000000f10435bff50435bf000000000000203f0000c0ff2edecc31000000bf000000002ede4c32000080bf000000000000403f0000c0fff704b53eef04b5be00000000f704353fef0435bf000000000000603f0000c0ff0000003f2ebdbb33000000000000803f2ebd3b34000000000000803f0000c0ff0000000000000000000000000000008000000080000080bf0000003f0000000000000000000000000000000000000000000000000000803f0000003f0000803f
+    _typelessdata: 0000003f00000000000000000000803f0000000000000000000000000000c07ff304b53ef304b53e00000000f304353ff304353f000000000000003e0000c07f2ebdbbb20000003f000000002ebd3bb30000803f000000000000803e0000c07ff304b5bef304b53e00000000f30435bff304353f000000000000c03e0000c07f000000bf2ebd3bb300000000000080bf2ebdbbb3000000000000003f0000c07ff104b5bef504b5be00000000f10435bff50435bf000000000000203f0000c07f2edecc31000000bf000000002ede4c32000080bf000000000000403f0000c07ff704b53eef04b5be00000000f704353fef0435bf000000000000603f0000c07f0000003f2ebdbb33000000000000803f2ebd3b34000000000000803f0000c07f0000000000000000000000000000008000000080000080bf0000003f0000000000000000000000000000000000000000000000000000803f0000003f0000803f
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -7510,6 +7511,81 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1251606188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1251606189}
+  - component: {fileID: 1251606191}
+  - component: {fileID: 1251606190}
+  m_Layer: 5
+  m_Name: Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1251606189
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251606188}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 98717796}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1251606190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251606188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1251606191
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251606188}
+  m_CullTransparentMesh: 1
 --- !u!1 &1253217001
 GameObject:
   m_ObjectHideFlags: 0
@@ -11475,6 +11551,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2096975060}
   - component: {fileID: 2096975059}
+  - component: {fileID: 2096975061}
   m_Layer: 0
   m_Name: BendScript
   m_TagString: Untagged
@@ -11511,6 +11588,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2096975061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096975058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2e601214edf84516987dfe7403dcb4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 98717796}
+  expandedSize: {x: 0, y: 0}
+  compressedSize: {x: -1800, y: 0}
 --- !u!1 &2112502086
 GameObject:
   m_ObjectHideFlags: 0
