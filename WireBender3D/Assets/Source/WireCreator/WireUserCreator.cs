@@ -211,7 +211,7 @@ public class WireUserCreator : WireCreator
         // Use Application.dataPath to build a relative path
         // Note: Application.dataPath points to the "Assets" folder in Unity project // Relative to the "Assets" folder
         // Relative path from the Assets directory
-        string relativePath = Path.Combine("Output", "Coordinates.csv");
+        string relativePath = Path.Combine("Coordinates.csv");
 
         // Construct the full path using Application.dataPath
         string fullPath = Path.Combine(Application.dataPath, relativePath);

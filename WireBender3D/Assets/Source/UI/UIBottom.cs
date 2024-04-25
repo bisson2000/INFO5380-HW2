@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; 
 using UnityEngine.InputSystem;
 
 public class UIBottom : MonoBehaviour
@@ -8,6 +9,12 @@ public class UIBottom : MonoBehaviour
     [SerializeField] private WireUserCreator _wireUserCreator;
     [SerializeField] private WireInfo _wireInfo;
     [SerializeField] private MachineCollisions _machineCollisions;
+    
+    // Add arrays for buttons
+    public List<Button> buttonsForCurveOnly;
+    public List<Button> buttonsForLineOnly;
+    public List<Button> buttonsForBoth;
+    
     public void OnToggleMachineCollisions() // Mapped Key in Input Action (Key Mapped: "Backspace")
     {
         _machineCollisions.ToggleMachineCollisions();
@@ -86,7 +93,7 @@ public class UIBottom : MonoBehaviour
     public void OnButtonExportCoordinates2CSV()
     {
         _wireUserCreator.ExportCoordinates2CSV();
-        Debug.Log("Coordinates saved to WireBender3D/Assets/Output/Coordinates.csv");
+        Debug.Log("Coordinates saved to WireBender3D/Assets/Coordinates.csv");
     }
     
     // public void OnButtonPressed()
@@ -102,7 +109,45 @@ public class UIBottom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        _wireUserCreator.OnSelectionChange += OnSelectionChange;
+        SetButtonsActive(buttonsForCurveOnly, false); // Initially hide curve buttons
+        SetButtonsActive(buttonsForLineOnly, false);  // Initially hide line buttons
+        SetButtonsActive(buttonsForBoth, false);
+    }
+
+    private void OnSelectionChange()
+    {
+        int segment = _wireUserCreator.SelectedSegment;
+        if (segment >= 0 && segment < _wireUserCreator.SegmentList.Count)
+        {
+            Segment iSegment = _wireUserCreator.SegmentList[segment];
+            if (iSegment is Curve)
+            {
+                SetButtonsActive(buttonsForCurveOnly, true);  // Show buttons for curves
+                SetButtonsActive(buttonsForLineOnly, false); // Hide buttons for lines
+            }
+            else if (iSegment is Line)
+            {
+                SetButtonsActive(buttonsForLineOnly, true);  // Show buttons for lines
+                SetButtonsActive(buttonsForCurveOnly, false); // Hide buttons for curves
+            }
+            SetButtonsActive(buttonsForBoth, true);
+        }
+        else
+        {
+            // If no valid segment, hide all buttons
+            SetButtonsActive(buttonsForCurveOnly, false);
+            SetButtonsActive(buttonsForLineOnly, false);
+            SetButtonsActive(buttonsForBoth, false);
+        }
+    }
+    // Utility method to set the active state of a list of buttons
+    private void SetButtonsActive(List<Button> buttons, bool isInteractible)
+    {
+        foreach (Button button in buttons)
+        {
+            button.interactable = isInteractible;
+        }
     }
 
     // Update is called once per frame
