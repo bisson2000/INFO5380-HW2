@@ -34,8 +34,19 @@ public class BendScriptHook : MonoBehaviour
         _inputField.onSelect.AddListener(OnSelect);
         _inputField.onDeselect.AddListener(OnDeselect);
         _inputField.onCaretUpdateEvent += OnCaretUpdateEvent;
+        _inputField.onValidateInput += CustomValidateInput;
     }
-
+    private char CustomValidateInput(string text, int charIndex, char addedChar)
+    {
+        // Check if the added character is a Tab
+        if (addedChar == '\t')
+        {
+            return '\0'; // Return null character if Tab is pressed, effectively ignoring it
+        }
+        return addedChar; // Return the character unmodified if not Tab
+    }
+    
+    
     private void OnCaretUpdateEvent(int caretPosition)
     {
         //OnCaretChanged?.Invoke(caretPosition);
