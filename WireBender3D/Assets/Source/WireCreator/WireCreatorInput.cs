@@ -52,10 +52,6 @@ public class WireCreatorInput : MonoBehaviour
     [Tooltip("Export Coordinates to CSV")]
     [SerializeField] 
     private InputActionProperty exportCoordinates2CSV = new InputActionProperty(new InputAction("Select Previous Segment", type: InputActionType.Button));
-    // Save coordinates to /Output/Coordinates.csv
-    [Tooltip("Export Coordinates to CSV")]
-    [SerializeField] 
-    private InputActionProperty toggleInfo = new InputActionProperty(new InputAction("Toggle Info", type: InputActionType.Button));
     
     
     
@@ -83,13 +79,8 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.performed += OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed += OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed += OnExportCoordinates2CSV;
-        toggleInfo.action.performed += OnToggleInfo;
     }
     
-    private void OnToggleInfo(InputAction.CallbackContext obj) // Mapped Key in Input Action (Key Mapped: "Backspace")
-    {
-        _wireInfo.ToggleInfo();
-    }
     private void OnCreateLine(InputAction.CallbackContext obj)
     {
         if (!IsShiftHeld() && !IsDeletePressed()) // If Shift is not held
@@ -205,7 +196,6 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Enable();
         printCoordinatesAsArray.action.Enable();
         exportCoordinates2CSV.action.Enable();
-        toggleInfo.action.Enable();
     }
 
     private void OnDisable()
@@ -225,7 +215,6 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.Disable();
         printCoordinatesAsArray.action.Disable();
         exportCoordinates2CSV.action.Disable();
-        toggleInfo.action.Disable();
     }
 
     private void OnDestroy()
@@ -245,7 +234,6 @@ public class WireCreatorInput : MonoBehaviour
         selectPreviousSegment.action.performed -= OnSelectPreviousSegment;
         printCoordinatesAsArray.action.performed -= OnPrintCoordinatesAsArray;
         exportCoordinates2CSV.action.performed -= OnExportCoordinates2CSV;
-        toggleInfo.action.performed -= OnToggleInfo;
     }
 
     // Helper Functions to Map two Keyboard keys to Input Action
