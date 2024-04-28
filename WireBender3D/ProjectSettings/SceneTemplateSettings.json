@@ -84,7 +84,7 @@
         {
             "userAdded": false,
             "type": "UnityEditor.SceneAsset",
-            "defaultInstantiationMode": 1
+            "defaultInstantiationMode": 0
         },
         {
             "userAdded": false,
@@ -117,5 +117,5 @@
         "type": "<default_scene_template_dependencies>",
         "defaultInstantiationMode": 1
     },
-    "newSceneOverride": 0
+    "newSceneOverride": 1
 }
