@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/WireBender3D.unity
-    guid: 502cac6f4c7fc004880eed33a13a89ef
-  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: d6f90391bc8fe4b5b96f6fb70132ca6f
+  - enabled: 1
+    path: Assets/Scenes/WireBender3D.unity
+    guid: 502cac6f4c7fc004880eed33a13a89ef
   m_configObjects: {}

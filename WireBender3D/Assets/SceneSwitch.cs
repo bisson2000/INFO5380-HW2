@@ -8,6 +8,6 @@ public class SceneSwitch : MonoBehaviour
     // Start is called before the first frame update
     public void StartBending()
     {
-      SceneManager.LoadSceneAsync(0);
+      SceneManager.LoadSceneAsync(1);
     }
 }
