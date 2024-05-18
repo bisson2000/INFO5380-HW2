@@ -1,5 +1,41 @@
-# INFO5380-HW2
-INFO5380-HW2
+# WireBender3D
+
+**Description:** Currently, creating wire-bent structures for large-scale manufacturing requires users to code in order to visualize and render their designs. This process can often be intimidating and/or inaccessible to many users. Our goal is to simplify the process of creating wire-bent structures by designing a workflow that empowers users to design their wire bends visually. We find our project idea instrumental in making wire bending more accessible to a wider audience. While there exist solutions that offer a somewhat visual workflow, none are specifically tailored to wire bending, nor do they provide feedback on the feasibility/manufacturability of the design. We are excited about working on a wire bending automation software due to its wide-ranging applications, spanning jewelry making, eyeglass frame development, orthodontic equipment, motorbikes/bicycle parts, office furnishing, gym equipment, etc.
+
+https://github.com/bisson2000/INFO5380-HW2/assets/143034234/9caadadd-9600-4fb4-94e8-956ec2ffa540
+
+**Summary of our keyboard shortcuts:** 
+
+- **Adding line:** `L` (lowercase)
+    - If you have a line segment selected and you want to increase the line: `Shift +  L` 
+    - If you have a line segment selected and you want to retract the line: `Del +  L`
+- **Adding curve:** `C` (lowercase)
+    - If you have a curve segment selected and you want to increase the line: `Shift + C`
+    - If you have a curve segment selected and you want to retract the line: `Del + C`
+- **Rotate:** 
+    - Clockwise: `R` (lowercase)
+    - Counterclockwise: `Shift + R`
+- **Increase or decrease the radius (e.g., arc) of a curve segment:** 
+    - Increase: `K` (lowercase)
+    - Loosen: `J` (lowercase)
+- **Toggle length, bend, angle: `i`**
+- **Erase:** `Backspace` 
+- **Next segment selection: `↑`**
+    - **Previous segment: `↓`**
+- **Show collisions (simulation): `M`** (lowercase)
+- Save: `Shift + P`  to save coordinates to a CSV file. 
+    - Note when running the executable file (not in Unity):
+        - For Windows users, the `Coordinates.csv` file will save to the following path (relative to the Windows Build parent folder):
+            - `.\WireBender_Windows_Build\WireBender3D_Data\Output\Coordinates.csv`
+        - For Mac users, the Coordinates.csv file will save to the following path (relative to the Windows Build parent folder):
+            - `.\WireBender_Mac_AppleM-chip.app\Contents\Resources\Output\Coordinates.csv`
+- **Toggle (Minimize/Expand) Bendscript Editor:** Tab
+- **Orbit:**
+    - **Trackpad:** `ctrl + Right Clic + Movement` (Windows) or `cmd + Right Clic + Movement` (Mac)\
+    - **Mouse:** `Right Click + Movement`
+- **Pan:**
+    - **Trackpad:** `ctrl + Left Clic + Movement` (Windows) or `cmd + Left Clic + Movement` (Mac)\
+    - **Mouse:** `Wheel Click + Movement`
 
 
 ## Cloning the repository
