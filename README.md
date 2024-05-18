@@ -4,7 +4,7 @@
 
 https://github.com/bisson2000/INFO5380-HW2/assets/143034234/9caadadd-9600-4fb4-94e8-956ec2ffa540
 
-**Summary of our keyboard shortcuts:** 
+**Summary of keyboard shortcuts & Trackpad/Mouse Actions:** 
 
 - **Adding line:** `L` (lowercase)
     - If you have a line segment selected and you want to increase the line: `Shift +  L` 
@@ -30,11 +30,12 @@ https://github.com/bisson2000/INFO5380-HW2/assets/143034234/9caadadd-9600-4fb4-9
         - For Mac users, the Coordinates.csv file will save to the following path (relative to the Windows Build parent folder):
             - `.\WireBender_Mac_AppleM-chip.app\Contents\Resources\Output\Coordinates.csv`
 - **Toggle (Minimize/Expand) Bendscript Editor:** Tab
+- **Select a Segment:** `Left Click` 
 - **Orbit:**
-    - **Trackpad:** `ctrl + Right Clic + Movement` (Windows) or `cmd + Right Clic + Movement` (Mac)\
+    - **Trackpad:** `ctrl + Right Click + Movement` (Windows) or `cmd + Right Click + Movement` (Mac)
     - **Mouse:** `Right Click + Movement`
 - **Pan:**
-    - **Trackpad:** `ctrl + Left Clic + Movement` (Windows) or `cmd + Left Clic + Movement` (Mac)\
+    - **Trackpad:** `ctrl + Left Click + Movement` (Windows) or `cmd + Left Click + Movement` (Mac)
     - **Mouse:** `Wheel Click + Movement`
 
 
